@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Voidcreepreaper — Gamer Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container">
+            <div class="brand">
+                <div class="pfp" style="background-image:url('https://via.placeholder.com/140')"></div>
+                <div>
+                    <h1>Voidcreepreaper</h1>
+                    <p class="tagline">Competitive FPS player • Content Creator • Speedrunner</p>
+                    <div class="live-bar">
+                        <span class="live-dot" aria-hidden="true">●</span>
+                        <strong id="liveLabel">Next stream in</strong>
+                        <span id="liveCountdown">00:00:00</span>
+                    </div>
+                </div>
+            </div>
+            <nav class="actions">
+                <button id="themeToggle" aria-label="Toggle theme">Dark</button>
+                <a class="cta" href="#contact">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero card">
+            <div class="hero-left">
+                <h2>Gamer Portfolio</h2>
+                <p>Highlights, clips, and achievements from my competitive play and content creation.</p>
+                <div class="stats">
+                    <div><strong>1.2k</strong><span>Followers</span></div>
+                    <div><strong>450</strong><span>Wins</span></div>
+                    <div><strong>3.8k</strong><span>Hours</span></div>
+                </div>
+                <div class="links">
+                    <a href="#gallery" class="btn">View Gallery</a>
+                    <a href="#about" class="btn ghost">About Me</a>
+                </div>
+            </div>
+            <div class="hero-right">
+                <img src="https://via.placeholder.com/420x260" alt="Gameplay preview">
+            </div>
+        </section>
+
+        <section id="about" class="card">
+            <h3>About Me</h3>
+            <p>I'm a passionate gamer who focuses on movement, aim mechanics, and creating entertaining clips. I stream
+                regularly, coach newer players, and post highlight reels.</p>
+            <ul class="skills">
+                <li>Games: Valorant, Apex Legends, CS2</li>
+                <li>Content: Short-form highlights, tutorials, montages</li>
+                <li>Tools: OBS, Premiere, ReShade</li>
+            </ul>
+        </section>
+
+        <section id="gallery" class="card">
+            <h3>Gallery</h3>
+            <p class="muted">Click a clip to open a preview.</p>
+            <div class="grid">
+                <div class="thumb" data-src="https://via.placeholder.com/800x450?text=Clip+1"><img
+                        src="https://via.placeholder.com/320x180?text=Clip+1" alt="Clip 1"></div>
+                <div class="thumb" data-src="https://via.placeholder.com/800x450?text=Clip+2"><img
+                        src="https://via.placeholder.com/320x180?text=Clip+2" alt="Clip 2"></div>
+                <div class="thumb" data-src="https://via.placeholder.com/800x450?text=Clip+3"><img
+                        src="https://via.placeholder.com/320x180?text=Clip+3" alt="Clip 3"></div>
+                <div class="thumb" data-src="https://via.placeholder.com/800x450?text=Clip+4"><img
+                        src="https://via.placeholder.com/320x180?text=Clip+4" alt="Clip 4"></div>
+            </div>
+        </section>
+
+        <section class="card">
+            <h3>Achievements</h3>
+
+            Not Yet But Played Some local Scrims
+            <!-- <ol>
+				<li>Ranked Top 500 (Season 7)</li>
+				<li>Tournament semi-finalist — LAN Cup 2024</li>
+				<li>Featured in community highlight reels</li>
+			</ol> -->
+        </section>
+
+        <section id="contact" class="card">
+            <h3>Contact</h3>
+            <p>Reach out for collaborations, coaching, or sponsorships.</p>
+            <div class="contact-grid">
+                <div>
+                    <strong>Discord</strong>
+                    <p id="discordTag">Voidcreepreaper<button id="copyDiscord" class="small">Copy</button></p>
+                </div>
+                <div>
+                    <strong>Email</strong>
+                    <p><a href="mailto:hello@void.example">vaibhavjalota06@gmail.com</a></p>
+                </div>
+                <div>
+                    <strong>Socials</strong>
+                    <p><a href="https://www.youtube.com/@voidcreepreapergaming8814" target="_blank"
+                            rel="noopener noreferrer">YouTube</a>
+                        <a href="#" target="_blank" rel="noopener noreferrer">Twitter</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="modal" class="modal" aria-hidden="true">
+        <div class="modal-inner">
+            <button id="modalClose" class="modal-close">×</button>
+            <img id="modalImg" src="" alt="Preview">
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
