@@ -1,0 +1,28 @@
+plugins = []
+headers = []
+redirects = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "D:\\ai models\\portfolio\\client\\client\\dist"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npm install && npm run build"
+base = "D:\\ai models\\portfolio\\client"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]

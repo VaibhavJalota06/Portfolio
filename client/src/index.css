@@ -1,0 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-accent: #ff9f1c;
+  --color-accent-hover: #e58f13;
+  --color-accent-dark: #cc7f10;
+  --color-accent-light: #ffb347;
+
+  --color-cinema-black: #070708;
+  --color-cinema-card: #0f0f12;
+  --color-cinema-border: #1e1e24;
+  --color-cinema-muted: #80808a;
+
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@utility focus-ring {
+  outline: none;
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-cinema-black);
+    color: white;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-cinema-black);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+  }
+}
+
+/* Custom Film Grain */
+@keyframes noise {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-1%, -1%); }
+  20% { transform: translate(-2%, 1%); }
+  30% { transform: translate(1%, -2%); }
+  40% { transform: translate(-1%, 3%); }
+  50% { transform: translate(-2%, 1%); }
+  60% { transform: translate(1%, 3%); }
+  70% { transform: translate(2%, 1%); }
+  80% { transform: translate(-2%, -1%); }
+  90% { transform: translate(1%, 2%); }
+}
+
+.grain-bg {
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200%;
+  background: transparent url("data:image/svg+xml,%3Csvg viewBox='0 0 250 250' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E") repeat;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 9999;
+  animation: noise 1.2s steps(8) infinite;
+}
+
+/* Bento Grid System */
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 240px;
+  grid-auto-flow: dense;
+  gap: 1rem;
+}
+
+/* Bento Tile Span Rules */
+.tile-small {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.tile-wide {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.tile-tall {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+
+.tile-large {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+
+.tile-banner {
+  grid-column: span 1;
+  grid-row: span 1;
+}
+
+.tile-ultratall {
+  grid-column: span 1;
+  grid-row: span 3;
+}
+
+.tile-full {
+  grid-column: span 1;
+  grid-row: span 2;
+}
+
+/* Responsive Grid Spans (Tablet and up) */
+@media (min-width: 640px) {
+  .bento-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-rows: 260px;
+    gap: 1.5rem;
+  }
+  .tile-wide {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  .tile-large {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  .tile-banner {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  .tile-full {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
+
+/* Responsive Grid Spans (Desktop and up) */
+@media (min-width: 1024px) {
+  .tile-banner {
+    grid-column: span 3;
+    grid-row: span 1;
+  }
+  .tile-full {
+    grid-column: span 4;
+    grid-row: span 2;
+  }
+}
+
+/* Thin styled scrollbar for a professional UI look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #070708;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e1e24;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff9f1c;
+}
+
+/* Cinematic clapper and soundwave keyframes */
+@keyframes clack {
+  0% { transform: rotate(-16deg); }
+  25% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; pointer-events: none; visibility: hidden; }
+}
+
+@keyframes soundwave-1 {
+  0%, 100% { height: 4px; }
+  50% { height: 12px; }
+}
+
+@keyframes soundwave-2 {
+  0%, 100% { height: 8px; }
+  50% { height: 3px; }
+}
+
+@keyframes soundwave-3 {
+  0%, 100% { height: 12px; }
+  50% { height: 5px; }
+}
+
+@keyframes soundwave-4 {
+  0%, 100% { height: 3px; }
+  50% { height: 10px; }
+}
+
+.animate-clack {
+  animation: clack 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.4s ease-out forwards;
+}
+
+.animate-soundwave-1 { animation: soundwave-1 0.6s ease-in-out infinite; }
+.animate-soundwave-2 { animation: soundwave-2 0.7s ease-in-out infinite; }
+.animate-soundwave-3 { animation: soundwave-3 0.5s ease-in-out infinite; }
+.animate-soundwave-4 { animation: soundwave-4 0.8s ease-in-out infinite; }
+.animate-spin-slow { animation: spin 4s linear infinite; }
+
+/* Custom cursor reset selector (hides OS pointer when active) */
+@media (pointer: fine) {
+  .custom-cursor-active,
+  .custom-cursor-active * {
+    cursor: none !important;
+  }
+}
+
+

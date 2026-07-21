@@ -1,0 +1,15 @@
+{
+  "name": "video-editing-portfolio",
+  "version": "1.0.0",
+  "description": "Video editing portfolio website with React, Tailwind, and Node.js + SQLite",
+  "scripts": {
+    "setup": "npm install && npm install --prefix server && npm install --prefix client",
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "seed": "node server/seed.js",
+    "dev": "concurrently --kill-others \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
