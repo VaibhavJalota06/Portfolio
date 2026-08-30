@@ -20,21 +20,41 @@ app.use((req, res, next) => {
 // Helper: Auto-detect media type from URL
 function detectMediaType(url) {
   if (!url) return 'image';
-  const youtubeRegex = /youtu\.be\/|youtube\.com\/(watch\?v=|embed\/|v\/|shorts\/)/i;
-  if (youtubeRegex.test(url)) return 'youtube';
-  const vimeoRegex = /vimeo\.com\/(\d+)|player\.vimeo\.com\/video\/(\d+)/i;
-  if (vimeoRegex.test(url)) return 'vimeo';
-  const videoExtRegex = /\.(mp4|webm|mov|ogg)($|\?)/i;
-  if (videoExtRegex.test(url)) return 'mp4';
+  if (/youtu\.be\/|youtube\.com\/(watch\?v=|embed\/|v\/|shorts\/)/i.test(url)) return 'youtube';
+  if (/vimeo\.com\/(\d+)|player\.vimeo\.com\/video\/(\d+)/i.test(url)) return 'vimeo';
+  if (/drive\.google\.com\/(file\/d\/|open\?id=|uc\?id=)|lh3\.googleusercontent\.com\/d\//i.test(url)) return 'gdrive';
+  if (/loom\.com\/(share|embed)\//i.test(url)) return 'loom';
+  if (/streamable\.com\//i.test(url)) return 'streamable';
+  if (/tiktok\.com\//i.test(url)) return 'tiktok';
+  if (/instagram\.com\/(reel|p|tv)\//i.test(url)) return 'instagram';
+  if (/dailymotion\.com\/video\/|dai\.ly\//i.test(url)) return 'dailymotion';
+  if (/wistia\.(com|net)\//i.test(url)) return 'wistia';
+  if (/dropbox\.com/i.test(url) || /\.(mp4|webm|mov|ogg)($|\?)/i.test(url)) return 'mp4';
   return 'image';
+}
+
+// ─── ADMIN AUTH & MIDDLEWARE ──────────────────────────────────────────────────
+
+function verifyAdmin(req, res, next) {
+  const storedPinRow = db.prepare("SELECT value FROM settings WHERE key = 'admin_pin'").get();
+  const storedPin = storedPinRow?.value || '';
+  if (!storedPin) return next(); // Open access if no PIN is configured
+
+  const clientPin = req.headers['x-admin-pin'] || req.query.admin_pin;
+  if (clientPin === storedPin) return next();
+  return res.status(401).json({ error: 'Unauthorized: Invalid or missing admin PIN' });
 }
 
 // ─── PORTFOLIO ITEMS ────────────────────────────────────────────────────────
 
-// GET /api/items — public: only published items
+// GET /api/items — public: published items; admin: all items
 app.get('/api/items', (req, res) => {
   try {
-    const isAdmin = req.query.admin === '1';
+    const storedPinRow = db.prepare("SELECT value FROM settings WHERE key = 'admin_pin'").get();
+    const storedPin = storedPinRow?.value || '';
+    const clientPin = req.headers['x-admin-pin'] || req.query.admin_pin;
+    const isAdmin = req.query.admin === '1' && (!storedPin || clientPin === storedPin);
+
     const stmt = isAdmin
       ? db.prepare('SELECT * FROM portfolio_items ORDER BY is_featured DESC, sort_order ASC, created_at DESC')
       : db.prepare('SELECT * FROM portfolio_items WHERE is_published = 1 ORDER BY is_featured DESC, sort_order ASC, created_at DESC');
@@ -53,8 +73,8 @@ app.get('/api/items', (req, res) => {
   }
 });
 
-// POST /api/items — create new item
-app.post('/api/items', (req, res) => {
+// POST /api/items — create new item (Admin)
+app.post('/api/items', verifyAdmin, (req, res) => {
   const { url, title, size, description, tags, is_featured, is_published } = req.body;
   if (!url || !size) return res.status(400).json({ error: 'URL and size are required.' });
 
@@ -88,8 +108,8 @@ app.post('/api/items', (req, res) => {
   }
 });
 
-// PUT /api/items/:id — update existing item
-app.put('/api/items/:id', (req, res) => {
+// PUT /api/items/:id — update existing item (Admin)
+app.put('/api/items/:id', verifyAdmin, (req, res) => {
   const { id } = req.params;
   const { url, title, size, sort_order, description, tags, is_featured, is_published } = req.body;
   if (!url || !size) return res.status(400).json({ error: 'URL and size are required.' });
@@ -126,8 +146,8 @@ app.put('/api/items/:id', (req, res) => {
   }
 });
 
-// DELETE /api/items/:id
-app.delete('/api/items/:id', (req, res) => {
+// DELETE /api/items/:id (Admin)
+app.delete('/api/items/:id', verifyAdmin, (req, res) => {
   const { id } = req.params;
   try {
     const result = db.prepare('DELETE FROM portfolio_items WHERE id = ?').run(id);
@@ -139,8 +159,8 @@ app.delete('/api/items/:id', (req, res) => {
   }
 });
 
-// PATCH /api/items/reorder — batch update sort order
-app.patch('/api/items/reorder', (req, res) => {
+// PATCH /api/items/reorder — batch update sort order (Admin)
+app.patch('/api/items/reorder', verifyAdmin, (req, res) => {
   const { ids } = req.body;
   if (!Array.isArray(ids)) return res.status(400).json({ error: 'An array of item IDs is required.' });
   try {
@@ -167,7 +187,7 @@ app.get('/api/settings', (req, res) => {
   }
 });
 
-app.put('/api/settings', (req, res) => {
+app.put('/api/settings', verifyAdmin, (req, res) => {
   const newSettings = req.body;
   try {
     const updateStmt = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
@@ -189,7 +209,7 @@ app.post('/api/contact', (req, res) => {
   try {
     const stmt = db.prepare('INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)');
     stmt.run(name.trim(), email.trim(), message.trim());
-    
+
     console.log('\n========== NEW CONTACT MESSAGE SAVED ==========');
     console.log(`From:    ${name} <${email}>`);
     console.log(`Message: ${message}`);
@@ -202,10 +222,8 @@ app.post('/api/contact', (req, res) => {
   }
 });
 
-app.get('/api/contact', (req, res) => {
+app.get('/api/contact', verifyAdmin, (req, res) => {
   try {
-    const isAdmin = req.query.admin === '1';
-    if (!isAdmin) return res.status(403).json({ error: 'Access denied' });
     const stmt = db.prepare('SELECT * FROM contact_messages ORDER BY created_at DESC');
     const messages = stmt.all();
     res.json(messages);
@@ -215,7 +233,7 @@ app.get('/api/contact', (req, res) => {
   }
 });
 
-app.delete('/api/contact/:id', (req, res) => {
+app.delete('/api/contact/:id', verifyAdmin, (req, res) => {
   const { id } = req.params;
   try {
     const result = db.prepare('DELETE FROM contact_messages WHERE id = ?').run(id);

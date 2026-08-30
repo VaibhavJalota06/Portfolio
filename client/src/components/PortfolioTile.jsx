@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Trash2, Edit3, Move, Maximize2, Play, VolumeX, Eye } from 'lucide-react';
-import { getMediaInfo } from '../utils/media';
+import { getMediaInfo, isEmbedType } from '../utils/media';
 
 export default function PortfolioTile({ 
   item, 
@@ -129,6 +129,8 @@ export default function PortfolioTile({
             alt={item.title}
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             loading="lazy"
+            decoding="async"
+            fetchPriority="low"
           />
         )}
 
@@ -141,6 +143,7 @@ export default function PortfolioTile({
               loop
               muted
               playsInline
+              preload="metadata"
               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-102"
             />
             {/* Play/Muted indicators (hidden in Admin edit mode to prevent overlap) */}
@@ -156,8 +159,8 @@ export default function PortfolioTile({
           </div>
         )}
 
-        {/* Render YouTube/Vimeo embed preview */}
-        {(mediaType === 'youtube' || mediaType === 'vimeo') && (
+        {/* Render multi-platform embed preview */}
+        {isEmbedType(mediaType) && (
           <div className="relative w-full h-full">
             {/* Show iframe when hovered on desktop, else show thumbnail */}
             {isHovered && !isDragging ? (
@@ -175,6 +178,13 @@ export default function PortfolioTile({
                 alt={item.title}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+                onError={(e) => {
+                  // Fallback for Google Drive thumbnail if CORS/auth blocks direct image
+                  e.target.onerror = null;
+                  e.target.src = 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80';
+                }}
               />
             )}
             
@@ -185,7 +195,7 @@ export default function PortfolioTile({
                 style={{ transform: 'translateZ(25px)' }}
               >
                 <Play className="w-3 h-3 text-accent fill-accent" />
-                <span>{mediaType.toUpperCase()}</span>
+                <span>{mediaType === 'gdrive' ? 'G-DRIVE' : mediaType.toUpperCase()}</span>
               </div>
             )}
           </div>

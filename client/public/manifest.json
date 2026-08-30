@@ -1,0 +1,17 @@
+{
+  "short_name": "Portfolio",
+  "name": "Cinematic Editor & Colorist Portfolio",
+  "description": "Industry-grade film editing, color grading, and narrative portfolio showcase.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": ".",
+  "background_color": "#070708",
+  "theme_color": "#ff9f1c",
+  "display": "standalone",
+  "orientation": "portrait"
+}

@@ -1,13 +1,37 @@
 import React, { useState } from 'react';
-import { Send, X, CheckCircle, Mail } from 'lucide-react';
+import { Send, X, CheckCircle, Mail, Download } from 'lucide-react';
+import { generateRateCardText } from '../utils/rateCard';
 
-export default function ContactForm({ onClose }) {
+export default function ContactForm({ onClose, settings }) {
   const [name, setName]       = useState('');
   const [email, setEmail]     = useState('');
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [sent, setSent]       = useState(false);
   const [error, setError]     = useState('');
+
+  const defaultRateCardText = `====================================================
+${(settings?.editor_name || 'ALEX KANE').toUpperCase()} — CINEMATIC EDITOR & DIGITAL COLORIST
+====================================================
+Location: ${settings?.location_info || 'Los Angeles, CA / Remote Worldwide'}
+Contact: ${settings?.contact_email || 'alexkane.edit@gmail.com'}
+
+----------------------------------------------------
+EDITORIAL & COLOR GRADING DAY RATES
+----------------------------------------------------
+• Full Day Editorial Rate (10 Hrs): $1,250 / Day
+• Half Day Editorial Rate (5 Hrs):  $700 / Half Day
+• Commercial Color Grade (per Spot): $1,500 / Spot
+• Feature / Narrative Grading:      $3,500 / Project Base
+
+----------------------------------------------------
+EQUIPMENT & STUDIO PIPELINE
+----------------------------------------------------
+• Mac Studio M2 Ultra (128GB Unified Memory)
+• Flanders Scientific BM240 Calibrated Broadcast Monitor
+• Tangent Wave2 Color Control Panel
+• Full 4K ProRes 4444 XQ & REDCODE RAW Playback Support
+====================================================`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,7 +111,7 @@ export default function ContactForm({ onClose }) {
 
             {error && <p className="text-xs text-red-400 font-mono">{error}</p>}
 
-            <div className="flex justify-end gap-3 pt-1 border-t border-cinema-border/30">
+            <div className="flex justify-end gap-3 pt-3 border-t border-cinema-border/30">
               <button type="button" onClick={onClose}
                 className="px-4 py-2 text-sm text-cinema-muted hover:text-white transition-colors cursor-pointer focus-ring rounded">
                 Cancel

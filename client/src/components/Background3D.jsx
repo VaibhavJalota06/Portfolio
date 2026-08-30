@@ -16,14 +16,27 @@ export default function Background3D() {
           0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(180deg) rotateZ(0deg); }
           50% { transform: translateY(-25px) rotateX(30deg) rotateY(360deg) rotateZ(60deg); }
         }
+        @keyframes grid-pulse {
+          0%, 100% { opacity: 0.15; }
+          50% { opacity: 0.35; }
+        }
         .preserve-3d {
           transform-style: preserve-3d;
         }
       `}</style>
 
+      {/* Cybernetic Ambient Grid Pattern */}
+      <div 
+        className="absolute inset-0 bg-[radial-gradient(#1e1e24_1px,transparent_1px)] [background-size:32px_32px] opacity-25"
+        style={{ animation: 'grid-pulse 8s ease-in-out infinite' }}
+      />
+
+      {/* Subtle Vignette Mask */}
+      <div className="absolute inset-0 bg-radial from-transparent via-cinema-black/40 to-cinema-black pointer-events-none" />
+
       {/* Object 1: 3D Film Reel - Top Left */}
       <div 
-        className="absolute top-[25vh] left-[4%] w-24 h-24 preserve-3d opacity-[0.06] hidden lg:block"
+        className="absolute top-[25vh] left-[4%] w-28 h-28 preserve-3d opacity-[0.07] hidden lg:block"
         style={{ animation: 'float-1 25s ease-in-out infinite' }}
       >
         <div className="absolute inset-0 rounded-full border-4 border-accent bg-transparent preserve-3d">
@@ -38,21 +51,20 @@ export default function Background3D() {
 
       {/* Object 2: 3D Rotating Cube (Film Slate Box) - Mid Right */}
       <div 
-        className="absolute top-[60vh] right-[5%] w-20 h-20 preserve-3d opacity-[0.05] hidden md:block"
+        className="absolute top-[60vh] right-[5%] w-24 h-24 preserve-3d opacity-[0.06] hidden md:block"
         style={{ animation: 'float-2 28s ease-in-out infinite' }}
       >
-        {/* Cube faces */}
-        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateZ(40px)' }} />
-        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateZ(-40px) rotateY(180deg)' }} />
-        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateX(40px) rotateY(90deg)' }} />
-        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateX(-40px) rotateY(-90deg)' }} />
-        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateY(40px) rotateX(90deg)' }} />
-        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateY(-40px) rotateX(-90deg)' }} />
+        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateZ(48px)' }} />
+        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateZ(-48px) rotateY(180deg)' }} />
+        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateX(48px) rotateY(90deg)' }} />
+        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateX(-48px) rotateY(-90deg)' }} />
+        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateY(48px) rotateX(90deg)' }} />
+        <div className="absolute inset-0 border-2 border-white/40 bg-white/[0.01] preserve-3d" style={{ transform: 'translateY(-48px) rotateX(-90deg)' }} />
       </div>
 
       {/* Object 3: Concentric Lens Ring - Bottom Left */}
       <div 
-        className="absolute top-[110vh] left-[6%] w-32 h-32 preserve-3d opacity-[0.05] hidden lg:block"
+        className="absolute top-[110vh] left-[6%] w-36 h-36 preserve-3d opacity-[0.06] hidden lg:block"
         style={{ animation: 'float-3 30s ease-in-out infinite' }}
       >
         <div className="absolute inset-0 rounded-full border-[3px] border-accent/40 preserve-3d" style={{ transform: 'translateZ(0px)' }} />
@@ -65,7 +77,7 @@ export default function Background3D() {
 
       {/* Object 4: Mini 3D Film Reel - Bottom Right */}
       <div 
-        className="absolute top-[160vh] right-[6%] w-24 h-24 preserve-3d opacity-[0.05] hidden lg:block"
+        className="absolute top-[160vh] right-[6%] w-28 h-28 preserve-3d opacity-[0.06] hidden lg:block"
         style={{ animation: 'float-1 32s ease-in-out infinite', animationDelay: '-5s' }}
       >
         <div className="absolute inset-0 rounded-full border-4 border-accent/40 bg-transparent preserve-3d" style={{ transform: 'translateZ(8px)' }} />

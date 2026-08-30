@@ -17,6 +17,15 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
   const [availableForWork, setAvailableForWork] = useState(false);
   const [adminPin, setAdminPin]             = useState('');
   const [themeAccent, setThemeAccent]       = useState('amber');
+  
+  // Structured Rate Card Fields
+  const [rateCurrency, setRateCurrency]           = useState('₹');
+  const [rateEditorialDay, setRateEditorialDay]   = useState('25,000');
+  const [rateEditorialHalf, setRateEditorialHalf] = useState('15,000');
+  const [rateColorSpot, setRateColorSpot]         = useState('30,000');
+  const [rateNarrativeBase, setRateNarrativeBase] = useState('75,000');
+  const [rateEquipmentSpecs, setRateEquipmentSpecs] = useState('');
+  const [rateCredits, setRateCredits]             = useState('');
 
   useEffect(() => {
     if (settings) {
@@ -35,27 +44,41 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
       setAvailableForWork(settings.available_for_work === '1');
       setAdminPin(settings.admin_pin || '');
       setThemeAccent(settings.theme_accent || 'amber');
+      setRateCurrency(settings.rate_currency || '₹');
+      setRateEditorialDay(settings.rate_editorial_day || '25,000');
+      setRateEditorialHalf(settings.rate_editorial_half || '15,000');
+      setRateColorSpot(settings.rate_color_spot || '30,000');
+      setRateNarrativeBase(settings.rate_narrative_base || '75,000');
+      setRateEquipmentSpecs(settings.rate_equipment_specs || '');
+      setRateCredits(settings.rate_credits || '');
     }
   }, [settings]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSaveSettings({
-      editor_name:       editorName.trim(),
-      hero_tagline:      heroTagline.trim(),
-      showreel_url:      showreelUrl.trim(),
-      bio_text:          bioText.trim(),
-      location_info:     locationInfo.trim(),
-      contact_email:     contactEmail.trim(),
-      contact_github:    contactGithub.trim(),
-      contact_vimeo:     contactVimeo.trim(),
-      gallery_title:     galleryTitle.trim(),
-      hero_label:        heroLabel.trim(),
-      instagram_url:     instagramUrl.trim(),
-      behance_url:       behanceUrl.trim(),
-      available_for_work: availableForWork ? '1' : '0',
-      admin_pin:         adminPin.trim(),
-      theme_accent:      themeAccent
+      editor_name:         editorName.trim(),
+      hero_tagline:        heroTagline.trim(),
+      showreel_url:        showreelUrl.trim(),
+      bio_text:            bioText.trim(),
+      location_info:       locationInfo.trim(),
+      contact_email:       contactEmail.trim(),
+      contact_github:      contactGithub.trim(),
+      contact_vimeo:       contactVimeo.trim(),
+      gallery_title:       galleryTitle.trim(),
+      hero_label:          heroLabel.trim(),
+      instagram_url:       instagramUrl.trim(),
+      behance_url:         behanceUrl.trim(),
+      available_for_work:   availableForWork ? '1' : '0',
+      admin_pin:           adminPin.trim(),
+      theme_accent:        themeAccent,
+      rate_currency:       rateCurrency.trim(),
+      rate_editorial_day:  rateEditorialDay.trim(),
+      rate_editorial_half: rateEditorialHalf.trim(),
+      rate_color_spot:     rateColorSpot.trim(),
+      rate_narrative_base: rateNarrativeBase.trim(),
+      rate_equipment_specs: rateEquipmentSpecs.trim(),
+      rate_credits:        rateCredits.trim()
     });
   };
 
@@ -105,9 +128,71 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
         {/* Row 3: Bio text */}
         <div className="flex flex-col gap-2">
           <label htmlFor="bioText" className={labelClass}>FOOTER BIOGRAPHY / BACKGROUND DETAIL</label>
-          <textarea id="bioText" rows="4" value={bioText} onChange={e => setBioText(e.target.value)}
+          <textarea id="bioText" rows="3" value={bioText} onChange={e => setBioText(e.target.value)}
             placeholder="Introduce editing experience, software setups, or workflow approaches..."
             className={fieldClass} />
+        </div>
+
+        {/* RATE CARD & PRICING CONFIGURATOR */}
+        <div className="pt-4 border-t border-cinema-border/30 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-mono text-accent uppercase flex items-center gap-1.5">
+              <span>[PRICING // RATE CARD & RESUME CONFIG]</span>
+            </div>
+            <span className="text-[10px] font-mono text-cinema-muted">Auto-formats PDF/TXT download & Rate Card</span>
+          </div>
+
+          {/* Currency + Day Rates Row */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+            <div className="flex flex-col gap-1.5 sm:col-span-1">
+              <label htmlFor="rateCurrency" className={labelClass}>CURRENCY</label>
+              <select
+                id="rateCurrency"
+                value={rateCurrency}
+                onChange={e => setRateCurrency(e.target.value)}
+                className={fieldClass + ' cursor-pointer'}
+              >
+                <option value="₹">₹ (INR - Rupee)</option>
+                <option value="$">$ (USD - Dollar)</option>
+                <option value="€">€ (EUR - Euro)</option>
+                <option value="£">£ (GBP - Pound)</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-1">
+              <label htmlFor="rateEditorialDay" className={labelClass}>FULL DAY RATE</label>
+              <input id="rateEditorialDay" type="text" value={rateEditorialDay} onChange={e => setRateEditorialDay(e.target.value)}
+                placeholder="25,000" className={fieldClass} />
+            </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-1">
+              <label htmlFor="rateEditorialHalf" className={labelClass}>HALF DAY RATE</label>
+              <input id="rateEditorialHalf" type="text" value={rateEditorialHalf} onChange={e => setRateEditorialHalf(e.target.value)}
+                placeholder="15,000" className={fieldClass} />
+            </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-1">
+              <label htmlFor="rateColorSpot" className={labelClass}>COLOR SPOT RATE</label>
+              <input id="rateColorSpot" type="text" value={rateColorSpot} onChange={e => setRateColorSpot(e.target.value)}
+                placeholder="30,000" className={fieldClass} />
+            </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-1">
+              <label htmlFor="rateNarrativeBase" className={labelClass}>FEATURE BASE RATE</label>
+              <input id="rateNarrativeBase" type="text" value={rateNarrativeBase} onChange={e => setRateNarrativeBase(e.target.value)}
+                placeholder="75,000" className={fieldClass} />
+            </div>
+          </div>
+
+          {/* Equipment Specs & Credits */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="rateEquipmentSpecs" className={labelClass}>STUDIO HARDWARE & SUITE SPECS</label>
+              <input id="rateEquipmentSpecs" type="text" value={rateEquipmentSpecs} onChange={e => setRateEquipmentSpecs(e.target.value)}
+                placeholder="Mac Studio M2 Ultra • Flanders Scientific BM240 Monitor • Tangent Wave2 Panel" className={fieldClass} />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="rateCredits" className={labelClass}>FEATURED CREDITS / CLIENT WORK</label>
+              <input id="rateCredits" type="text" value={rateCredits} onChange={e => setRateCredits(e.target.value)}
+                placeholder="Vanguard Velocity (Commercial) • Neon Horizon (Short Film) • Aura (Music Video)" className={fieldClass} />
+            </div>
+          </div>
         </div>
 
         {/* Row 4: Location + Email */}

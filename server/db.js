@@ -1,4 +1,5 @@
-import Database from 'better-sqlite3';
+import initSqlJs from 'sql.js';
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -6,9 +7,115 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const dbPath = process.env.DB_PATH || path.resolve(__dirname, 'portfolio.db');
-const db = new Database(dbPath);
 
-// Enable WAL mode for better concurrency performance
+const SQL = await initSqlJs();
+
+let sqlDb;
+if (fs.existsSync(dbPath)) {
+  try {
+    const filebuffer = fs.readFileSync(dbPath);
+    sqlDb = new SQL.Database(filebuffer);
+  } catch (err) {
+    console.warn('Could not read existing db file, creating new database:', err);
+    sqlDb = new SQL.Database();
+  }
+} else {
+  sqlDb = new SQL.Database();
+}
+
+function saveDatabase() {
+  try {
+    const data = sqlDb.export();
+    const buffer = Buffer.from(data);
+    fs.writeFileSync(dbPath, buffer);
+  } catch (err) {
+    console.error('Error saving database file:', err);
+  }
+}
+
+const db = {
+  exec(sql) {
+    sqlDb.exec(sql);
+    saveDatabase();
+  },
+
+  pragma(str) {
+    try {
+      sqlDb.exec(`PRAGMA ${str}`);
+    } catch {
+      // Ignore unsupported pragmas in WASM mode
+    }
+  },
+
+  prepare(sql) {
+    return {
+      all(...args) {
+        const params = args.length === 1 && Array.isArray(args[0]) ? args[0] : args;
+        const stmt = sqlDb.prepare(sql);
+        if (params.length > 0) stmt.bind(params);
+        const results = [];
+        while (stmt.step()) {
+          results.push(stmt.getAsObject());
+        }
+        stmt.free();
+        return results;
+      },
+
+      get(...args) {
+        const params = args.length === 1 && Array.isArray(args[0]) ? args[0] : args;
+        const stmt = sqlDb.prepare(sql);
+        if (params.length > 0) stmt.bind(params);
+        let result = undefined;
+        if (stmt.step()) {
+          result = stmt.getAsObject();
+        }
+        stmt.free();
+        return result;
+      },
+
+      run(...args) {
+        const params = args.length === 1 && Array.isArray(args[0]) ? args[0] : args;
+        const stmt = sqlDb.prepare(sql);
+        if (params.length > 0) stmt.bind(params);
+        stmt.step();
+        stmt.free();
+
+        const lastInsertRowidRes = sqlDb.exec("SELECT last_insert_rowid() as id");
+        const lastInsertRowid = (lastInsertRowidRes.length > 0 && lastInsertRowidRes[0].values.length > 0)
+          ? lastInsertRowidRes[0].values[0][0]
+          : 0;
+
+        const changesRes = sqlDb.exec("SELECT changes() as c");
+        const changes = (changesRes.length > 0 && changesRes[0].values.length > 0)
+          ? changesRes[0].values[0][0]
+          : 0;
+
+        saveDatabase();
+        return { lastInsertRowid, changes };
+      }
+    };
+  },
+
+  transaction(fn) {
+    return (...args) => {
+      try {
+        sqlDb.exec('BEGIN TRANSACTION');
+      } catch (e) {}
+      try {
+        const result = fn(...args);
+        try { sqlDb.exec('COMMIT'); } catch (e) {}
+        saveDatabase();
+        return result;
+      } catch (err) {
+        console.error('Transaction inner error:', err);
+        try { sqlDb.exec('ROLLBACK'); } catch (e) {}
+        throw err;
+      }
+    };
+  }
+};
+
+// Enable WAL mode or pragmas if applicable
 db.pragma('journal_mode = WAL');
 
 // Initialize base schema

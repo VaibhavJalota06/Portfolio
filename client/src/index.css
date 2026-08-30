@@ -223,12 +223,14 @@
 .animate-soundwave-4 { animation: soundwave-4 0.8s ease-in-out infinite; }
 .animate-spin-slow { animation: spin 4s linear infinite; }
 
-/* Custom cursor reset selector (hides OS pointer when active) */
+/* Custom cursor: hide native OS cursor on main page, reveal native OS cursor when modal/lightbox is open */
 @media (pointer: fine) {
-  .custom-cursor-active,
-  .custom-cursor-active * {
+  body:not(.modal-open),
+  body:not(.modal-open) * {
     cursor: none !important;
   }
 }
+
+
 
 

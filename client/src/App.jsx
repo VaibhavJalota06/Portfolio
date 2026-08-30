@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Film, Eye, Mail, Github, Compass, Video, X, Instagram, Globe, Tag, Send, Lock, RotateCcw, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Film, Eye, Mail, Github, Compass, Video, X, Instagram, Globe, Tag, Send, Lock, RotateCcw, Trash2, ChevronLeft, ChevronRight, Command, Share2, Search, FileText } from 'lucide-react';
 import FilmGrain from './components/FilmGrain';
 import Toast from './components/Toast';
 import AdminPanel from './components/AdminPanel';
@@ -8,7 +8,11 @@ import PortfolioGrid from './components/PortfolioGrid';
 import FilmReel3D from './components/FilmReel3D';
 import Background3D from './components/Background3D';
 import ContactForm from './components/ContactForm';
-import { getMediaInfo } from './utils/media';
+import CommandPalette from './components/CommandPalette';
+import SkillRadarTile from './components/SkillRadarTile';
+import ShareModal from './components/ShareModal';
+import { getMediaInfo, isEmbedType } from './utils/media';
+import { generateRateCardText, generateRateCardHTML } from './utils/rateCard';
 
 export default function App() {
   const [items, setItems] = useState([]);
@@ -18,11 +22,17 @@ export default function App() {
   const [timecode, setTimecode] = useState('00:00:00:00');
   const [activeLightboxItem, setActiveLightboxItem] = useState(null);
   const [isLightboxLooping, setIsLightboxLooping] = useState(false);
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState(() => {
+    try {
+      const cached = localStorage.getItem('portfolio_settings');
+      return cached ? JSON.parse(cached) : null;
+    } catch { return null; }
+  });
   const [adminGridTab, setAdminGridTab] = useState('edit');
   const [adminTypeFilter, setAdminTypeFilter] = useState('all');
   const [activeGalleryTab, setActiveGalleryTab] = useState('all');
   const [activeTagFilter, setActiveTagFilter] = useState(''); // tag name string
+  const [searchQuery, setSearchQuery] = useState(''); // real-time search string
 
   // PIN protection
   const [pinVerified, setPinVerified] = useState(() => sessionStorage.getItem('admin_verified') === '1');
@@ -31,6 +41,35 @@ export default function App() {
   const [pinChecking, setPinChecking] = useState(false);
 
 
+
+  // Command Palette
+  const [showCommandPalette, setShowCommandPalette] = useState(false);
+
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setShowCommandPalette(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
+
+  const handleSelectTheme = async (themeName) => {
+    const newSettings = { ...(settings || {}), theme_accent: themeName };
+    setSettings(newSettings);
+    try { localStorage.setItem('portfolio_settings', JSON.stringify(newSettings)); } catch {}
+    showToast(`Theme changed to ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`);
+
+    try {
+      await fetch('/api/settings', {
+        method: 'PUT',
+        headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(newSettings)
+      });
+    } catch {}
+  };
 
   // Custom delete confirmation modal state
   const [itemToDelete, setItemToDelete] = useState(null);
@@ -47,11 +86,27 @@ export default function App() {
 
   // Custom Aesthetic Enhanced States & Refs
   const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
-  const [isPlayingSound, setIsPlayingSound] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isHeroMuted, setIsHeroMuted] = useState(true);
   const [isHeroPlaying, setIsHeroPlaying] = useState(true);
   
+  // Share Modal
+  const [showShareModal, setShowShareModal] = useState(false);
+
+  // Toggle modal-open class on body to reveal native OS cursor during Lightbox/Modal previews
+  const isModalOpen = Boolean(activeLightboxItem || showContactForm || showCommandPalette || itemToDelete || showShareModal);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [isModalOpen]);
+
   const audioRef = useRef(null);
   const heroVideoRef = useRef(null);
   const lightboxVideoRef = useRef(null);
@@ -100,8 +155,8 @@ export default function App() {
           ringX = mouseX;
           ringY = mouseY;
         } else {
-          ringX += (mouseX - ringX) * 0.16;
-          ringY += (mouseY - ringY) * 0.16;
+          ringX += (mouseX - ringX) * 0.65;
+          ringY += (mouseY - ringY) * 0.65;
         }
         cursorRingRef.current.style.left = `${ringX}px`;
         cursorRingRef.current.style.top = `${ringY}px`;
@@ -146,35 +201,7 @@ export default function App() {
     return () => window.removeEventListener('mouseover', handleMouseOver);
   }, [isAdmin]);
 
-  // 2. Audio ambient player load
-  useEffect(() => {
-    audioRef.current = new Audio('/ambient.mp3');
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.35;
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-      }
-    };
-  }, []);
 
-  // 3. Film Clapperboard Slate Intro Screen Timer
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const toggleSound = () => {
-    if (!audioRef.current) return;
-    if (isPlayingSound) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(err => console.warn('Sound play blocked:', err));
-    }
-    setIsPlayingSound(!isPlayingSound);
-  };
 
   const toggleHeroPlay = () => {
     if (heroVideoRef.current) {
@@ -198,7 +225,7 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash === '#studio') {
+      if (hash === '#studio' || hash === '#admin') {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);
@@ -262,6 +289,7 @@ export default function App() {
       const data = await res.json();
       if (data.ok) {
         sessionStorage.setItem('admin_verified', '1');
+        sessionStorage.setItem('admin_pin', pinInput);
         setPinVerified(true);
       } else {
         setPinError('Incorrect PIN. Try again.');
@@ -272,6 +300,14 @@ export default function App() {
     } finally {
       setPinChecking(false);
     }
+  };
+
+  const getAdminHeaders = (extraHeaders = {}) => {
+    const pin = sessionStorage.getItem('admin_pin') || '';
+    return {
+      ...extraHeaders,
+      ...(pin ? { 'x-admin-pin': pin } : {})
+    };
   };
 
   // Inject CSS accent theme variables dynamically based on settings
@@ -294,7 +330,7 @@ export default function App() {
   const fetchMessages = async () => {
     setMessagesLoading(true);
     try {
-      const res = await fetch('/api/contact?admin=1');
+      const res = await fetch('/api/contact?admin=1', { headers: getAdminHeaders() });
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
@@ -308,7 +344,7 @@ export default function App() {
 
   const handleDeleteMessage = async (id) => {
     try {
-      const res = await fetch(`/api/contact/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/contact/${id}`, { method: 'DELETE', headers: getAdminHeaders() });
       if (res.ok) {
         setMessages(prev => prev.filter(m => m.id !== id));
         showToast('Message deleted successfully');
@@ -356,17 +392,18 @@ export default function App() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!activeLightboxItem) return;
-      
-      // Stop space key from scrolling the page
-      if (e.key === ' ') {
+      const tag = e.target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+      if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         e.preventDefault();
       }
 
       if (e.key === 'Escape') setActiveLightboxItem(null);
-      if (e.key === 'ArrowRight') navigateLightbox('next');
-      if (e.key === 'ArrowLeft') navigateLightbox('prev');
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') navigateLightbox('next');
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') navigateLightbox('prev');
 
-      // Native video playback controls (J-K-L + Space)
+      // Video playback controls
       const video = lightboxVideoRef.current;
       if (video) {
         if (e.key === 'k' || e.key === 'K' || e.key === ' ') {
@@ -377,7 +414,7 @@ export default function App() {
           }
         }
         if (e.key === 'l' || e.key === 'L') {
-          video.currentTime = Math.min(video.currentTime + 5, video.duration);
+          video.currentTime = Math.min(video.currentTime + 5, video.duration || 0);
         }
         if (e.key === 'j' || e.key === 'J') {
           video.currentTime = Math.max(video.currentTime - 5, 0);
@@ -416,7 +453,9 @@ export default function App() {
 
   const fetchItems = async (forAdmin = false) => {
     try {
-      const res = await fetch(forAdmin ? '/api/items?admin=1' : '/api/items');
+      const res = await fetch(forAdmin ? '/api/items?admin=1' : '/api/items', {
+        headers: forAdmin ? getAdminHeaders() : {}
+      });
       if (!res.ok) throw new Error('Failed to load portfolio items');
       const data = await res.json();
       setItems(data);
@@ -432,24 +471,32 @@ export default function App() {
       if (!res.ok) throw new Error('Failed to load settings');
       const data = await res.json();
       setSettings(data);
+      try { localStorage.setItem('portfolio_settings', JSON.stringify(data)); } catch {}
     } catch (err) {
       console.error('Error loading settings:', err);
     }
   };
 
   const handleSaveSettings = async (updatedSettings) => {
+    setSettings(updatedSettings);
+    try { localStorage.setItem('portfolio_settings', JSON.stringify(updatedSettings)); } catch {}
+
     try {
       const res = await fetch('/api/settings', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updatedSettings)
       });
-      if (!res.ok) throw new Error('Failed to save settings');
-      setSettings(updatedSettings);
-      showToast('Website identity settings updated');
+      if (res.ok) {
+        showToast('Website identity settings updated');
+      } else if (res.status === 401) {
+        showToast('Theme updated locally (Admin PIN required for global default)', 'info');
+      } else {
+        throw new Error('Failed to save settings');
+      }
     } catch (err) {
       console.error(err);
-      showToast('Failed to save settings', 'error');
+      showToast('Settings saved locally', 'info');
     }
   };
 
@@ -466,7 +513,7 @@ export default function App() {
     try {
       const res = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(itemData),
       });
 
@@ -509,7 +556,7 @@ export default function App() {
     try {
       const res = await fetch(`/api/items/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(updatedItem)
       });
       if (!res.ok) throw new Error('Failed to resize item');
@@ -529,7 +576,7 @@ export default function App() {
     try {
       const res = await fetch('/api/items/reorder', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({
           ids: reorderedItems.map(item => item.id)
         })
@@ -544,10 +591,10 @@ export default function App() {
   };
 
   return (
-    <div className={`relative min-h-screen ${!isAdmin ? 'custom-cursor-active' : ''}`}>
+    <div className="relative min-h-screen">
 
       {/* Contact Form Modal */}
-      {showContactForm && <ContactForm onClose={() => setShowContactForm(false)} />}
+      {showContactForm && <ContactForm onClose={() => setShowContactForm(false)} settings={settings} />}
 
       {/* Cinematic Custom Delete Confirmation Modal */}
       {itemToDelete && (
@@ -582,7 +629,7 @@ export default function App() {
                   const previousItems = [...items];
                   setItems(prev => prev.filter(item => item.id !== id));
                   try {
-                    const res = await fetch(`/api/items/${id}`, { method: 'DELETE' });
+                    const res = await fetch(`/api/items/${id}`, { method: 'DELETE', headers: getAdminHeaders() });
                     if (!res.ok) throw new Error('Failed to delete item');
                     showToast('Project deleted successfully');
                   } catch (err) {
@@ -700,34 +747,52 @@ export default function App() {
         </div>
       )}
 
-      {/* Dynamic Custom Cursor (Only active on desktop views with pointer cursor) */}
+      {/* Dynamic Custom Cursor (Cinematic Viewfinder Reticle) */}
       {!isAdmin && (
-        <div className="hidden sm:block">
-          {/* Inner Custom Dot - Theme Accent Amber */}
+        <div className="hidden sm:block pointer-events-none">
+          {/* Inner Viewfinder Crosshairs + Center Point */}
           <div 
             ref={cursorDotRef}
-            className="pointer-events-none fixed z-50 w-2 h-2 rounded-full bg-accent transition-transform duration-75 ease-out"
+            className="fixed z-50 transition-transform duration-75 ease-out"
             style={{
               left: '-20px',
               top: '-20px',
-              transform: `translate(-50%, -50%) scale(${isHoveringInteractive ? 0.5 : 1})`,
-              opacity: isHoveringInteractive ? 0.2 : 1
+              transform: `translate(-50%, -50%) scale(${isHoveringInteractive ? 1.3 : 1})`,
             }}
-          />
-          {/* Outer Custom Target Lens Ring - Theme Accent Amber Ring */}
+          >
+            <div className="relative w-4 h-4 flex items-center justify-center">
+              {/* Horizontal Crosshair */}
+              <div className="absolute w-3 h-[1.5px] bg-accent/80" />
+              {/* Vertical Crosshair */}
+              <div className="absolute h-3 w-[1.5px] bg-accent/80" />
+              {/* Center Dot */}
+              <div className="w-1 h-1 rounded-full bg-accent shadow-[0_0_6px_var(--color-accent)]" />
+            </div>
+          </div>
+
+          {/* Outer Camera Viewfinder Corner Brackets */}
           <div 
             ref={cursorRingRef}
-            className="pointer-events-none fixed z-50 rounded-full border transition-all duration-300 ease-out"
+            className="fixed z-50 transition-[width,height] duration-200 ease-out"
             style={{
               left: '-20px',
               top: '-20px',
-              width: isHoveringInteractive ? '44px' : '24px',
-              height: isHoveringInteractive ? '44px' : '24px',
+              width: isHoveringInteractive ? '44px' : '28px',
+              height: isHoveringInteractive ? '44px' : '28px',
               transform: `translate(-50%, -50%)`,
-              backgroundColor: isHoveringInteractive ? 'rgba(255, 159, 28, 0.08)' : 'transparent',
-              borderColor: isHoveringInteractive ? '#ff9f1c' : 'rgba(255, 159, 28, 0.35)'
             }}
-          />
+          >
+            <div className="relative w-full h-full">
+              {/* Top-Left Corner Bracket ⌜ */}
+              <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-accent" />
+              {/* Top-Right Corner Bracket ⌝ */}
+              <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-accent" />
+              {/* Bottom-Left Corner Bracket ⌞ */}
+              <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-accent" />
+              {/* Bottom-Right Corner Bracket ⌟ */}
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-accent" />
+            </div>
+          </div>
         </div>
       )}
 
@@ -792,22 +857,45 @@ export default function App() {
         )}
 
         <div className="flex items-center gap-3">
-          {/* Audio ambient player */}
+          {/* Rate Card PDF Download Button */}
           <button
             type="button"
-            onClick={toggleSound}
-            className={`flex items-center gap-2 px-3 py-1.5 bg-cinema-card border rounded text-[10px] font-mono tracking-widest cursor-pointer transition-all duration-300 focus-ring ${
-              isPlayingSound ? 'border-accent/40 text-accent shadow-[0_0_10px_rgba(255,159,28,0.1)]' : 'border-cinema-border text-cinema-muted hover:text-white'
-            }`}
+            onClick={() => {
+              const printWin = window.open('', '_blank');
+              if (!printWin) return;
+              const htmlContent = generateRateCardHTML(settings);
+              printWin.document.write(htmlContent);
+              printWin.document.close();
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-cinema-card border border-cinema-border hover:border-accent/40 rounded text-[10px] font-mono tracking-widest text-cinema-muted hover:text-white transition-all duration-300 focus-ring cursor-pointer"
+            title="Download Official Rate Card PDF"
           >
-            <div className="flex gap-[2px] items-end h-2.5 w-3.5">
-              <span className={`w-[2px] bg-current rounded-full ${isPlayingSound ? 'animate-soundwave-1' : 'h-1'}`}></span>
-              <span className={`w-[2px] bg-current rounded-full ${isPlayingSound ? 'animate-soundwave-2' : 'h-1'}`}></span>
-              <span className={`w-[2px] bg-current rounded-full ${isPlayingSound ? 'animate-soundwave-3' : 'h-1'}`}></span>
-              <span className={`w-[2px] bg-current rounded-full ${isPlayingSound ? 'animate-soundwave-4' : 'h-1'}`}></span>
-            </div>
-            <span>AMBIENT: {isPlayingSound ? 'ON' : 'OFF'}</span>
+            <FileText className="w-3.5 h-3.5 text-accent" />
+            <span className="hidden sm:inline">RATE CARD</span>
           </button>
+
+          {/* Share Portfolio Button */}
+          <button
+            type="button"
+            onClick={() => setShowShareModal(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-cinema-card border border-cinema-border hover:border-accent/40 rounded text-[10px] font-mono tracking-widest text-cinema-muted hover:text-white transition-all duration-300 focus-ring cursor-pointer"
+          >
+            <Share2 className="w-3.5 h-3.5 text-accent" />
+            <span className="hidden md:inline">SHARE</span>
+          </button>
+
+          {/* Command Palette Trigger Button */}
+          <button
+            type="button"
+            onClick={() => setShowCommandPalette(true)}
+            className="flex items-center gap-2 px-3 py-1.5 bg-cinema-card border border-cinema-border rounded text-[10px] font-mono tracking-widest text-cinema-muted hover:text-white hover:border-cinema-muted transition-all duration-300 focus-ring cursor-pointer"
+          >
+            <Command className="w-3.5 h-3.5 text-accent" />
+            <span className="hidden sm:inline">COMMANDS</span>
+            <span className="px-1 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-[9px]">⌘K</span>
+          </button>
+
+
 
           {/* Timecode display */}
           <div className="hidden lg:flex items-center gap-2 bg-cinema-card border border-cinema-border px-3 py-1.5 rounded text-[10px] font-mono tracking-widest">
@@ -1050,6 +1138,8 @@ export default function App() {
                       muted={isHeroMuted}
                       loop
                       playsInline
+                      preload="metadata"
+                      fetchPriority="high"
                       className="w-full h-full object-cover opacity-50"
                       src={settings?.showreel_url || "https://assets.mixkit.co/videos/preview/mixkit-cinematic-shot-of-a-man-with-a-camera-42861-large.mp4"}
                     />
@@ -1164,6 +1254,30 @@ export default function App() {
                   </div>
                 )}
 
+                {/* Search Bar & Tag Controls Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                  {/* Search Bar */}
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-4 h-4 text-cinema-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search title, tags, or description..."
+                      className="w-full bg-cinema-black/70 border border-cinema-border focus:border-accent rounded-lg pl-10 pr-9 py-2 text-xs font-mono text-white placeholder-cinema-muted/60 outline-none transition-all focus-ring"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-cinema-muted hover:text-white p-0.5 cursor-pointer"
+                        title="Clear search"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
                 {/* Tags filter row */}
                 {(() => {
                   const allTags = [...new Set(filteredItems.flatMap(i => Array.isArray(i.tags) ? i.tags : []))];
@@ -1193,20 +1307,43 @@ export default function App() {
                   const tagFiltered = activeTagFilter
                     ? filteredItems.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTagFilter))
                     : filteredItems;
-                  return tagFiltered.length > 0 ? (
+                  
+                  const q = searchQuery.toLowerCase().trim();
+                  const searchFiltered = q
+                    ? tagFiltered.filter(i => 
+                        (i.title && i.title.toLowerCase().includes(q)) ||
+                        (i.description && i.description.toLowerCase().includes(q)) ||
+                        (i.type && i.type.toLowerCase().includes(q)) ||
+                        (Array.isArray(i.tags) && i.tags.some(t => t.toLowerCase().includes(q)))
+                      )
+                    : tagFiltered;
+
+                  return searchFiltered.length > 0 ? (
                     <PortfolioGrid
-                      key={activeGalleryTab + activeTagFilter}
-                      items={tagFiltered}
+                      key={activeGalleryTab + activeTagFilter + searchQuery}
+                      items={searchFiltered}
                       isAdmin={false}
                       onClickTile={setActiveLightboxItem}
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-32 text-cinema-muted">
-                      <div className="text-5xl mb-4 opacity-20">{activeGalleryTab === 'videos' ? '🎬' : '🖼'}</div>
-                      <p className="text-sm font-mono tracking-wider uppercase">No {activeTagFilter || (activeGalleryTab === 'videos' ? 'videos' : 'images')} found.</p>
+                    <div className="flex flex-col items-center justify-center py-24 text-cinema-muted border border-dashed border-cinema-border/60 rounded-xl bg-cinema-black/40">
+                      <div className="text-4xl mb-3 opacity-30">🔍</div>
+                      <p className="text-xs font-mono tracking-widest uppercase text-white mb-1">[0_RESULTS_FOUND]</p>
+                      <p className="text-xs text-cinema-muted">No projects match "{searchQuery || activeTagFilter}". Try clearing your filters.</p>
+                      <button
+                        onClick={() => { setSearchQuery(''); setActiveTagFilter(''); }}
+                        className="mt-4 px-4 py-1.5 bg-cinema-card border border-cinema-border hover:border-accent text-accent rounded text-xs font-mono transition-all cursor-pointer focus-ring"
+                      >
+                        RESET FILTERS
+                      </button>
                     </div>
                   );
                 })()}
+
+                {/* Interactive Skill Radar & Pipeline Metrics Tile */}
+                <div className="mt-16">
+                  <SkillRadarTile />
+                </div>
               </main>
 
           {/* About/Contact Footer */}
@@ -1299,9 +1436,15 @@ export default function App() {
                 </div>
 
                 {/* Copyright and Timecode Metadata */}
-                <div className="flex items-center justify-between text-[9px] font-mono text-cinema-muted">
+                <div className="flex flex-wrap items-center justify-between gap-4 text-[10px] font-mono text-cinema-muted pt-4 border-t border-cinema-border/40">
                   <span>© {new Date().getFullYear()} {settings?.editor_name || "ALEX KANE"}. ALL RIGHTS RESERVED.</span>
-                  <span className="tracking-widest">TC_OUT: 00:04:12:00</span>
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-cinema-dark border border-cinema-border/60 text-white">
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                      LIVE TC: <span className="text-accent font-bold tracking-widest">{timecode}</span>
+                    </span>
+                    <span className="hidden sm:inline text-cinema-muted">24.00 FPS SMPTE</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1387,12 +1530,14 @@ export default function App() {
                 />
               )}
 
-              {(mediaType === 'youtube' || mediaType === 'vimeo') && (
+              {isEmbedType(mediaType) && (
                 <iframe
                   key={`${activeLightboxItem.id}-${isLightboxLooping}`} // Force reload when loop switches
                   src={mediaType === 'youtube' 
                     ? `https://www.youtube.com/embed/${media.id}?autoplay=1&controls=1&rel=0${isLightboxLooping ? `&loop=1&playlist=${media.id}` : ''}`
-                    : `https://player.vimeo.com/video/${media.id}?autoplay=1&controls=1${isLightboxLooping ? '&loop=1' : ''}`
+                    : mediaType === 'vimeo'
+                    ? `https://player.vimeo.com/video/${media.id}?autoplay=1&controls=1${isLightboxLooping ? '&loop=1' : ''}`
+                    : media.embedUrl
                   }
                   title={activeLightboxItem.title}
                   frameBorder="0"
@@ -1449,10 +1594,39 @@ export default function App() {
                   ))}
                 </div>
               )}
+
+              {/* Keyboard Shortcut Hints Bar */}
+              <div className="flex items-center justify-center gap-3 text-[10px] font-mono text-cinema-muted mt-3 pt-3 border-t border-cinema-border/40 flex-wrap">
+                <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">←</kbd> <kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">→</kbd> NAVIGATE</span>
+                {mediaType !== 'image' && (
+                  <>
+                    <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">SPACE</kbd> PLAY/PAUSE</span>
+                    <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">L</kbd> +5s</span>
+                    <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">J</kbd> -5s</span>
+                  </>
+                )}
+                <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">ESC</kbd> CLOSE</span>
+              </div>
             </div>
           </div>
         );
       })()}
+      {/* Command Palette Modal */}
+      <CommandPalette
+        isOpen={showCommandPalette}
+        onClose={() => setShowCommandPalette(false)}
+        items={items}
+        onOpenContact={() => setShowContactForm(true)}
+        onOpenAdminPin={() => { window.location.hash = '#studio'; }}
+        onSelectTheme={handleSelectTheme}
+        onSelectProject={(item) => setActiveLightboxItem(item)}
+      />
+      {/* Share Portfolio Modal */}
+      <ShareModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        settings={settings}
+      />
     </div>
   );
 }

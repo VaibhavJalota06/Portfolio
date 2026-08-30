@@ -1,13 +1,12 @@
 plugins = []
 headers = []
-redirects = []
 
 [functions]
 
 [functions."*"]
 
 [build]
-publish = "D:\\ai models\\portfolio\\client\\client\\dist"
+publish = "D:\\ai models\\portfolio\\client\\dist"
 publishOrigin = "config"
 commandOrigin = "config"
 command = "npm install && npm run build"
@@ -26,3 +25,15 @@ base = "D:\\ai models\\portfolio\\client"
 [build.processing.js]
 
 [build.services]
+
+[[redirects]]
+from = "/api/*"
+to = "https://portfolio-server-ve91.onrender.com/api/:splat"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
