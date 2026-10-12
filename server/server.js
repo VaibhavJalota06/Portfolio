@@ -11,7 +11,7 @@ const google = await import('./google.js');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Same-origin in dev (Vite proxy) and prod (Render serves client/dist) - grid update
+// Same-origin in dev (Vite proxy) and prod (Render serves client/dist) - balanced columns grid
 app.use(cors({ origin: process.env.CORS_ORIGIN || false }));
 // Behind Netlify/Render proxies set TRUST_PROXY (e.g. 2) so the PIN lockout sees real client IPs.
 app.set('trust proxy', process.env.TRUST_PROXY ? Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY : 'loopback');

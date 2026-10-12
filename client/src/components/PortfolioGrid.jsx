@@ -144,10 +144,25 @@ export default function PortfolioGrid({
   // Public mode: masonry columns, every piece keeps its own shape (no cropping)
   return (
     <>
-      <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 sm:gap-5">
-        {items.slice(0, visibleCount).map((item, index) => (
-          <PublicTile key={item.id} item={item} index={index} onClick={onClickTile} />
-        ))}
+      {/* 3-column balanced layout */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-start">
+        {[0, 1, 2].map((colIndex) => {
+          const colItems = items
+            .slice(0, visibleCount)
+            .filter((_, i) => i % 3 === colIndex);
+          return (
+            <div key={colIndex} className="flex flex-col gap-4 sm:gap-5">
+              {colItems.map((item, idx) => (
+                <PublicTile
+                  key={item.id}
+                  item={item}
+                  index={idx * 3 + colIndex}
+                  onClick={onClickTile}
+                />
+              ))}
+            </div>
+          );
+        })}
       </div>
       {visibleCount < items.length && (
         <div className="text-center mt-6">
