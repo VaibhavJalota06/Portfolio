@@ -747,54 +747,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Dynamic Custom Cursor (Cinematic Viewfinder Reticle) */}
-      {!isAdmin && (
-        <div className="hidden sm:block pointer-events-none">
-          {/* Inner Viewfinder Crosshairs + Center Point */}
-          <div 
-            ref={cursorDotRef}
-            className="fixed z-50 transition-transform duration-75 ease-out"
-            style={{
-              left: '-20px',
-              top: '-20px',
-              transform: `translate(-50%, -50%) scale(${isHoveringInteractive ? 1.3 : 1})`,
-            }}
-          >
-            <div className="relative w-4 h-4 flex items-center justify-center">
-              {/* Horizontal Crosshair */}
-              <div className="absolute w-3 h-[1.5px] bg-accent/80" />
-              {/* Vertical Crosshair */}
-              <div className="absolute h-3 w-[1.5px] bg-accent/80" />
-              {/* Center Dot */}
-              <div className="w-1 h-1 rounded-full bg-accent shadow-[0_0_6px_var(--color-accent)]" />
-            </div>
-          </div>
-
-          {/* Outer Camera Viewfinder Corner Brackets */}
-          <div 
-            ref={cursorRingRef}
-            className="fixed z-50 transition-[width,height] duration-200 ease-out"
-            style={{
-              left: '-20px',
-              top: '-20px',
-              width: isHoveringInteractive ? '44px' : '28px',
-              height: isHoveringInteractive ? '44px' : '28px',
-              transform: `translate(-50%, -50%)`,
-            }}
-          >
-            <div className="relative w-full h-full">
-              {/* Top-Left Corner Bracket ⌜ */}
-              <div className="absolute top-0 left-0 w-2.5 h-2.5 border-t-2 border-l-2 border-accent" />
-              {/* Top-Right Corner Bracket ⌝ */}
-              <div className="absolute top-0 right-0 w-2.5 h-2.5 border-t-2 border-r-2 border-accent" />
-              {/* Bottom-Left Corner Bracket ⌞ */}
-              <div className="absolute bottom-0 left-0 w-2.5 h-2.5 border-b-2 border-l-2 border-accent" />
-              {/* Bottom-Right Corner Bracket ⌟ */}
-              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 border-b-2 border-r-2 border-accent" />
-            </div>
-          </div>
-        </div>
-      )}
 
 
         {/* Cinematic Film Grain Overlay */}
