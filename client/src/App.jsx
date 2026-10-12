@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Film, Eye, Mail, Lock, X, ChevronLeft, ChevronRight, Trash2, MessageCircle, Instagram } from 'lucide-react';
+import { Film, Eye, Mail, Lock, X, ChevronLeft, ChevronRight, Trash2, MessageCircle, Instagram, Linkedin } from 'lucide-react';
 import Toast from './components/Toast';
 import AdminPanel from './components/AdminPanel';
 import SettingsPanel from './components/SettingsPanel';
@@ -891,6 +891,7 @@ export default function App() {
                     <ul className="space-y-2.5 text-sm mb-4">
                       <li><a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-2"><MessageCircle className="w-4 h-4" />WhatsApp {CONTACT.whatsapp}</a></li>
                       <li><a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2"><Instagram className="w-4 h-4" />{CONTACT.instagram}</a></li>
+                      <li><a href={CONTACT.linkedinUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-2"><Linkedin className="w-4 h-4" />{CONTACT.linkedin}</a></li>
                       <li><a href={`mailto:${CONTACT.email}`} className="font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2 break-all"><Mail className="w-4 h-4 shrink-0" />{CONTACT.email}</a></li>
                     </ul>
                   </div>

@@ -5,5 +5,8 @@ export const CONTACT = {
   whatsappUrl: 'https://wa.me/919217584204',
   instagram: '@studiocutframe',
   instagramUrl: 'https://instagram.com/studiocutframe',
-  email: 'vaibhavjalota06@gmail.com',
+  linkedin: 'Cutframe Studio',
+  linkedinUrl: 'https://www.linkedin.com/company/cutframe-studio',
+  email: 'vaibhav@cutframestudio.in',
+  website: 'https://cutframestudio.in',
 };
