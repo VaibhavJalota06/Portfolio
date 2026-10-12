@@ -161,23 +161,24 @@ safeAddColumn('portfolio_items', 'is_published','INTEGER DEFAULT 1');
 
 // Seed default settings if they do not exist
 const insertSetting = db.prepare('INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)');
+const updateSetting = db.prepare('UPDATE settings SET value = ? WHERE key = ?');
 const defaults = {
-  editor_name: "ALEX KANE",
-  hero_tagline: "Cinematic editor and color scientist. Crafting rhythm, tone, and pacing for commercial, music video, and narrative formats.",
+  editor_name: "Cutframe Studio",
+  hero_tagline: "We engineer high-retention videos that scale modern brands and creators.",
   showreel_url: "https://assets.mixkit.co/videos/preview/mixkit-cinematic-shot-of-a-man-with-a-camera-42861-large.mp4",
-  bio_text: "Alex Kane is an industry-grade film editor and digital colorist. Drawing on a decade of color pipeline management and editorial storytelling, Alex transforms raw footage into cinematic narratives. Working with major commercial brands and indie narrative productions, he designs custom color grading curves and pacing that breathes life into every single cut.",
-  location_info: "LOCATED: LOS ANGELES, CA • DIGITAL PIPELINE: DAVINCI RESOLVE / PREMIERE PRO",
-  contact_email: "contact@alexkane.edit",
-  contact_github: "github.com/alexkane-edit",
-  contact_vimeo: "vimeo.com/alexkane",
-  gallery_title: "BENTO WORK SHOWCASE",
-  gallery_description: "",
-  hero_label: "",
-  instagram_url: "",
+  bio_text: "Cutframe Studio is a full-service media production and post-production engine. We transform raw footage into magnetic, high-retaining short-form assets, cinematic YouTube stories, and commercial ad creatives designed to maximize reach, retention, and return on ad spend.",
+  location_info: "FULL-SERVICE VIDEO AGENCY • DAVINCI RESOLVE / PREMIERE PRO / AFTER EFFECTS",
+  contact_email: "hello@cutframestudio.com",
+  contact_github: "github.com/cutframestudio",
+  contact_vimeo: "vimeo.com/cutframestudio",
+  gallery_title: "AGENCY VIDEO SHOWCASE",
+  gallery_description: "Filter our recent viral short-form campaigns, YouTube long-form stories, and high-conversion commercial ads.",
+  hero_label: "CUTFRAME STUDIO • FULL-SERVICE MEDIA ENGINE",
+  instagram_url: "instagram.com/cutframestudio",
   behance_url: "",
-  available_for_work: "0",
+  available_for_work: "1",
   admin_pin: "",
-  theme_accent: "amber"
+  theme_accent: "blue"
 };
 
 const seedSettings = db.transaction(() => {
