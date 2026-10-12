@@ -386,6 +386,9 @@ app.post('/api/google/sync', verifyAdmin, async (req, res) => {
   res.json(result);
 });
 
+// Public, cheap: pinged every ~10 min (GitHub Actions) so the free Render instance never sleeps.
+app.get('/api/health', (req, res) => res.json({ ok: true }));
+
 // Hit every ~10 min by a free external cron (cron-job.org): keeps a free-tier host awake and syncs Drive.
 app.get('/api/cron', (req, res) => {
   if (!process.env.CRON_SECRET || req.query.key !== process.env.CRON_SECRET) return res.status(401).json({ error: 'Unauthorized' });

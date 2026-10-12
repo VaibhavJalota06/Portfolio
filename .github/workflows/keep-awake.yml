@@ -1,0 +1,13 @@
+# Free keep-awake: Render's free plan sleeps after 15 idle minutes, which makes the first visitor wait ~50s.
+# GitHub runs this every 10 minutes (sometimes a few minutes late). Note: GitHub pauses scheduled
+# workflows after 60 days without commits; re-enable it from the repo's Actions tab if that happens.
+name: Keep site awake
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS --max-time 90 https://portfolio-server-ve91.onrender.com/api/health
