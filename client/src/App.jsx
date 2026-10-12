@@ -1,20 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Film, Eye, Mail, Github, Compass, Video, X, Instagram, Globe, Tag, Send, Lock, RotateCcw, Trash2, ChevronLeft, ChevronRight, Command, Share2, Search, FileText } from 'lucide-react';
-import FilmGrain from './components/FilmGrain';
+import { Film, Eye, Mail, Lock, X, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import Toast from './components/Toast';
 import AdminPanel from './components/AdminPanel';
 import SettingsPanel from './components/SettingsPanel';
 import PortfolioGrid from './components/PortfolioGrid';
-import FilmReel3D from './components/FilmReel3D';
-import Background3D from './components/Background3D';
 import ContactForm from './components/ContactForm';
 import CommandPalette from './components/CommandPalette';
-import SkillRadarTile from './components/SkillRadarTile';
 import ShareModal from './components/ShareModal';
+import AgencyNavbar from './components/AgencyNavbar';
+import AgencyHero from './components/AgencyHero';
+import BeforeAfterSlider from './components/BeforeAfterSlider';
+import AgencyServices from './components/AgencyServices';
+import AgencyWorkflow from './components/AgencyWorkflow';
+import AgencyResults from './components/AgencyResults';
+import AgencyFAQ from './components/AgencyFAQ';
+import DiscoveryModal from './components/DiscoveryModal';
 import { getMediaInfo, isEmbedType } from './utils/media';
-import { generateRateCardText, generateRateCardHTML } from './utils/rateCard';
 
 export default function App() {
+  const [showDiscoveryModal, setShowDiscoveryModal] = useState(false);
+  const [selectedService, setSelectedService] = useState('');
   const [items, setItems] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -94,7 +99,7 @@ export default function App() {
   const [showShareModal, setShowShareModal] = useState(false);
 
   // Toggle modal-open class on body to reveal native OS cursor during Lightbox/Modal previews
-  const isModalOpen = Boolean(activeLightboxItem || showContactForm || showCommandPalette || itemToDelete || showShareModal);
+  const isModalOpen = Boolean(activeLightboxItem || showContactForm || showCommandPalette || itemToDelete || showShareModal || showDiscoveryModal);
 
   useEffect(() => {
     if (isModalOpen) {
@@ -312,14 +317,15 @@ export default function App() {
 
   // Inject CSS accent theme variables dynamically based on settings
   useEffect(() => {
-    const accent = settings?.theme_accent || 'amber';
+    const accent = settings?.theme_accent || 'blue';
     const palettes = {
+      blue:  { base: '#2563EB', hover: '#1D4ED8', dark: '#1E40AF', light: '#3B82F6' },
       amber: { base: '#ff9f1c', hover: '#e58f13', dark: '#cc7f10', light: '#ffb347' },
       green: { base: '#10b981', hover: '#059669', dark: '#047857', light: '#34d399' },
-      cyan: { base: '#06b6d4', hover: '#0891b2', dark: '#0e7490', light: '#22d3ee' },
+      cyan:  { base: '#06b6d4', hover: '#0891b2', dark: '#0e7490', light: '#22d3ee' },
       red:   { base: '#ef4444', hover: '#dc2626', dark: '#b91c1c', light: '#f87171' }
     };
-    const colors = palettes[accent] || palettes.amber;
+    const colors = palettes[accent] || palettes.blue;
     document.documentElement.style.setProperty('--color-accent', colors.base);
     document.documentElement.style.setProperty('--color-accent-hover', colors.hover);
     document.documentElement.style.setProperty('--color-accent-dark', colors.dark);
@@ -764,113 +770,30 @@ export default function App() {
         }}
       />
 
-      {/* Sleek Cinematic Header */}
-      <header className="sticky top-0 z-40 bg-cinema-black/80 backdrop-blur-md border-b border-cinema-border/50 px-6 py-4 flex items-center justify-between gap-4">
-        {/* Logo / Name */}
-        <div className="flex items-center gap-3 flex-shrink-0">
-          <a href="#" onClick={() => { window.location.hash = ''; }}
-            className="flex items-center gap-3 group focus-ring rounded">
-            <Film className="w-5 h-5 text-accent" />
-            <span className="font-display font-bold tracking-widest text-sm text-white group-hover:text-accent transition-colors">
-              {settings?.editor_name || 'ALEX KANE'} <span className="hidden sm:inline text-accent font-light font-sans ml-1 text-xs">/ CUT & GRADE</span>
+      {isAdmin ? (
+        <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between gap-4 text-white">
+          <div className="flex items-center gap-3">
+            <Film className="w-5 h-5 text-blue-500" />
+            <span className="font-bold text-sm text-white font-display">
+              Cutframe Studio <span className="text-blue-400 font-mono text-xs">/ Admin Portal</span>
             </span>
-          </a>
-          {/* Available for Work badge */}
-          {settings?.available_for_work === '1' && (
-            <span className="hidden md:flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[9px] font-mono rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              AVAILABLE
-            </span>
-          )}
-        </div>
-
-        {/* Public Nav Tabs — only shown outside admin */}
-        {!isAdmin && (
-          <nav className="hidden sm:flex items-center gap-1 bg-cinema-card/60 border border-cinema-border/50 rounded-lg p-1">
-            {[
-              { id: 'all',    label: 'ALL WORK', hash: '#' },
-              { id: 'videos', label: 'VIDEOS',   hash: '#videos' },
-              { id: 'photos', label: 'PHOTOS',   hash: '#photos' },
-            ].map(tab => (
-              <a
-                key={tab.id}
-                href={tab.hash}
-                onClick={() => setActiveGalleryTab(tab.id)}
-                className={`px-4 py-1.5 rounded-md text-[11px] font-mono font-semibold tracking-wider transition-all duration-200 focus-ring ${
-                  activeGalleryTab === tab.id
-                    ? 'bg-accent text-cinema-black shadow-sm'
-                    : 'text-cinema-muted hover:text-white'
-                }`}
-              >
-                {tab.label}
-              </a>
-            ))}
-          </nav>
-        )}
-
-        <div className="flex items-center gap-3">
-          {/* Rate Card PDF Download Button */}
-          <button
-            type="button"
-            onClick={() => {
-              const printWin = window.open('', '_blank');
-              if (!printWin) return;
-              const htmlContent = generateRateCardHTML(settings);
-              printWin.document.write(htmlContent);
-              printWin.document.close();
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-cinema-card border border-cinema-border hover:border-accent/40 rounded text-[10px] font-mono tracking-widest text-cinema-muted hover:text-white transition-all duration-300 focus-ring cursor-pointer"
-            title="Download Official Rate Card PDF"
-          >
-            <FileText className="w-3.5 h-3.5 text-accent" />
-            <span className="hidden sm:inline">RATE CARD</span>
-          </button>
-
-          {/* Share Portfolio Button */}
-          <button
-            type="button"
-            onClick={() => setShowShareModal(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-cinema-card border border-cinema-border hover:border-accent/40 rounded text-[10px] font-mono tracking-widest text-cinema-muted hover:text-white transition-all duration-300 focus-ring cursor-pointer"
-          >
-            <Share2 className="w-3.5 h-3.5 text-accent" />
-            <span className="hidden md:inline">SHARE</span>
-          </button>
-
-          {/* Command Palette Trigger Button */}
-          <button
-            type="button"
-            onClick={() => setShowCommandPalette(true)}
-            className="flex items-center gap-2 px-3 py-1.5 bg-cinema-card border border-cinema-border rounded text-[10px] font-mono tracking-widest text-cinema-muted hover:text-white hover:border-cinema-muted transition-all duration-300 focus-ring cursor-pointer"
-          >
-            <Command className="w-3.5 h-3.5 text-accent" />
-            <span className="hidden sm:inline">COMMANDS</span>
-            <span className="px-1 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-[9px]">⌘K</span>
-          </button>
-
-
-
-          {/* Timecode display */}
-          <div className="hidden lg:flex items-center gap-2 bg-cinema-card border border-cinema-border px-3 py-1.5 rounded text-[10px] font-mono tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
-            <span className="text-cinema-muted">REC</span>
-            <span className="text-white">{timecode}</span>
           </div>
-        </div>
-
-        {/* Return to Public Site Button (Only visible in admin workspace) */}
-        {isAdmin && (
           <button
             type="button"
-            onClick={() => {
-              window.location.hash = ''; // Clear hash to return to public site
-            }}
-            className="flex items-center gap-2 px-4 py-1.5 border border-cinema-border text-cinema-muted hover:text-white hover:border-cinema-muted rounded text-xs font-mono font-medium transition-all duration-300 focus-ring cursor-pointer"
+            onClick={() => { window.location.hash = ''; }}
+            className="flex items-center gap-2 px-4 py-1.5 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white rounded text-xs font-mono font-medium transition-all focus-ring cursor-pointer"
           >
-            <Eye className="w-3.5 h-3.5 text-accent" />
+            <Eye className="w-3.5 h-3.5 text-blue-400" />
             BACK TO PORTFOLIO
           </button>
-        )}
-      </header>
+        </header>
+      ) : (
+        <AgencyNavbar
+          onOpenDiscovery={() => setShowDiscoveryModal(true)}
+          onOpenAdmin={() => { window.location.hash = '#admin'; }}
+          isAdmin={isAdmin}
+        />
+      )}
       {isAdmin ? (
         /* --- DEDICATED FULLSCREEN ADMIN WORKSPACE --- */
         <main className="max-w-7xl mx-auto px-6 py-12 animate-fade-in flex flex-col gap-8">
@@ -1079,328 +1002,211 @@ export default function App() {
 
           return (
             <>
-              {/* Hero Section — only on ALL WORK tab */}
-              {activeGalleryTab === 'all' && (
-                <section className="relative h-[80vh] flex items-center justify-center overflow-hidden border-b border-cinema-border/50">
-                  <div className="absolute inset-0 w-full h-full z-0 bg-black/60" style={{ transform: `translateY(${heroParallax}px)` }}>
-                    <video
-                      ref={heroVideoRef}
-                      key={settings?.showreel_url}
-                      autoPlay
-                      muted={isHeroMuted}
-                      loop
-                      playsInline
-                      preload="metadata"
-                      fetchPriority="high"
-                      className="w-full h-full object-cover opacity-50"
-                      src={settings?.showreel_url || "https://assets.mixkit.co/videos/preview/mixkit-cinematic-shot-of-a-man-with-a-camera-42861-large.mp4"}
-                    />
-                  </div>
+              {/* 1. Agency Hero */}
+              <AgencyHero onOpenDiscovery={() => { setSelectedService(''); setShowDiscoveryModal(true); }} />
 
-                  {/* Play/Pause & Mute/Unmute overlays (bottom right) */}
-                  <div className="absolute bottom-14 right-6 z-25 flex items-center gap-2 pointer-events-auto">
-                    <button
-                      type="button"
-                      onClick={toggleHeroPlay}
-                      className="p-2 bg-cinema-black/85 backdrop-blur-sm border border-cinema-border text-white hover:text-accent rounded-full transition-colors cursor-pointer focus-ring"
-                      title={isHeroPlaying ? "Pause Showreel" : "Play Showreel"}
-                    >
-                      {isHeroPlaying ? (
-                        <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      ) : (
-                        <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
-                    </button>
+              {/* 2. Interactive Before & After Engine */}
+              <BeforeAfterSlider />
 
-                    <button
-                      type="button"
-                      onClick={toggleHeroMute}
-                      className="p-2 bg-cinema-black/85 backdrop-blur-sm border border-cinema-border text-white hover:text-accent rounded-full transition-colors cursor-pointer focus-ring"
-                      title={isHeroMuted ? "Unmute Showreel" : "Mute Showreel"}
-                    >
-                      {isHeroMuted ? (
-                        <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .9-1.077 1.347-1.707.707L5.586 15z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
-                        </svg>
-                      ) : (
-                        <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .9-1.077 1.347-1.707.707L5.586 15z" />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-
-                  {/* Subtle vignette layer */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-cinema-black via-transparent to-cinema-black/40 z-10 pointer-events-none" />
-
-                  {/* Hero text */}
-                  <div className="relative z-20 text-center max-w-4xl px-6 flex flex-col items-center">
-                    <FilmReel3D />
-                    {settings?.hero_label !== "" && (
-                      <div className="text-accent font-mono text-xs tracking-[0.25em] mb-4 uppercase">
-                        {settings?.hero_label ?? "[SHOWREEL_EDIT_2026]"}
-                      </div>
-                    )}
-                    <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white mb-6 uppercase">
-                      {settings?.editor_name || "ALEX KANE"}
-                    </h1>
-                    {settings?.hero_tagline !== "" && (
-                      <p className="text-base md:text-xl font-light text-cinema-muted max-w-xl leading-relaxed tracking-wide mb-8">
-                        {settings?.hero_tagline ?? "Cinematic editor and color scientist. Crafting rhythm, tone, and pacing for commercial, music video, and narrative formats."}
-                      </p>
-                    )}
-                    <a
-                      href="#gallery"
-                      className="flex items-center gap-2 px-6 py-3 bg-transparent border border-white hover:bg-white hover:text-cinema-black font-semibold text-sm rounded transition-all duration-300 tracking-wider font-mono focus-ring"
-                    >
-                      <Video className="w-4 h-4" />
-                      ENTER TIMELINE
-                    </a>
-                  </div>
-
-                  {/* Timeline bar visual at the bottom of hero */}
-                  <div className="absolute bottom-0 left-0 right-0 h-10 bg-cinema-card/75 backdrop-blur-sm border-t border-cinema-border/50 z-20 flex items-center justify-between px-6 text-[10px] font-mono text-cinema-muted">
-                    <div>00:00:00:00</div>
-                    <div className="flex-1 mx-4 h-px bg-cinema-border relative">
-                      <div className="absolute top-1/2 left-[25%] transform -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent"></div>
-                      <div className="absolute top-1/2 left-[60%] transform -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent"></div>
+              {/* 3. Agency Video Showcase Matrix */}
+              <section id="work" className="py-24 bg-white border-t border-slate-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  {/* Section Title */}
+                  <div className="text-center max-w-3xl mx-auto mb-12">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
+                      <Film className="w-3.5 h-3.5 text-blue-600" />
+                      Agency Showcase
                     </div>
-                    <div>00:04:12:00</div>
-                  </div>
-                </section>
-              )}
-
-              {/* Filtered Page Header — shown on Videos / Photos tabs only */}
-              {activeGalleryTab !== 'all' && (
-                <div className="max-w-7xl mx-auto px-6 pt-16 pb-4 border-b border-cinema-border/30">
-                  <div className="text-accent font-mono text-xs tracking-[0.2em] mb-3 uppercase flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent"></span>
-                    {activeGalleryTab === 'videos' ? 'VIDEO WORK' : 'PHOTO WORK'}
-                  </div>
-                  <h1 className="text-3xl md:text-5xl font-bold uppercase tracking-tight text-white">
-                    {activeGalleryTab === 'videos' ? 'VIDEOS' : 'PHOTOS'}
-                  </h1>
-                  <p className="text-sm text-cinema-muted mt-3 font-light">
-                    {activeGalleryTab === 'videos'
-                      ? `${filteredItems.length} video${filteredItems.length !== 1 ? 's' : ''} — YouTube, Vimeo & MP4`
-                      : `${filteredItems.length} image${filteredItems.length !== 1 ? 's' : ''}`
-                    }
-                  </p>
-                </div>
-              )}
-
-              {/* Gallery / Grid Section */}
-              <main id="gallery" className="max-w-7xl mx-auto px-6 py-16">
-                {/* Section Header (All Work tab only) */}
-                {activeGalleryTab === 'all' && (
-                  <div className="mb-8">
-                    <h2 className="text-2xl md:text-4xl font-bold uppercase tracking-tight text-white">
-                      {settings?.gallery_title ?? "PORTFOLIO SHOWCASE"}
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
+                      Work That <span className="text-blue-600">Halts The Scroll</span>
                     </h2>
-                  </div>
-                )}
-
-                {/* Search Bar & Tag Controls Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                  {/* Search Bar */}
-                  <div className="relative flex-1 max-w-md">
-                    <Search className="w-4 h-4 text-cinema-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search title, tags, or description..."
-                      className="w-full bg-cinema-black/70 border border-cinema-border focus:border-accent rounded-lg pl-10 pr-9 py-2 text-xs font-mono text-white placeholder-cinema-muted/60 outline-none transition-all focus-ring"
-                    />
-                    {searchQuery && (
-                      <button
-                        onClick={() => setSearchQuery('')}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-cinema-muted hover:text-white p-0.5 cursor-pointer"
-                        title="Clear search"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Tags filter row */}
-                {(() => {
-                  const allTags = [...new Set(filteredItems.flatMap(i => Array.isArray(i.tags) ? i.tags : []))];
-                  if (allTags.length === 0) return null;
-                  return (
-                    <div className="flex flex-wrap gap-2 mb-8">
-                      <button onClick={() => setActiveTagFilter('')}
-                        className={`px-3 py-1 rounded-full text-[10px] font-mono tracking-wider transition-all cursor-pointer border ${
-                          !activeTagFilter ? 'bg-accent text-cinema-black border-accent' : 'border-cinema-border text-cinema-muted hover:text-white'
-                        }`}>
-                        ALL TAGS
-                      </button>
-                      {allTags.map(tag => (
-                        <button key={tag} onClick={() => setActiveTagFilter(activeTagFilter === tag ? '' : tag)}
-                          className={`px-3 py-1 rounded-full text-[10px] font-mono tracking-wider transition-all cursor-pointer border ${
-                            activeTagFilter === tag ? 'bg-accent text-cinema-black border-accent' : 'border-cinema-border text-cinema-muted hover:text-white'
-                          }`}>
-                          {tag}
-                        </button>
-                      ))}
-                    </div>
-                  );
-                })()}
-
-                {/* Filtered Bento Grid */}
-                {(() => {
-                  const tagFiltered = activeTagFilter
-                    ? filteredItems.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTagFilter))
-                    : filteredItems;
-                  
-                  const q = searchQuery.toLowerCase().trim();
-                  const searchFiltered = q
-                    ? tagFiltered.filter(i => 
-                        (i.title && i.title.toLowerCase().includes(q)) ||
-                        (i.description && i.description.toLowerCase().includes(q)) ||
-                        (i.type && i.type.toLowerCase().includes(q)) ||
-                        (Array.isArray(i.tags) && i.tags.some(t => t.toLowerCase().includes(q)))
-                      )
-                    : tagFiltered;
-
-                  return searchFiltered.length > 0 ? (
-                    <PortfolioGrid
-                      key={activeGalleryTab + activeTagFilter + searchQuery}
-                      items={searchFiltered}
-                      isAdmin={false}
-                      onClickTile={setActiveLightboxItem}
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-24 text-cinema-muted border border-dashed border-cinema-border/60 rounded-xl bg-cinema-black/40">
-                      <div className="text-4xl mb-3 opacity-30">🔍</div>
-                      <p className="text-xs font-mono tracking-widest uppercase text-white mb-1">[0_RESULTS_FOUND]</p>
-                      <p className="text-xs text-cinema-muted">No projects match "{searchQuery || activeTagFilter}". Try clearing your filters.</p>
-                      <button
-                        onClick={() => { setSearchQuery(''); setActiveTagFilter(''); }}
-                        className="mt-4 px-4 py-1.5 bg-cinema-card border border-cinema-border hover:border-accent text-accent rounded text-xs font-mono transition-all cursor-pointer focus-ring"
-                      >
-                        RESET FILTERS
-                      </button>
-                    </div>
-                  );
-                })()}
-
-                {/* Interactive Skill Radar & Pipeline Metrics Tile */}
-                <div className="mt-16">
-                  <SkillRadarTile />
-                </div>
-              </main>
-
-          {/* About/Contact Footer */}
-          <footer className="bg-cinema-card border-t border-cinema-border/50 py-16 px-6 mt-12 relative overflow-hidden">
-            {/* Background visual detail */}
-            <div className="absolute -right-24 -bottom-24 w-96 h-96 bg-accent/5 rounded-full filter blur-3xl pointer-events-none"></div>
-
-            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
-              
-              {/* Bio block */}
-              <div className="flex flex-col justify-between gap-6">
-                <div>
-                  <div className="text-accent font-mono text-[10px] tracking-widest mb-3 uppercase">
-                    [00:03:45:00] BIO_METADATA
-                  </div>
-                  <h3 className="text-xl font-bold uppercase tracking-wide text-white mb-4">
-                    THE EDITOR'S ROOM
-                  </h3>
-                  {settings?.bio_text !== "" && (
-                    <p className="text-sm text-cinema-muted leading-relaxed font-light">
-                      {settings?.bio_text ?? "Alex Kane is an industry-grade film editor and digital colorist. Drawing on a decade of color pipeline management and editorial storytelling, Alex transforms raw footage into cinematic narratives. Working with major commercial brands and indie narrative productions, he designs custom color grading curves and pacing that breathes life into every single cut."}
+                    <p className="mt-4 text-base sm:text-lg text-slate-600">
+                      Explore our portfolio of viral short-form hooks, YouTube retention edits, and high-converting commercial ad masters.
                     </p>
-                  )}
-                </div>
-                
-                {settings?.location_info !== "" && (
-                  <div className="text-[10px] font-mono text-cinema-muted uppercase">
-                    {settings?.location_info ?? "LOCATED: LOS ANGELES, CA • DIGITAL PIPELINE: DAVINCI RESOLVE / PREMIERE PRO"}
                   </div>
-                )}
-              </div>
 
-              {/* Contact / Links block */}
-              <div className="flex flex-col justify-between gap-8 md:pl-12 md:border-l border-cinema-border/50">
-                <div>
-                  <div className="text-accent font-mono text-[10px] tracking-widest mb-3 uppercase">
-                    [CONTACT_CHANNELS]
+                  {/* Search Bar & Tag Controls Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                    {/* Search Bar */}
+                    <div className="relative flex-1 max-w-md">
+                      <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search projects, tags, or deliverables..."
+                        className="w-full bg-slate-50 border border-slate-200 focus:border-blue-600 rounded-xl pl-10 pr-9 py-2.5 text-xs font-mono text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:ring-1 focus:ring-blue-600"
+                      />
+                      {searchQuery && (
+                        <button
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-0.5 cursor-pointer"
+                          title="Clear search"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold uppercase tracking-wide text-white mb-6">
-                    START A PROJECT
-                  </h3>
-                  
-                  <div className="flex flex-col gap-4">
-                    {settings?.contact_email !== "" && (
-                      <a href={settings?.contact_email ? `mailto:${settings.contact_email}` : "mailto:contact@alexkane.edit"}
-                        className="flex items-center gap-3 text-sm text-cinema-muted hover:text-accent transition-colors group focus-ring p-1 -m-1 rounded">
-                        <Mail className="w-4 h-4 text-accent" />
-                        <span>{settings?.contact_email ?? "contact@alexkane.edit"}</span>
+
+                  {/* Tags filter row */}
+                  {(() => {
+                    const allTags = [...new Set(filteredItems.flatMap(i => Array.isArray(i.tags) ? i.tags : []))];
+                    if (allTags.length === 0) return null;
+                    return (
+                      <div className="flex flex-wrap gap-2 mb-8">
+                        <button 
+                          onClick={() => setActiveTagFilter('')}
+                          className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide transition-all cursor-pointer border ${
+                            !activeTagFilter 
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
+                              : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-600'
+                          }`}>
+                          ALL TAGS
+                        </button>
+                        {allTags.map(tag => (
+                          <button 
+                            key={tag} 
+                            onClick={() => setActiveTagFilter(activeTagFilter === tag ? '' : tag)}
+                            className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide transition-all cursor-pointer border ${
+                              activeTagFilter === tag 
+                                ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
+                                : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-600'
+                            }`}>
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
+                    );
+                  })()}
+
+                  {/* Filtered Bento Grid */}
+                  {(() => {
+                    const tagFiltered = activeTagFilter
+                      ? filteredItems.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTagFilter))
+                      : filteredItems;
+                    
+                    const q = searchQuery.toLowerCase().trim();
+                    const searchFiltered = q
+                      ? tagFiltered.filter(i => 
+                          (i.title && i.title.toLowerCase().includes(q)) ||
+                          (i.description && i.description.toLowerCase().includes(q)) ||
+                          (i.type && i.type.toLowerCase().includes(q)) ||
+                          (Array.isArray(i.tags) && i.tags.some(t => t.toLowerCase().includes(q)))
+                        )
+                      : tagFiltered;
+
+                    return searchFiltered.length > 0 ? (
+                      <PortfolioGrid
+                        key={activeGalleryTab + activeTagFilter + searchQuery}
+                        items={searchFiltered}
+                        isAdmin={false}
+                        onClickTile={setActiveLightboxItem}
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-20 text-slate-500 border border-dashed border-slate-200 rounded-2xl bg-slate-50 text-center">
+                        <div className="text-4xl mb-3 opacity-40">🔍</div>
+                        <p className="text-xs font-mono tracking-widest uppercase text-slate-900 font-bold mb-1">[0_RESULTS_FOUND]</p>
+                        <p className="text-xs text-slate-500 max-w-sm">No agency projects match "{searchQuery || activeTagFilter}". Try clearing your filters.</p>
+                        <button
+                          onClick={() => { setSearchQuery(''); setActiveTagFilter(''); }}
+                          className="mt-4 px-4 py-2 bg-white border border-slate-200 hover:border-blue-500 text-blue-600 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
+                        >
+                          Reset Filters
+                        </button>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </section>
+
+              {/* 4. Agency Capabilities & Services */}
+              <AgencyServices onSelectService={(serviceTitle) => {
+                setSelectedService(serviceTitle);
+                setShowDiscoveryModal(true);
+              }} />
+
+              {/* 5. Production Workflow */}
+              <AgencyWorkflow />
+
+              {/* 6. Proven Client Results & Testimonials */}
+              <AgencyResults />
+
+              {/* 7. Frequently Asked Questions */}
+              <AgencyFAQ />
+
+              {/* 8. Agency Footer */}
+              <footer className="bg-slate-900 text-white py-16 px-6 border-t border-slate-800">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+                  <div className="md:col-span-2 space-y-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+                        <Film className="w-5 h-5 text-white" />
+                      </div>
+                      <span className="text-xl font-bold tracking-tight text-white font-display">
+                        Cutframe <span className="text-blue-400">Studio</span>
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-400 max-w-md leading-relaxed">
+                      We engineer high-retention video pipelines for modern creators, founders, and high-growth consumer brands. Transforming raw footage into revenue.
+                    </p>
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedService('');
+                          setShowDiscoveryModal(true);
+                        }}
+                        className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer"
+                      >
+                        Book a Discovery Call
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
+                      Navigation
+                    </h4>
+                    <ul className="space-y-2.5 text-sm text-slate-400">
+                      <li><a href="#work" className="hover:text-white transition-colors">Featured Work</a></li>
+                      <li><a href="#before-after" className="hover:text-white transition-colors">Before & After</a></li>
+                      <li><a href="#services" className="hover:text-white transition-colors">Agency Services</a></li>
+                      <li><a href="#process" className="hover:text-white transition-colors">Production Process</a></li>
+                      <li><a href="#results" className="hover:text-white transition-colors">Client Results</a></li>
+                      <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
+                      Direct Inquiries
+                    </h4>
+                    <p className="text-xs text-slate-400 mb-2">Have a raw footage dump ready?</p>
+                    <a
+                      href="mailto:hello@cutframestudio.com"
+                      className="text-sm font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2 mb-4"
+                    >
+                      <Mail className="w-4 h-4" />
+                      hello@cutframestudio.com
+                    </a>
+                    <div className="pt-2">
+                      <a
+                        href="#admin"
+                        className="text-[11px] font-mono text-slate-500 hover:text-slate-300 flex items-center gap-1.5 transition-colors"
+                      >
+                        <Lock className="w-3 h-3" />
+                        Agency Admin Access
                       </a>
-                    )}
-                    {/* Contact Form Button */}
-                    <button onClick={() => setShowContactForm(true)}
-                      className="flex items-center gap-3 text-sm text-accent hover:text-white transition-colors border border-accent/30 hover:border-accent px-4 py-2 rounded font-mono tracking-wide cursor-pointer w-fit">
-                      <Send className="w-3.5 h-3.5" />
-                      SEND A MESSAGE
-                    </button>
-                    {settings?.contact_github !== "" && (
-                      <a href={settings?.contact_github ? `https://${settings.contact_github.replace(/^https?:\/\//, '')}` : "https://github.com"}
-                        target="_blank" rel="noreferrer"
-                        className="flex items-center gap-3 text-sm text-cinema-muted hover:text-accent transition-colors group focus-ring p-1 -m-1 rounded">
-                        <Github className="w-4 h-4 text-accent" />
-                        <span>{settings?.contact_github ?? "github.com/alexkane-edit"}</span>
-                      </a>
-                    )}
-                    {settings?.contact_vimeo !== "" && (
-                      <a href={settings?.contact_vimeo ? `https://${settings.contact_vimeo.replace(/^https?:\/\//, '')}` : "https://vimeo.com"}
-                        target="_blank" rel="noreferrer"
-                        className="flex items-center gap-3 text-sm text-cinema-muted hover:text-accent transition-colors group focus-ring p-1 -m-1 rounded">
-                        <Compass className="w-4 h-4 text-accent" />
-                        <span>{settings?.contact_vimeo ?? "vimeo.com/alexkane"}</span>
-                      </a>
-                    )}
-                    {settings?.instagram_url && settings.instagram_url !== "" && (
-                      <a href={`https://${settings.instagram_url.replace(/^https?:\/\//, '')}`}
-                        target="_blank" rel="noreferrer"
-                        className="flex items-center gap-3 text-sm text-cinema-muted hover:text-accent transition-colors group focus-ring p-1 -m-1 rounded">
-                        <Instagram className="w-4 h-4 text-accent" />
-                        <span>{settings.instagram_url}</span>
-                      </a>
-                    )}
-                    {settings?.behance_url && settings.behance_url !== "" && (
-                      <a href={`https://${settings.behance_url.replace(/^https?:\/\//, '')}`}
-                        target="_blank" rel="noreferrer"
-                        className="flex items-center gap-3 text-sm text-cinema-muted hover:text-accent transition-colors group focus-ring p-1 -m-1 rounded">
-                        <Globe className="w-4 h-4 text-accent" />
-                        <span>{settings.behance_url}</span>
-                      </a>
-                    )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Copyright and Timecode Metadata */}
-                <div className="flex flex-wrap items-center justify-between gap-4 text-[10px] font-mono text-cinema-muted pt-4 border-t border-cinema-border/40">
-                  <span>© {new Date().getFullYear()} {settings?.editor_name || "ALEX KANE"}. ALL RIGHTS RESERVED.</span>
-                  <div className="flex items-center gap-3">
-                    <span className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-cinema-dark border border-cinema-border/60 text-white">
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                      LIVE TC: <span className="text-accent font-bold tracking-widest">{timecode}</span>
-                    </span>
-                    <span className="hidden sm:inline text-cinema-muted">24.00 FPS SMPTE</span>
-                  </div>
+                <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+                  <p>© {new Date().getFullYear()} Cutframe Studio. All rights reserved.</p>
+                  <p className="font-mono text-[11px]">Industrial Video Engine • 24–48h Turnarounds</p>
                 </div>
-              </div>
-            </div>
-          </footer>
+              </footer>
             </>
           );
         })()
@@ -1578,6 +1384,14 @@ export default function App() {
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         settings={settings}
+      />
+
+      {/* Agency Discovery & Scope Brief Modal */}
+      <DiscoveryModal
+        isOpen={showDiscoveryModal}
+        onClose={() => setShowDiscoveryModal(false)}
+        initialService={selectedService}
+        showToast={showToast}
       />
     </div>
   );

@@ -204,7 +204,7 @@ export default function PortfolioTile({
 
 
       {/* Dark overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-t from-cinema-black via-cinema-black/30 to-transparent opacity-60 sm:opacity-0 sm:group-hover:opacity-80 transition-opacity duration-300 z-10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent opacity-80 sm:opacity-0 sm:group-hover:opacity-90 transition-opacity duration-300 z-10 pointer-events-none" />
 
       {/* Title & Info overlay (bottom) - Always visible on mobile, visible on hover for desktop */}
         <div 

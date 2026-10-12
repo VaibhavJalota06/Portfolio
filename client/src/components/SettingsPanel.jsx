@@ -16,7 +16,7 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
   const [behanceUrl, setBehanceUrl]         = useState('');
   const [availableForWork, setAvailableForWork] = useState(false);
   const [adminPin, setAdminPin]             = useState('');
-  const [themeAccent, setThemeAccent]       = useState('amber');
+  const [themeAccent, setThemeAccent]       = useState('blue');
   
   // Structured Rate Card Fields
   const [rateCurrency, setRateCurrency]           = useState('₹');
@@ -267,6 +267,7 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
             <label htmlFor="themeAccent" className={labelClass + ' flex items-center gap-1.5'}><Globe className="w-3 h-3" /> CINEMATIC ACCENT THEME</label>
             <select id="themeAccent" value={themeAccent} onChange={e => setThemeAccent(e.target.value)}
               className={fieldClass + ' cursor-pointer'}>
+              <option value="blue">Electric Blue (Cutframe Agency Master)</option>
               <option value="amber">Classic Amber (Warm Cinema)</option>
               <option value="green">Emerald Green (Matrix Grade)</option>
               <option value="cyan">Cyber Cyan (Neo-Noir Grade)</option>
