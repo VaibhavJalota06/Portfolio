@@ -755,20 +755,6 @@ export default function App() {
 
 
 
-        {/* Cinematic Film Grain Overlay */}
-        <FilmGrain />
-
-        {/* Dynamic 3D Floating Background Elements */}
-        {!isAdmin && <Background3D />}
-
-      {/* Interactive Mouse Glow Tracker Overlay */}
-      <div 
-        ref={glowRef}
-        className="pointer-events-none fixed inset-0 z-10 transition-opacity duration-300 opacity-60"
-        style={{
-          background: `radial-gradient(600px circle at -1000px -1000px, rgba(255, 159, 28, 0.055), transparent 80%)`
-        }}
-      />
 
       {isAdmin ? (
         <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between gap-4 text-white">
