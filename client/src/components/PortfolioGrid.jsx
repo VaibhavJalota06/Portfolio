@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -66,6 +66,18 @@ function SortableTileWrapper({ item, isAdmin, onEdit, onDelete, onResize, onClic
   );
 }
 
+// Column count matching the Tailwind breakpoints (1 phone / 2 tablet / 3 desktop).
+function useColumnCount() {
+  const get = () => (window.innerWidth >= 1024 ? 3 : window.innerWidth >= 640 ? 2 : 1);
+  const [cols, setCols] = useState(get);
+  useEffect(() => {
+    const onResize = () => setCols(get());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+  return cols;
+}
+
 export default function PortfolioGrid({ 
   items, 
   isAdmin, 
@@ -77,6 +89,7 @@ export default function PortfolioGrid({
   onTogglePublish
 }) {
   const [visibleCount, setVisibleCount] = useState(12);
+  const columnCount = useColumnCount();
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -144,19 +157,19 @@ export default function PortfolioGrid({
   // Public mode: masonry columns, every piece keeps its own shape (no cropping)
   return (
     <>
-      {/* 3-column balanced layout */}
+      {/* Balanced columns: item i goes to column i % columnCount, so reading order stays left-to-right */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 items-start">
-        {[0, 1, 2].map((colIndex) => {
+        {Array.from({ length: columnCount }, (_, colIndex) => {
           const colItems = items
             .slice(0, visibleCount)
-            .filter((_, i) => i % 3 === colIndex);
+            .filter((_, i) => i % columnCount === colIndex);
           return (
             <div key={colIndex} className="flex flex-col gap-4 sm:gap-5">
               {colItems.map((item, idx) => (
                 <PublicTile
                   key={item.id}
                   item={item}
-                  index={idx * 3 + colIndex}
+                  index={idx * columnCount + colIndex}
                   onClick={onClickTile}
                 />
               ))}
