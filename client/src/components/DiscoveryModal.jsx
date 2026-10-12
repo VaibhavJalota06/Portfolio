@@ -216,7 +216,7 @@ Focus: ${callData.topics}`,
                 Book a Free Call
               </h3>
               <p className="text-xs text-slate-500">
-                Free 30-minute call with the founder, plus a quick Instagram audit.
+                Free 30-minute call with the founder to discuss your brand goals.
               </p>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, LayoutGrid, Clapperboard, Palette, Bot, Gift, CalendarCheck, FolderUp, MessageSquareText, PackageCheck } from 'lucide-react';
+import { Users, LayoutGrid, Clapperboard, Palette, Bot, FileText, CalendarCheck, FolderUp, MessageSquareText, PackageCheck } from 'lucide-react';
 
 
 const services = [
@@ -10,8 +10,8 @@ const services = [
 ];
 
 const steps = [
-  { icon: CalendarCheck, title: 'Free call + Instagram audit', text: 'Book a call or message us on WhatsApp. We review your current Instagram page and show you what to improve.' },
-  { icon: Gift, title: 'Free sample reel concept', text: 'Before you pay anything, we share a sample reel idea made for your brand, so you can see how we think.' },
+  { icon: CalendarCheck, title: 'Free discovery call', text: 'Book a call or message us on WhatsApp to discuss your brand and content goals.' },
+  { icon: FileText, title: 'Custom plan & quote', text: 'We prepare a clear monthly plan and quote tailored to your needs, with no hidden costs.' },
   { icon: FolderUp, title: 'Share your footage', text: 'Send clips through WhatsApp or a shared Google Drive folder. No new apps or software needed.' },
   { icon: MessageSquareText, title: 'Review & approve', text: 'You get each reel or post to review. We make your changes until you are happy with it.' },
   { icon: PackageCheck, title: 'Post & grow', text: 'Content is delivered ready to post, or we post it for you as part of page management.' },
@@ -65,7 +65,7 @@ export default function AgencyAbout() {
           <div className="text-center max-w-2xl mx-auto mb-10">
             <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">How working with us works</h3>
             <p className="mt-3 text-slate-600">
-              We always start with a <strong className="text-slate-900 font-semibold">free sample reel concept</strong> and a <strong className="text-slate-900 font-semibold">quick Instagram audit</strong>, so you see the value before you commit.
+              Book a quick call to talk through your goals, and we'll create a tailored plan for your brand.
             </p>
           </div>
           <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">

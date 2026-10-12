@@ -10,10 +10,6 @@ export default function AgencyFAQ() {
       a: 'Brands and businesses of all kinds: food and product brands, clinics and doctors, coaches, creators and local businesses that want a strong Instagram presence.'
     },
     {
-      q: 'What is the free sample reel and Instagram audit?',
-      a: 'Before you commit, we look at your current Instagram page and share clear points on what to improve. We also share a sample reel concept made for your brand, so you can see our style and thinking first. It is completely free.'
-    },
-    {
       q: 'How do I send you my videos?',
       a: 'Record on your phone and send the clips on WhatsApp, or upload them to a shared Google Drive folder that we set up for you. No special camera or software needed. We guide you on what to record.'
     },
@@ -31,7 +27,7 @@ export default function AgencyFAQ() {
     },
     {
       q: 'How much does it cost?',
-      a: 'It depends on how many reels and posts you need each month and whether you want full page management. After the free call and audit, we send you a clear monthly quote in ₹, with no hidden charges.'
+      a: 'It depends on how many reels and posts you need each month and whether you want full page management. After the free call, we send you a clear monthly quote in ₹, with no hidden charges.'
     }
   ];
 

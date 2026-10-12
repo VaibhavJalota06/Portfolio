@@ -11,7 +11,7 @@ export default function AgencyServices({ onSelectService }) {
       tag: 'Most Popular',
       description: 'We run your Instagram for you: a monthly content plan, regular posting and a page that looks consistent and trustworthy to new customers.',
       deliverables: [
-        'Free Instagram audit to start',
+        'Monthly content strategy',
         'Monthly content calendar',
         'Captions and hashtags written for you',
         'Regular posting on your schedule',
@@ -23,7 +23,7 @@ export default function AgencyServices({ onSelectService }) {
       icon: Clapperboard,
       title: 'Reels & Video Editing',
       subtitle: 'Reels • Shorts • YouTube',
-      tag: 'Free Sample Reel',
+      tag: 'High Retention',
       description: 'Send us raw clips from your phone. We turn them into short, clear reels that show your products and services, answer customer questions and keep people watching.',
       deliverables: [
         'Strong first-3-second hooks',
@@ -80,7 +80,7 @@ export default function AgencyServices({ onSelectService }) {
             <span className="text-blue-600">on Instagram</span>
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            Pick one service or combine them into a monthly plan. Every plan starts with a free sample reel concept and a quick Instagram audit.
+            Pick one service or combine them into a monthly plan. Transparent pricing with no long-term lock-in.
           </p>
         </div>
 

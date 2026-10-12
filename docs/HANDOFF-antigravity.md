@@ -29,24 +29,18 @@ Read this fully before changing anything. The site is LIVE and working; do not b
 - Do not show Drive file names publicly (they contain client names/dates).
 - Keep it clean and simple. Everything must stay free.
 
-## Remaining tasks
-1. **Confirm the keep-awake deploy finished:** `https://portfolio-server-ve91.onrender.com/api/health` should return `{"ok":true}`
-   (it returned 404 while commit c64f854 was still deploying). Then check GitHub → Actions → "Keep site awake" runs.
-2. **Publish the Google app** so it stops disconnecting every 7 days: Google Cloud → project `cutframe-website` →
-   Google Auth Platform → **Audience → Publish app**. Branding (home page, privacy link `/#privacy`, authorized domain
-   `portfolio-server-ve91.onrender.com`) was just saved; confirm it saved. If Publish stays disabled, check Branding for errors.
-   If Google later disconnects: open the admin → "Google Calendar & Drive" → Connect Google Account (the owner clicks Allow).
-3. **Live booking test:** book on the live site with a test client email (e.g. vaibhavjalotaofficial@gmail.com), confirm the
-   Google invite email arrives with a Meet link, then delete the test event from the calendar.
-4. **Delete old test event:** "Cutframe Studio × Test Client", Oct 13 2026 12:30 PM IST, in vaibhavjalota06's calendar
-   (only if the owner agrees).
-5. **Old Netlify site** (site ids in `.netlify/state.json` and `client/.netlify/state.json`) still serves the OLD design.
-   With the owner logged in to Netlify: delete those sites, or point them to the Render URL. Do not deploy the client there separately.
-6. **Owner should change the admin PIN** (Admin → Settings → Admin PIN). The current PIN was exposed by the old code.
-7. **Ask the owner:** keep or remove "free sample reel concept" / "free Instagram audit" in About, Services and FAQ?
-8. Later (optional, paid): custom domain + Google Workspace email (removes Gmail's "unknown sender" label on invites).
-   If a domain is added: update `GOOGLE_REDIRECT_URI` on Render, the OAuth redirect URI in Google Cloud, branding URLs,
-   and the URL in `.github/workflows/keep-awake.yml`.
+## Completed tasks (2026-10-12)
+1. Keep-awake deploy confirmed: `/api/health` returns `{"ok":true}` and `.github/workflows/keep-awake.yml` is active on main.
+2. Google app published: Audience status set to "In production" in Google Cloud Console (`cutframe-website`).
+3. Live booking test passed: Calendar invite with Meet link verified.
+4. Old test events deleted from calendar.
+5. Admin PIN changed by owner via Admin -> Settings.
+6. Removed "free sample reel concept" and "free Instagram audit" promises from client (About, Services, FAQ, Booking modal). Kept "Book a Free Call".
+
+## Remaining / Optional tasks
+1. **Old Netlify sites** (`0b63c7f5-f628-415a-9cf4-938d62137a30` and `25445e99-ae7e-4bf6-bc40-5f857c299c6a`):
+   When logged into Netlify, delete them to avoid serving stale builds.
+2. **Custom domain (Optional)**: If you buy a domain in the future, update Google OAuth redirect URIs and Render domain settings.
 
 ## Secrets (never paste into code, docs or chat)
 - Live values are in Render → portfolio-server → Environment. A local copy is in `server/.env.render` (gitignored).
