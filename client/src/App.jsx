@@ -1,21 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Film, Eye, Mail, Lock, X, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Film, Eye, Mail, Lock, X, ChevronLeft, ChevronRight, Trash2, MessageCircle, Instagram } from 'lucide-react';
 import Toast from './components/Toast';
 import AdminPanel from './components/AdminPanel';
 import SettingsPanel from './components/SettingsPanel';
 import PortfolioGrid from './components/PortfolioGrid';
-import ContactForm from './components/ContactForm';
-import CommandPalette from './components/CommandPalette';
-import ShareModal from './components/ShareModal';
 import AgencyNavbar from './components/AgencyNavbar';
 import AgencyHero from './components/AgencyHero';
-import BeforeAfterSlider from './components/BeforeAfterSlider';
 import AgencyServices from './components/AgencyServices';
-import AgencyWorkflow from './components/AgencyWorkflow';
-import AgencyResults from './components/AgencyResults';
+import AgencyAbout from './components/AgencyAbout';
+import { CONTACT } from './contact';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
-import { getMediaInfo, isEmbedType } from './utils/media';
+import GooglePanel from './components/GooglePanel';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import { getMediaInfo, isEmbedType, isVideoItem } from './utils/media';
+
+// Private admin link: not linked anywhere on the public site. Protected by the admin PIN as well.
+const ADMIN_HASH = '#cutframe-admin';
 
 export default function App() {
   const [showDiscoveryModal, setShowDiscoveryModal] = useState(false);
@@ -24,8 +25,9 @@ export default function App() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [toast, setToast] = useState(null);
-  const [timecode, setTimecode] = useState('00:00:00:00');
   const [activeLightboxItem, setActiveLightboxItem] = useState(null);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const lightboxVideoRef = useRef(null);
   const [isLightboxLooping, setIsLightboxLooping] = useState(false);
   const [settings, setSettings] = useState(() => {
     try {
@@ -37,7 +39,6 @@ export default function App() {
   const [adminTypeFilter, setAdminTypeFilter] = useState('all');
   const [activeGalleryTab, setActiveGalleryTab] = useState('all');
   const [activeTagFilter, setActiveTagFilter] = useState(''); // tag name string
-  const [searchQuery, setSearchQuery] = useState(''); // real-time search string
 
   // PIN protection
   const [pinVerified, setPinVerified] = useState(() => sessionStorage.getItem('admin_verified') === '1');
@@ -47,80 +48,20 @@ export default function App() {
 
 
 
-  // Command Palette
-  const [showCommandPalette, setShowCommandPalette] = useState(false);
-
-  useEffect(() => {
-    const handleGlobalKeyDown = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        setShowCommandPalette(prev => !prev);
-      }
-    };
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, []);
-
-  const handleSelectTheme = async (themeName) => {
-    const newSettings = { ...(settings || {}), theme_accent: themeName };
-    setSettings(newSettings);
-    try { localStorage.setItem('portfolio_settings', JSON.stringify(newSettings)); } catch {}
-    showToast(`Theme changed to ${themeName.charAt(0).toUpperCase() + themeName.slice(1)}`);
-
-    try {
-      await fetch('/api/settings', {
-        method: 'PUT',
-        headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify(newSettings)
-      });
-    } catch {}
-  };
-
   // Custom delete confirmation modal state
   const [itemToDelete, setItemToDelete] = useState(null);
-
-  // Contact form
-  const [showContactForm, setShowContactForm] = useState(false);
-
-  // Parallax hero
-  const [heroParallax, setHeroParallax] = useState(0);
 
   // Client messages
   const [messages, setMessages] = useState([]);
   const [messagesLoading, setMessagesLoading] = useState(false);
 
-  // Custom Aesthetic Enhanced States & Refs
-  const [isHeroMuted, setIsHeroMuted] = useState(true);
-  const [isHeroPlaying, setIsHeroPlaying] = useState(true);
-  
-  // Share Modal
-  const [showShareModal, setShowShareModal] = useState(false);
-
-
-
-  const toggleHeroPlay = () => {
-    if (heroVideoRef.current) {
-      if (isHeroPlaying) {
-        heroVideoRef.current.pause();
-      } else {
-        heroVideoRef.current.play().catch(err => console.warn(err));
-      }
-      setIsHeroPlaying(!isHeroPlaying);
-    }
-  };
-
-  const toggleHeroMute = () => {
-    if (heroVideoRef.current) {
-      heroVideoRef.current.muted = !isHeroMuted;
-      setIsHeroMuted(!isHeroMuted);
-    }
-  };
-
   // Fetch settings and manage secret hash-based admin routing on mount
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash === '#studio' || hash === '#admin') {
+      setShowPrivacy(hash === '#privacy');
+      if (hash === '#privacy') window.scrollTo(0, 0);
+      if (hash === ADMIN_HASH) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);
@@ -139,35 +80,28 @@ export default function App() {
 
   // Synchronize portfolio items based on user view (admin vs public) and login status
   useEffect(() => {
-    if (isAdmin && (pinVerified || (settings && !settings.admin_pin))) {
+    if (isAdmin && (pinVerified || (settings && !settings.has_admin_pin))) {
       fetchItems(true);
     } else if (!isAdmin) {
       fetchItems(false);
     }
   }, [isAdmin, pinVerified, settings]);
 
-  // Parallax hero on scroll
-  useEffect(() => {
-    const handleScroll = () => setHeroParallax(window.scrollY * 0.35);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   // Inject OG / Twitter meta tags dynamically
   useEffect(() => {
     const name = settings?.editor_name || 'Cutframe Studio';
-    const desc = settings?.hero_tagline || 'We engineer high-retention videos that scale modern brands and creators.';
+    const desc = settings?.hero_tagline || 'Reels, posts and Instagram page management for brands, businesses and creators.';
     const setMeta = (prop, content, attr = 'property') => {
       let el = document.querySelector(`meta[${attr}="${prop}"]`);
       if (!el) { el = document.createElement('meta'); el.setAttribute(attr, prop); document.head.appendChild(el); }
       el.setAttribute('content', content);
     };
-    document.title = `${name} | High-Retention Media & Video Agency`;
-    setMeta('og:title', `${name} | High-Retention Media Agency`);
+    document.title = `${name} | Reels, Posts & Instagram Growth`;
+    setMeta('og:title', `${name} | We help brands grow on Instagram`);
     setMeta('og:description', desc);
     setMeta('og:type', 'website');
     setMeta('twitter:card', 'summary_large_image', 'name');
-    setMeta('twitter:title', `${name} | High-Retention Media Agency`, 'name');
+    setMeta('twitter:title', `${name} | We help brands grow on Instagram`, 'name');
     setMeta('twitter:description', desc, 'name');
   }, [settings]);
 
@@ -187,7 +121,7 @@ export default function App() {
         sessionStorage.setItem('admin_pin', pinInput);
         setPinVerified(true);
       } else {
-        setPinError('Incorrect PIN. Try again.');
+        setPinError(data.error || 'Incorrect PIN. Try again.');
         setPinInput('');
       }
     } catch {
@@ -255,7 +189,7 @@ export default function App() {
 
   // Automatically fetch messages when entering admin workspace and authenticated
   useEffect(() => {
-    if (isAdmin && (pinVerified || (settings && !settings.admin_pin))) {
+    if (isAdmin && (pinVerified || (settings && !settings.has_admin_pin))) {
       fetchMessages();
     }
   }, [isAdmin, pinVerified, settings]);
@@ -263,7 +197,7 @@ export default function App() {
   // Lightbox arrow navigation
   const navigateLightbox = (direction) => {
     if (!activeLightboxItem) return;
-    const VIDEO_TYPES = ['youtube', 'vimeo', 'mp4'];
+    const VIDEO_TYPES = ['youtube', 'vimeo', 'mp4', 'gdrive'];
     const filtered = activeGalleryTab === 'videos'
       ? items.filter(i => VIDEO_TYPES.includes(i.type))
       : activeGalleryTab === 'photos'
@@ -321,32 +255,6 @@ export default function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeLightboxItem, items, activeGalleryTab, activeTagFilter]);
 
-  // Update browser tab document title dynamically based on settings
-  useEffect(() => {
-    if (settings?.editor_name) {
-      document.title = `${settings.editor_name.toUpperCase()} | Cinematic Editor & Colorist`;
-    } else {
-      document.title = "ALEX KANE | Cinematic Editor & Colorist";
-    }
-  }, [settings]);
-
-  // 24fps Ticking Timecode to evoke editing timeline
-  useEffect(() => {
-    let frame = 0;
-    const interval = setInterval(() => {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, '0');
-      const m = String(now.getMinutes()).padStart(2, '0');
-      const s = String(now.getSeconds()).padStart(2, '0');
-      const f = String(frame).padStart(2, '0');
-      setTimecode(`${h}:${m}:${s}:${f}`);
-      frame = (frame + 1) % 24;
-    }, 41.67); // 1000ms / 24 frames = 41.67ms
-    return () => clearInterval(interval);
-  }, []);
-
-
-
   const fetchItems = async (forAdmin = false) => {
     try {
       const res = await fetch(forAdmin ? '/api/items?admin=1' : '/api/items', {
@@ -374,8 +282,10 @@ export default function App() {
   };
 
   const handleSaveSettings = async (updatedSettings) => {
-    setSettings(updatedSettings);
-    try { localStorage.setItem('portfolio_settings', JSON.stringify(updatedSettings)); } catch {}
+    const { admin_pin: _pin, ...visible } = updatedSettings; // the PIN never lives in client state
+    const next = { ...settings, ...visible, has_admin_pin: (settings?.has_admin_pin || updatedSettings.admin_pin) ? '1' : '' };
+    setSettings(next);
+    try { localStorage.setItem('portfolio_settings', JSON.stringify(next)); } catch {}
 
     try {
       const res = await fetch('/api/settings', {
@@ -464,6 +374,26 @@ export default function App() {
     }
   };
 
+  // Hide / show a project on the public site (optimistic update)
+  const handleTogglePublish = async (id) => {
+    const target = items.find(item => item.id === id);
+    if (!target) return;
+    const updated = { ...target, is_published: !target.is_published };
+    setItems(prev => prev.map(item => item.id === id ? updated : item));
+    try {
+      const res = await fetch(`/api/items/${id}`, {
+        method: 'PUT',
+        headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(updated)
+      });
+      if (!res.ok) throw new Error();
+      showToast(updated.is_published ? 'Visible on the website again' : 'Hidden from the website');
+    } catch {
+      setItems(prev => prev.map(item => item.id === id ? target : item));
+      showToast('Could not change visibility', 'error');
+    }
+  };
+
   // Reorder callback from @dnd-kit (optimistic update)
   const handleReorderItems = async (reorderedItems) => {
     const previousItems = [...items];
@@ -487,15 +417,12 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-white text-slate-900 animate-fade-in">
-
-      {/* Contact Form Modal */}
-      {showContactForm && <ContactForm onClose={() => setShowContactForm(false)} settings={settings} />}
+    <div className={`relative min-h-screen ${isAdmin ? 'cinema-dark bg-cinema-black' : 'bg-white text-slate-900'}`}>
 
       {/* Cinematic Custom Delete Confirmation Modal */}
       {itemToDelete && (
         <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cinema-black/90 backdrop-blur-md animate-fade-in"
+          className="cinema-dark fixed inset-0 z-[60] flex items-center justify-center p-4 bg-cinema-black/90 backdrop-blur-md animate-fade-in"
           onClick={() => setItemToDelete(null)}
         >
           <div 
@@ -553,33 +480,9 @@ export default function App() {
         />
       )}
 
-      {/* Mobile Bottom Navigation (sm and below, public only) */}
-      {!isAdmin && (
-        <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-cinema-black/95 backdrop-blur-md border-t border-cinema-border/50 flex items-center justify-around py-2 px-4">
-          {[
-            { id: 'all',    label: 'All',    hash: '#',       icon: '◈' },
-            { id: 'videos', label: 'Videos', hash: '#videos', icon: '▶' },
-            { id: 'photos', label: 'Photos', hash: '#photos', icon: '◻' },
-          ].map(tab => (
-            <a key={tab.id} href={tab.hash} onClick={() => setActiveGalleryTab(tab.id)}
-              className={`flex flex-col items-center gap-0.5 px-4 py-1 rounded transition-colors ${
-                activeGalleryTab === tab.id ? 'text-accent' : 'text-cinema-muted'
-              }`}>
-              <span className="text-base">{tab.icon}</span>
-              <span className="text-[9px] font-mono font-semibold tracking-wider">{tab.label}</span>
-            </a>
-          ))}
-          <button onClick={() => setShowContactForm(true)}
-            className="flex flex-col items-center gap-0.5 px-4 py-1 rounded text-cinema-muted transition-colors cursor-pointer">
-            <Mail className="w-4 h-4" />
-            <span className="text-[9px] font-mono font-semibold tracking-wider">Contact</span>
-          </button>
-        </nav>
-      )}
-
       {/* Admin PIN Lock Screen */}
-      {isAdmin && settings?.admin_pin && !pinVerified && (
-        <div className="fixed inset-0 z-50 bg-cinema-black flex items-center justify-center p-6">
+      {isAdmin && settings?.has_admin_pin && !pinVerified && (
+        <div className="cinema-dark fixed inset-0 z-[60] bg-cinema-black flex items-center justify-center p-6">
           <div className="w-full max-w-sm bg-cinema-card border border-cinema-border rounded-xl p-8 text-center">
             <Lock className="w-10 h-10 text-accent mx-auto mb-4" />
             <h2 className="text-lg font-display font-bold mb-1">Admin Access</h2>
@@ -630,8 +533,6 @@ export default function App() {
       ) : (
         <AgencyNavbar
           onOpenDiscovery={() => setShowDiscoveryModal(true)}
-          onOpenAdmin={() => { window.location.hash = '#admin'; }}
-          isAdmin={isAdmin}
         />
       )}
       {isAdmin ? (
@@ -674,6 +575,9 @@ export default function App() {
             editingItem={editingItem}
             onCancelEdit={() => setEditingItem(null)}
           />
+
+          {/* Google Calendar + Drive connection */}
+          <GooglePanel showToast={showToast} onSynced={() => fetchItems(true)} />
 
           {/* Website settings panel */}
           <SettingsPanel
@@ -727,7 +631,7 @@ export default function App() {
                 <span className="text-[10px] font-mono text-cinema-muted uppercase mr-1">Filter:</span>
                 {[
                   { id: 'all',    label: 'All',    count: items.length },
-                  { id: 'videos', label: 'Videos', count: items.filter(i => ['youtube','vimeo','mp4'].includes(i.type)).length },
+                  { id: 'videos', label: 'Videos', count: items.filter(i => ['youtube','vimeo','mp4','gdrive'].includes(i.type)).length },
                   { id: 'photos', label: 'Photos', count: items.filter(i => i.type === 'image').length },
                 ].map(f => (
                   <button
@@ -748,21 +652,12 @@ export default function App() {
 
             {/* Empty state when filter yields nothing */}
             {(() => {
-              const VIDEO_TYPES = ['youtube', 'vimeo', 'mp4'];
+              const VIDEO_TYPES = ['youtube', 'vimeo', 'mp4', 'gdrive'];
               const adminFiltered = adminTypeFilter === 'videos'
                 ? items.filter(i => VIDEO_TYPES.includes(i.type))
                 : adminTypeFilter === 'photos'
                   ? items.filter(i => i.type === 'image')
                   : items;
-
-              if (adminFiltered.length === 0) {
-                return (
-                  <div className="flex flex-col items-center justify-center py-20 text-cinema-muted border border-dashed border-cinema-border/50 rounded-lg">
-                    <div className="text-4xl mb-3 opacity-20">{adminTypeFilter === 'videos' ? '🎬' : adminTypeFilter === 'photos' ? '🖼' : '📂'}</div>
-                    <p className="text-xs font-mono tracking-wider uppercase">No {adminTypeFilter === 'all' ? 'items' : adminTypeFilter} yet — add one above</p>
-                  </div>
-                );
-              }
 
               if (adminGridTab === 'inbox') {
                 return (
@@ -807,6 +702,15 @@ export default function App() {
                 );
               }
 
+              if (adminFiltered.length === 0) {
+                return (
+                  <div className="flex flex-col items-center justify-center py-20 text-cinema-muted border border-dashed border-cinema-border/50 rounded-lg">
+                    <div className="text-4xl mb-3 opacity-20">{adminTypeFilter === 'videos' ? '🎬' : adminTypeFilter === 'photos' ? '🖼' : '📂'}</div>
+                    <p className="text-xs font-mono tracking-wider uppercase">No {adminTypeFilter === 'all' ? 'items' : adminTypeFilter} yet — add one above</p>
+                  </div>
+                );
+              }
+
               return adminGridTab === 'edit' ? (
                 <PortfolioGrid
                   items={adminFiltered}
@@ -818,6 +722,7 @@ export default function App() {
                   onDelete={handleDeleteItem}
                   onResize={handleResizeItem}
                   onReorder={handleReorderItems}
+                  onTogglePublish={handleTogglePublish}
                 />
               ) : (
                 <PortfolioGrid
@@ -833,7 +738,7 @@ export default function App() {
         /* --- PUBLIC CINEMATIC PORTFOLIO VIEW --- */
         (() => {
           // Derive filtered items based on active gallery tab
-          const VIDEO_TYPES = ['youtube', 'vimeo', 'mp4'];
+          const VIDEO_TYPES = ['youtube', 'vimeo', 'mp4', 'gdrive'];
           const filteredItems = activeGalleryTab === 'videos'
             ? items.filter(i => VIDEO_TYPES.includes(i.type))
             : activeGalleryTab === 'photos'
@@ -842,63 +747,34 @@ export default function App() {
 
           return (
             <>
+              {showPrivacy ? <PrivacyPolicy contactEmail={CONTACT.email} /> : <>
               {/* 1. Agency Hero */}
               <AgencyHero onOpenDiscovery={() => { setSelectedService(''); setShowDiscoveryModal(true); }} />
 
-              {/* 2. Interactive Before & After Engine */}
-              <BeforeAfterSlider />
-
               {/* 3. Agency Video Showcase Matrix */}
-              <section id="work" className="py-24 bg-white border-t border-slate-200">
+              <section id="work" className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   {/* Section Title */}
-                  <div className="text-center max-w-3xl mx-auto mb-12">
+                  <div className="text-center max-w-3xl mx-auto mb-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
                       <Film className="w-3.5 h-3.5 text-blue-600" />
-                      Agency Showcase
+                      Our Work
                     </div>
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
-                      Work That <span className="text-blue-600">Halts The Scroll</span>
+                      Reels, posts &amp; designs <span className="text-blue-600">we&apos;ve made</span>
                     </h2>
                     <p className="mt-4 text-base sm:text-lg text-slate-600">
-                      Explore our portfolio of viral short-form hooks, YouTube retention edits, and high-converting commercial ad masters.
+                      Real work for brands, businesses, creators and clinics. Filter by category and tap any piece to watch or view it in full.
                     </p>
-                  </div>
-
-                  {/* Search Bar & Tag Controls Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                    {/* Search Bar */}
-                    <div className="relative flex-1 max-w-md">
-                      <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search projects, tags, or deliverables..."
-                        className="w-full bg-slate-50 border border-slate-200 focus:border-blue-600 rounded-xl pl-10 pr-9 py-2.5 text-xs font-mono text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:ring-1 focus:ring-blue-600"
-                      />
-                      {searchQuery && (
-                        <button
-                          onClick={() => setSearchQuery('')}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-0.5 cursor-pointer"
-                          title="Clear search"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      )}
-                    </div>
                   </div>
 
                   {/* Agency Category filter row */}
                   {(() => {
-                    const agencyCategories = [
-                      'All Work',
-                      'AI Videos',
-                      'Short-Form / Reels',
-                      'YouTube Long-Form',
-                      'Ad Creatives',
-                      'Thumbnails & Packaging'
-                    ];
+                    // Core agency categories first, then any other categories the work actually uses
+                    // (e.g. Drive sub-folders like "Photoshop Projects"). Empty categories are hidden.
+                    const core = ['AI Videos', 'Short-Form / Reels', 'YouTube Long-Form', 'Ad Creatives', 'Thumbnails & Packaging'];
+                    const used = new Set(items.flatMap(i => Array.isArray(i.tags) ? i.tags : []));
+                    const agencyCategories = ['All Work', ...core.filter(c => used.has(c)), ...[...used].filter(t => !core.includes(t)).sort()];
 
                     return (
                       <div className="flex flex-wrap gap-2.5 mb-8">
@@ -929,33 +805,22 @@ export default function App() {
                       ? filteredItems.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTagFilter))
                       : filteredItems;
                     
-                    const q = searchQuery.toLowerCase().trim();
-                    const searchFiltered = q
-                      ? tagFiltered.filter(i => 
-                          (i.title && i.title.toLowerCase().includes(q)) ||
-                          (i.description && i.description.toLowerCase().includes(q)) ||
-                          (i.type && i.type.toLowerCase().includes(q)) ||
-                          (Array.isArray(i.tags) && i.tags.some(t => t.toLowerCase().includes(q)))
-                        )
-                      : tagFiltered;
-
-                    return searchFiltered.length > 0 ? (
+                    return tagFiltered.length > 0 ? (
                       <PortfolioGrid
-                        key={activeGalleryTab + activeTagFilter + searchQuery}
-                        items={searchFiltered}
+                        key={activeGalleryTab + activeTagFilter}
+                        items={tagFiltered}
                         isAdmin={false}
                         onClickTile={setActiveLightboxItem}
                       />
                     ) : (
                       <div className="flex flex-col items-center justify-center py-20 text-slate-500 border border-dashed border-slate-200 rounded-2xl bg-slate-50 text-center">
-                        <div className="text-4xl mb-3 opacity-40">🔍</div>
-                        <p className="text-xs font-mono tracking-widest uppercase text-slate-900 font-bold mb-1">[0_RESULTS_FOUND]</p>
-                        <p className="text-xs text-slate-500 max-w-sm">No agency projects match "{searchQuery || activeTagFilter}". Try clearing your filters.</p>
+                        <p className="text-sm text-slate-900 font-semibold mb-1">New {activeTagFilter || 'work'} coming soon</p>
+                        <p className="text-xs text-slate-500 max-w-sm">We&apos;re adding fresh projects to this category. Explore the rest of our work in the meantime.</p>
                         <button
-                          onClick={() => { setSearchQuery(''); setActiveTagFilter(''); }}
+                          onClick={() => setActiveTagFilter('')}
                           className="mt-4 px-4 py-2 bg-white border border-slate-200 hover:border-blue-500 text-blue-600 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
                         >
-                          Reset Filters
+                          View All Work
                         </button>
                       </div>
                     );
@@ -963,20 +828,19 @@ export default function App() {
                 </div>
               </section>
 
+              {/* About the studio and how working together works */}
+              <AgencyAbout />
+
               {/* 4. Agency Capabilities & Services */}
               <AgencyServices onSelectService={(serviceTitle) => {
                 setSelectedService(serviceTitle);
                 setShowDiscoveryModal(true);
               }} />
 
-              {/* 5. Production Workflow */}
-              <AgencyWorkflow />
-
-              {/* 6. Proven Client Results & Testimonials */}
-              <AgencyResults />
-
               {/* 7. Frequently Asked Questions */}
               <AgencyFAQ />
+
+              </>}
 
               {/* 8. Agency Footer */}
               <footer className="bg-slate-900 text-white py-16 px-6 border-t border-slate-800">
@@ -991,7 +855,7 @@ export default function App() {
                       </span>
                     </div>
                     <p className="text-sm text-slate-400 max-w-md leading-relaxed">
-                      We engineer high-retention video pipelines for modern creators, founders, and high-growth consumer brands. Transforming raw footage into revenue.
+                      Video editing &amp; Instagram content studio in Delhi. We help brands and businesses grow on Instagram with reels, posts and page management.
                     </p>
                     <div className="pt-2">
                       <button
@@ -1002,7 +866,7 @@ export default function App() {
                         }}
                         className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer"
                       >
-                        Book a Discovery Call
+                        Book a Free Call
                       </button>
                     </div>
                   </div>
@@ -1012,11 +876,9 @@ export default function App() {
                       Navigation
                     </h4>
                     <ul className="space-y-2.5 text-sm text-slate-400">
-                      <li><a href="#work" className="hover:text-white transition-colors">Featured Work</a></li>
-                      <li><a href="#before-after" className="hover:text-white transition-colors">Before & After</a></li>
+                      <li><a href="#work" className="hover:text-white transition-colors">Our Work</a></li>
+                      <li><a href="#about" className="hover:text-white transition-colors">About Us</a></li>
                       <li><a href="#services" className="hover:text-white transition-colors">Agency Services</a></li>
-                      <li><a href="#process" className="hover:text-white transition-colors">Production Process</a></li>
-                      <li><a href="#results" className="hover:text-white transition-colors">Client Results</a></li>
                       <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
                     </ul>
                   </div>
@@ -1025,29 +887,18 @@ export default function App() {
                     <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
                       Direct Inquiries
                     </h4>
-                    <p className="text-xs text-slate-400 mb-2">Have a raw footage dump ready?</p>
-                    <a
-                      href="mailto:hello@cutframestudio.com"
-                      className="text-sm font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2 mb-4"
-                    >
-                      <Mail className="w-4 h-4" />
-                      hello@cutframestudio.com
-                    </a>
-                    <div className="pt-2">
-                      <a
-                        href="#admin"
-                        className="text-[11px] font-mono text-slate-500 hover:text-slate-300 flex items-center gap-1.5 transition-colors"
-                      >
-                        <Lock className="w-3 h-3" />
-                        Agency Admin Access
-                      </a>
-                    </div>
+                    <p className="text-xs text-slate-400 mb-3">Delhi &amp; all India · {CONTACT.founder}, Founder</p>
+                    <ul className="space-y-2.5 text-sm mb-4">
+                      <li><a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-2"><MessageCircle className="w-4 h-4" />WhatsApp {CONTACT.whatsapp}</a></li>
+                      <li><a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2"><Instagram className="w-4 h-4" />{CONTACT.instagram}</a></li>
+                      <li><a href={`mailto:${CONTACT.email}`} className="font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2 break-all"><Mail className="w-4 h-4 shrink-0" />{CONTACT.email}</a></li>
+                    </ul>
                   </div>
                 </div>
 
                 <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-                  <p>© {new Date().getFullYear()} Cutframe Studio. All rights reserved.</p>
-                  <p className="font-mono text-[11px]">Industrial Video Engine • 24–48h Turnarounds</p>
+                  <p>© {new Date().getFullYear()} Cutframe Studio. All rights reserved. · <a href="#privacy" className="hover:text-slate-300 underline-offset-2 hover:underline">Privacy Policy</a></p>
+                  <p className="text-[11px]">Delhi &amp; all India · Reels · Posts · Page management</p>
                 </div>
               </footer>
             </>
@@ -1060,7 +911,7 @@ export default function App() {
         const mediaType = activeLightboxItem.type || media.type;
         return (
           <div 
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-cinema-black/95 backdrop-blur-md p-4 animate-fade-in"
+            className="cinema-dark fixed inset-0 z-[60] flex flex-col items-center justify-center bg-cinema-black/95 backdrop-blur-md p-4 overflow-y-auto"
             onClick={() => setActiveLightboxItem(null)}
             style={{
               animation: 'fadeIn 0.25s ease-out forwards'
@@ -1112,9 +963,10 @@ export default function App() {
               }}
             >
               {mediaType === 'image' && (
-                <img 
+                <img
+                  referrerPolicy="no-referrer"
                   src={activeLightboxItem.url} 
-                  alt={activeLightboxItem.title} 
+                  alt={activeLightboxItem.title || 'Portfolio work'} 
                   className="w-full h-full object-contain"
                 />
               )}
@@ -1131,7 +983,16 @@ export default function App() {
                 />
               )}
 
-              {isEmbedType(mediaType) && (
+              {mediaType === 'gdrive' && (activeLightboxItem.mime || '').startsWith('image/') && (
+                <img
+                  referrerPolicy="no-referrer"
+                  src={`https://lh3.googleusercontent.com/d/${media.id}=w2000`}
+                  alt={activeLightboxItem.title || 'Portfolio work'}
+                  className="w-full h-full object-contain"
+                />
+              )}
+
+              {isEmbedType(mediaType) && !(mediaType === 'gdrive' && (activeLightboxItem.mime || '').startsWith('image/')) && (
                 <iframe
                   key={`${activeLightboxItem.id}-${isLightboxLooping}`} // Force reload when loop switches
                   src={mediaType === 'youtube' 
@@ -1140,7 +1001,7 @@ export default function App() {
                     ? `https://player.vimeo.com/video/${media.id}?autoplay=1&controls=1${isLightboxLooping ? '&loop=1' : ''}`
                     : media.embedUrl
                   }
-                  title={activeLightboxItem.title}
+                  title={activeLightboxItem.title || 'Portfolio work'}
                   frameBorder="0"
                   allow="autoplay; fullscreen; picture-in-picture"
                   allowFullScreen
@@ -1158,16 +1019,16 @@ export default function App() {
               }}
             >
               <div className="text-accent font-mono text-xs tracking-wider mb-1 uppercase flex items-center justify-center gap-4 flex-wrap">
-                <span>[TC 00:00:0{activeLightboxItem.id}:00 // FORMAT: {mediaType.toUpperCase()}]</span>
+                <span>{(Array.isArray(activeLightboxItem.tags) && activeLightboxItem.tags[0]) || (isVideoItem(activeLightboxItem) ? 'Video' : 'Photo')}</span>
                 
                 {/* Loop Video Selector */}
-                {mediaType !== 'image' && (
+                {isVideoItem(activeLightboxItem) && (
                   <button
                     type="button"
                     onClick={() => setIsLightboxLooping(!isLightboxLooping)}
                     className={`flex items-center gap-1.5 px-3 py-1 border rounded text-[10px] font-mono font-medium transition-all cursor-pointer focus-ring ${
                       isLightboxLooping
-                        ? 'bg-accent/15 border-accent text-accent shadow-[0_0_10px_rgba(255,159,28,0.15)]'
+                        ? 'bg-accent/15 border-accent text-accent '
                         : 'border-cinema-border text-cinema-muted hover:text-white hover:border-cinema-muted'
                     }`}
                   >
@@ -1178,17 +1039,19 @@ export default function App() {
                   </button>
                 )}
               </div>
-              <h3 className="text-xl md:text-2xl font-display font-bold text-white tracking-wide">
-                {activeLightboxItem.title}
-              </h3>
+              {activeLightboxItem.title && (
+                <h3 className="text-xl md:text-2xl font-display font-bold text-white tracking-wide">
+                  {activeLightboxItem.title}
+                </h3>
+              )}
               {activeLightboxItem.description && (
                 <p className="text-sm text-cinema-muted mt-2 max-w-xl leading-relaxed">
                   {activeLightboxItem.description}
                 </p>
               )}
-              {Array.isArray(activeLightboxItem.tags) && activeLightboxItem.tags.length > 0 && (
+              {Array.isArray(activeLightboxItem.tags) && activeLightboxItem.tags.length > 1 && (
                 <div className="flex flex-wrap justify-center gap-1.5 mt-3">
-                  {activeLightboxItem.tags.map(tag => (
+                  {activeLightboxItem.tags.slice(1).map(tag => (
                     <span key={tag} className="px-2 py-0.5 bg-accent/10 text-accent border border-accent/20 text-[10px] font-mono rounded">
                       {tag}
                     </span>
@@ -1199,7 +1062,7 @@ export default function App() {
               {/* Keyboard Shortcut Hints Bar */}
               <div className="flex items-center justify-center gap-3 text-[10px] font-mono text-cinema-muted mt-3 pt-3 border-t border-cinema-border/40 flex-wrap">
                 <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">←</kbd> <kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">→</kbd> NAVIGATE</span>
-                {mediaType !== 'image' && (
+                {isVideoItem(activeLightboxItem) && (
                   <>
                     <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">SPACE</kbd> PLAY/PAUSE</span>
                     <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">L</kbd> +5s</span>
@@ -1212,22 +1075,18 @@ export default function App() {
           </div>
         );
       })()}
-      {/* Command Palette Modal */}
-      <CommandPalette
-        isOpen={showCommandPalette}
-        onClose={() => setShowCommandPalette(false)}
-        items={items}
-        onOpenContact={() => setShowContactForm(true)}
-        onOpenAdminPin={() => { window.location.hash = '#studio'; }}
-        onSelectTheme={handleSelectTheme}
-        onSelectProject={(item) => setActiveLightboxItem(item)}
-      />
-      {/* Share Portfolio Modal */}
-      <ShareModal
-        isOpen={showShareModal}
-        onClose={() => setShowShareModal(false)}
-        settings={settings}
-      />
+      {/* Floating WhatsApp button (public site) */}
+      {!isAdmin && (
+        <a
+          href={CONTACT.whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat with us on WhatsApp"
+          className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-600/30 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 focus-ring"
+        >
+          <MessageCircle className="w-6 h-6" />
+        </a>
+      )}
 
       {/* Agency Discovery & Scope Brief Modal */}
       <DiscoveryModal

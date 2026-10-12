@@ -15,8 +15,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "lucide-react": "^0.479.0",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "video-editing-portfolio": "file:.."
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",

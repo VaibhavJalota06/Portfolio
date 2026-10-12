@@ -10,6 +10,7 @@
 
   --color-cinema-black: #FFFFFF;
   --color-cinema-card: #FFFFFF;
+  --color-cinema-dark: #F1F5F9;
   --color-cinema-border: #E2E8F0;
   --color-cinema-muted: #64748B;
 
@@ -31,6 +32,7 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 80px;
   }
 
   body {
@@ -52,46 +54,41 @@
   }
 }
 
-/* Before & After Comparison Slider Utilities */
-.ba-container {
-  position: relative;
-  overflow: hidden;
-  user-select: none;
-  -webkit-user-select: none;
+/* Dark surfaces (admin, lightbox, utility modals) reuse the cinema-* tokens */
+.cinema-dark {
+  --color-cinema-black: #070708;
+  --color-cinema-card: #0f0f12;
+  --color-cinema-dark: #16161b;
+  --color-cinema-border: #26262e;
+  --color-cinema-muted: #8a8a96;
+  color: #F8FAFC;
+  color-scheme: dark;
+}
+.cinema-dark input,
+.cinema-dark textarea,
+.cinema-dark select {
+  color: #F8FAFC;
 }
 
-.ba-slider-handle {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background-color: #2563EB;
-  box-shadow: 0 0 16px rgba(37, 99, 235, 0.4);
-  transform: translateX(-50%);
-  cursor: ew-resize;
-  z-index: 30;
+/* Bento Grid System */
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-auto-rows: 240px;
+  grid-auto-flow: dense;
+  gap: 1rem;
 }
+.tile-tall, .tile-large, .tile-full { grid-row: span 2; }
+.tile-ultratall { grid-row: span 3; }
 
-.ba-slider-button {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
-  border-radius: 9999px;
-  background-color: #2563EB;
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.5);
-  border: 2px solid #FFFFFF;
-  transition: transform 0.15s ease;
+@media (min-width: 640px) {
+  .bento-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 260px; gap: 1.25rem; }
+  .tile-wide, .tile-large, .tile-banner, .tile-full { grid-column: span 2; }
 }
-
-.ba-slider-button:hover {
-  transform: translate(-50%, -50%) scale(1.08);
+@media (min-width: 1024px) {
+  .bento-grid { grid-template-columns: repeat(4, 1fr); }
+  .tile-banner { grid-column: span 3; }
+  .tile-full { grid-column: span 4; }
 }
 
 /* Light Theme Scrollbar */

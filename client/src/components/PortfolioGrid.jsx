@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -16,9 +16,10 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import PortfolioTile from './PortfolioTile';
+import PublicTile from './PublicTile';
 
 // Wrapper component to provide Dnd Sortable features to individual tiles
-function SortableTileWrapper({ item, isAdmin, onEdit, onDelete, onResize, onClickTile }) {
+function SortableTileWrapper({ item, isAdmin, onEdit, onDelete, onResize, onClickTile, onTogglePublish }) {
   const {
     attributes,
     listeners,
@@ -57,6 +58,7 @@ function SortableTileWrapper({ item, isAdmin, onEdit, onDelete, onResize, onClic
         onDelete={onDelete}
         onResize={onResize}
         onClickTile={onClickTile}
+        onTogglePublish={onTogglePublish}
         dragHandleProps={isAdmin ? { ...attributes, ...listeners } : undefined}
         isDragging={isDragging}
       />
@@ -71,8 +73,10 @@ export default function PortfolioGrid({
   onDelete, 
   onResize, 
   onReorder,
-  onClickTile
+  onClickTile,
+  onTogglePublish
 }) {
+  const [visibleCount, setVisibleCount] = useState(12);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -128,6 +132,7 @@ export default function PortfolioGrid({
                 onDelete={onDelete}
                 onResize={onResize}
                 onClickTile={onClickTile}
+                onTogglePublish={onTogglePublish}
               />
             ))}
           </div>
@@ -136,20 +141,25 @@ export default function PortfolioGrid({
     );
   }
 
-  // Public mode: Standard grid without DND wrapper overhead
+  // Public mode: masonry columns, every piece keeps its own shape (no cropping)
   return (
-    <div className="bento-grid">
-      {items.map((item) => (
-        <PortfolioTile
-          key={item.id}
-          item={item}
-          isAdmin={false}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          onResize={onResize}
-          onClickTile={onClickTile}
-        />
-      ))}
-    </div>
+    <>
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 sm:gap-5">
+        {items.slice(0, visibleCount).map((item) => (
+          <PublicTile key={item.id} item={item} onClick={onClickTile} />
+        ))}
+      </div>
+      {visibleCount < items.length && (
+        <div className="text-center mt-6">
+          <button
+            type="button"
+            onClick={() => setVisibleCount(n => n + 12)}
+            className="px-6 py-3 rounded-xl bg-white border border-slate-200 hover:border-blue-500 text-slate-800 hover:text-blue-700 font-semibold text-sm shadow-sm transition-all active:scale-[0.98] cursor-pointer focus-ring"
+          >
+            Show more work <span className="text-slate-400 font-normal">({items.length - visibleCount} more)</span>
+          </button>
+        </div>
+      )}
+    </>
   );
 }

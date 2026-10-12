@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Trash2, Edit3, Move, Maximize2, Play, VolumeX, Eye } from 'lucide-react';
+import { Trash2, Edit3, Move, Play, VolumeX, Eye, EyeOff } from 'lucide-react';
 import { getMediaInfo, isEmbedType } from '../utils/media';
 
 export default function PortfolioTile({ 
@@ -9,12 +9,12 @@ export default function PortfolioTile({
   onDelete, 
   onResize,
   onClickTile,
+  onTogglePublish,
   // Drag and drop properties from parent sortable wrapper
   dragHandleProps,
   isDragging
 }) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isVisible, setIsVisible] = useState(false); // scroll-triggered fade-in
   const videoRef = useRef(null);
   const cardRef = useRef(null);
@@ -34,6 +34,8 @@ export default function PortfolioTile({
   }, []);
   
   const media = getMediaInfo(item.url);
+  const category = (Array.isArray(item.tags) && item.tags[0]) || 'Portfolio';
+  const label = item.title || `${category} project`;
   const mediaType = item.type || media.type;
 
   const handleMouseEnter = () => {
@@ -98,7 +100,7 @@ export default function PortfolioTile({
         isAdmin ? 'w-full h-full' : currentSizeClass
       } flex flex-col justify-between transition-all duration-300 ${
         isDragging ? 'opacity-40 scale-95 z-30 ring-2 ring-accent shadow-2xl' : 'hover:border-accent/40 shadow-lg'
-      } ${!isAdmin ? (isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6') : ''}`}
+      } ${!isAdmin ? (isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6') : (item.is_published ? '' : 'opacity-50 grayscale')}`}
       style={{
         transform: isAdmin ? undefined : tiltStyle,
         transition: tiltStyle
@@ -124,9 +126,10 @@ export default function PortfolioTile({
       <div className="absolute inset-0 w-full h-full z-0 pointer-events-none sm:pointer-events-auto">
         {/* Render Image */}
         {mediaType === 'image' && (
-          <img 
+          <img
+            referrerPolicy="no-referrer"
             src={item.url} 
-            alt={item.title}
+            alt={label}
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             loading="lazy"
             decoding="async"
@@ -166,16 +169,17 @@ export default function PortfolioTile({
             {isHovered && !isDragging ? (
               <iframe
                 src={media.embedUrl}
-                title={item.title}
+                title={label}
                 frameBorder="0"
                 allow="autoplay; fullscreen; picture-in-picture"
                 allowFullScreen
                 className="w-full h-full scale-[1.03] object-cover pointer-events-none"
               />
             ) : (
-              <img 
+              <img
+            referrerPolicy="no-referrer"
                 src={media.thumbnailUrl || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80'} 
-                alt={item.title}
+                alt={label}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 loading="lazy"
                 decoding="async"
@@ -216,15 +220,17 @@ export default function PortfolioTile({
         >
           <div className="text-[10px] text-accent font-mono uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse-slow"></span>
-            {item.size.toUpperCase()} FORMAT
+            {category}
           </div>
-          <h3 className="text-sm font-display font-semibold tracking-wide text-white drop-shadow-md">
-            {item.title}
-          </h3>
+          {item.title && (
+            <h3 className="text-sm font-display font-semibold tracking-wide text-white drop-shadow-md">
+              {item.title}
+            </h3>
+          )}
           {/* Tags */}
-          {Array.isArray(item.tags) && item.tags.length > 0 && (
+          {Array.isArray(item.tags) && item.tags.length > 1 && (
             <div className="flex flex-wrap gap-1 mt-1.5">
-              {item.tags.slice(0, 3).map(tag => (
+              {item.tags.slice(1, 4).map(tag => (
                 <span key={tag} className="px-1.5 py-0.5 bg-accent/15 text-accent text-[9px] font-mono rounded border border-accent/20">
                   {tag}
                 </span>
@@ -267,13 +273,22 @@ export default function PortfolioTile({
       {/* Draft status indicator (Top Right) */}
       {isAdmin && !item.is_published && (
         <div className="absolute top-3 right-3 z-20 bg-red-950/90 border border-red-500/40 text-red-400 text-[9px] font-mono font-bold px-2 py-1 rounded shadow-lg select-none">
-          DRAFT
+          HIDDEN
         </div>
       )}
 
       {/* Floating Admin Controls - Bottom Right (Edit & Delete Buttons) */}
       {isAdmin && (
         <div className="absolute bottom-3 right-3 z-20 flex gap-2 pointer-events-auto opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
+          <button
+            type="button"
+            onClick={() => onTogglePublish?.(item.id)}
+            className="p-1.5 bg-cinema-black/90 backdrop-blur-md border border-cinema-border/80 text-cinema-muted hover:text-accent hover:border-accent/40 rounded transition-colors focus-ring cursor-pointer"
+            title={item.is_published ? 'Hide from website' : 'Show on website'}
+            aria-label={item.is_published ? 'Hide from website' : 'Show on website'}
+          >
+            {item.is_published ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+          </button>
           <button
             type="button"
             onClick={() => onEdit(item)}

@@ -42,7 +42,7 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
       setInstagramUrl(settings.instagram_url || '');
       setBehanceUrl(settings.behance_url || '');
       setAvailableForWork(settings.available_for_work === '1');
-      setAdminPin(settings.admin_pin || '');
+      setAdminPin('');
       setThemeAccent(settings.theme_accent || 'amber');
       setRateCurrency(settings.rate_currency || '₹');
       setRateEditorialDay(settings.rate_editorial_day || '25,000');
@@ -257,11 +257,11 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
         {/* Row 7: Admin PIN + Theme Accent */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-cinema-border/30">
           <div className="flex flex-col gap-2 max-w-xs">
-            <label htmlFor="adminPin" className={labelClass + ' flex items-center gap-1.5'}><Lock className="w-3 h-3" /> ADMIN PIN <span className="text-cinema-muted/50 normal-case font-sans">(leave blank = no lock)</span></label>
+            <label htmlFor="adminPin" className={labelClass + ' flex items-center gap-1.5'}><Lock className="w-3 h-3" /> ADMIN PIN <span className="text-cinema-muted/50 normal-case font-sans">(leave blank to keep current)</span></label>
             <input id="adminPin" type="password" value={adminPin} onChange={e => setAdminPin(e.target.value.replace(/\D/g, '').slice(0, 6))}
               placeholder="e.g. 1234" maxLength={6}
               className={fieldClass + ' tracking-widest text-center text-lg'} />
-            <p className="text-[10px] text-cinema-muted font-mono">Set a numeric PIN to protect the #studio admin panel. Leave blank for open access.</p>
+            <p className="text-[10px] text-cinema-muted font-mono">Enter a new 4–6 digit PIN to change it. The current PIN is never shown.</p>
           </div>
           <div className="flex flex-col gap-2 max-w-xs">
             <label htmlFor="themeAccent" className={labelClass + ' flex items-center gap-1.5'}><Globe className="w-3 h-3" /> CINEMATIC ACCENT THEME</label>

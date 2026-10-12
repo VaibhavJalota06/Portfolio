@@ -6,28 +6,32 @@ export default function AgencyFAQ() {
 
   const faqs = [
     {
-      q: 'How fast is your turnaround time?',
-      a: 'Our standard turnaround is 24 to 48 hours for short-form content (Reels/TikTok/Shorts) and 3 to 4 business days for comprehensive YouTube long-form edits. We also provide express 24-hour turnaround for emergency campaigns and breaking content.'
+      q: 'Who do you work with?',
+      a: 'Brands and businesses of all kinds: food and product brands, clinics and doctors, coaches, creators and local businesses that want a strong Instagram presence.'
     },
     {
-      q: 'How do we upload and hand over raw footage?',
-      a: 'We use high-speed cloud workflows including Frame.io, Google Drive, and Dropbox. Simply drop your camera memory card dump or raw files into your dedicated agency folder, and our ingest team takes over immediately.'
+      q: 'What is the free sample reel and Instagram audit?',
+      a: 'Before you commit, we look at your current Instagram page and share clear points on what to improve. We also share a sample reel concept made for your brand, so you can see our style and thinking first. It is completely free.'
     },
     {
-      q: 'What is your revision policy?',
-      a: 'We provide unlimited revisions on all projects. You can leave frame-accurate timestamp notes directly on video drafts via Frame.io, and our editors turn around fixes within 24 hours until you are 100% thrilled with the final cut.'
+      q: 'How do I send you my videos?',
+      a: 'Record on your phone and send the clips on WhatsApp, or upload them to a shared Google Drive folder that we set up for you. No special camera or software needed. We guide you on what to record.'
     },
     {
-      q: 'Do you provide a dedicated editor or random freelancers?',
-      a: 'You are paired with a dedicated senior editor and a project manager who master your brand identity, pacing preferences, and typography guidelines over time. No outsourced mystery freelancers.'
+      q: 'Can you make reels if I don’t have time to record?',
+      a: 'Yes. We can create reels using AI visuals, animated characters, stock B-roll and graphic designs, so your page stays active even in busy weeks.'
     },
     {
-      q: 'Can you handle professional cinema Log formats?',
-      a: 'Absolutely. We run certified DaVinci Resolve Studio pipelines natively handling Sony S-Log3, Canon C-Log, Apple ProRes Log, Arri LogC, and RED IPP2 color spaces with film-print emulation and custom LUTs.'
+      q: 'What happens if I want changes?',
+      a: 'You review every reel and post before it goes live. Tell us what to change and we update it until you are happy.'
     },
     {
-      q: 'How do monthly agency retainers work?',
-      a: 'Our monthly plans reserve guaranteed weekly editing bandwidth for your channel or brand. Plans are month-to-month with no long-term lock-in, meaning you can pause, scale up, or cancel whenever your production schedule shifts.'
+      q: 'Do you only work in Delhi?',
+      a: 'We are based in Delhi, but everything works online, so we work with brands and businesses all over India.'
+    },
+    {
+      q: 'How much does it cost?',
+      a: 'It depends on how many reels and posts you need each month and whether you want full page management. After the free call and audit, we send you a clear monthly quote in ₹, with no hidden charges.'
     }
   ];
 
@@ -42,10 +46,10 @@ export default function AgencyFAQ() {
             Frequently Asked Questions
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900">
-            Everything You Need to Know
+            Frequently asked questions
           </h2>
           <p className="mt-4 text-base text-slate-600">
-            Transparent answers on how we collaborate with high-growth creators and brands.
+            Still unsure? Message us on WhatsApp and we will answer personally.
           </p>
         </div>
 

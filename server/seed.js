@@ -16,17 +16,6 @@ try {
 
   const sampleItems = [
     {
-      url: 'https://assets.mixkit.co/videos/preview/mixkit-cinematic-shot-of-a-man-with-a-camera-42861-large.mp4',
-      type: 'mp4',
-      title: "Cutframe Agency Master Showreel",
-      size: 'large',
-      sort_order: 0,
-      description: 'High-impact commercial campaigns, viral YouTube storytelling, and high-impact color grading across 180M+ aggregate impressions.',
-      tags: JSON.stringify(['Ad Creatives', 'YouTube Long-Form']),
-      is_featured: 1,
-      is_published: 1
-    },
-    {
       url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
       type: 'image',
       title: 'Generative AI Brand Film & Synthetic B-Roll',
@@ -82,8 +71,8 @@ try {
       is_published: 1
     },
     {
-      url: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',
-      type: 'mp4',
+      url: 'https://www.youtube.com/watch?v=LXb3EKWsInQ',
+      type: 'youtube',
       title: 'AI Avatar & Multilingual Video Dubbing',
       size: 'small',
       sort_order: 6,

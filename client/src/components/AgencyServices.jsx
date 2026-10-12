@@ -1,81 +1,66 @@
 import React from 'react';
-import { Smartphone, Youtube, ShoppingBag, Palette, Bot, ArrowRight, Check, Zap, Sparkles } from 'lucide-react';
+import { LayoutGrid, Clapperboard, Palette, Bot, ArrowRight, Check, Zap } from 'lucide-react';
 
 export default function AgencyServices({ onSelectService }) {
   const services = [
     {
-      id: 'ai-videos',
-      icon: Bot,
-      title: 'AI Video Creation & Generative Media',
-      subtitle: 'Runway Gen-3 • Midjourney • AI Avatars',
-      tag: 'Next-Gen AI',
-      description: 'Cutting-edge AI-generated video production, hyper-realistic B-roll synthesis, AI voice cloning, and generative visual effects tailored for high-impact social and commercial campaigns.',
+      id: 'page-management',
+      icon: LayoutGrid,
+      title: 'Instagram Page Management',
+      subtitle: 'Planning • Posting • Profile',
+      tag: 'Most Popular',
+      description: 'We run your Instagram for you: a monthly content plan, regular posting and a page that looks consistent and trustworthy to new customers.',
       deliverables: [
-        'Custom cinematic AI B-roll generation (Runway Gen-3 / Kling / Sora)',
-        'AI script ideation & automated retention storyboard analysis',
-        'Neural voice cloning & pristine multilingual dubbing',
-        'Generative image-to-video animations & product visualizers',
-        'Hybrid AI + Human precision post-production finish'
+        'Free Instagram audit to start',
+        'Monthly content calendar',
+        'Captions and hashtags written for you',
+        'Regular posting on your schedule',
+        'Profile, highlights and bio cleanup'
       ]
     },
     {
-      id: 'short-form',
-      icon: Smartphone,
-      title: 'Short-Form Content Engine',
-      subtitle: 'Reels • TikTok • YouTube Shorts',
-      tag: 'Viral Retention',
-      description: 'We turn podcasts, raw talking heads, and vlog footage into punchy, high-retaining short-form assets that capture algorithms and drive organic followers.',
+      id: 'reels',
+      icon: Clapperboard,
+      title: 'Reels & Video Editing',
+      subtitle: 'Reels • Shorts • YouTube',
+      tag: 'Free Sample Reel',
+      description: 'Send us raw clips from your phone. We turn them into short, clear reels that show your products and services, answer customer questions and keep people watching.',
       deliverables: [
-        'Aggressive hook editing (0–3s retention)',
-        'Kinetic word-by-word animated captions',
-        'Immersive sound design & audio impact cues',
-        'Custom zoom-ins, b-roll overlays & stickers',
-        'Formatted for 9:16 vertical distribution'
+        'Strong first-3-second hooks',
+        'Clean word-by-word captions',
+        'Music, sound effects and B-roll',
+        'Cuts, zooms and pacing for retention',
+        'Exported in 9:16 for Reels & Shorts'
       ]
     },
     {
-      id: 'youtube',
-      icon: Youtube,
-      title: 'YouTube Long-Form Production',
-      subtitle: 'Docuseries • Vlogs • Video Podcasts',
-      tag: 'Audience Loyalty',
-      description: 'Full-spectrum editing engineered around the retention curve. We eliminate viewer drop-off points and build compelling pacing that maximizes watch time and RPM.',
-      deliverables: [
-        'Complete pacing & story structure assembly',
-        'A-Roll and multicam switching',
-        'Contextual 4K B-Roll & motion graphics',
-        'Broadcast audio mastering (-14 LUFS)',
-        'CTR-boosting packaging & thumbnail consultation'
-      ]
-    },
-    {
-      id: 'commercial',
-      icon: ShoppingBag,
-      title: 'Commercial & Paid Ad Creatives',
-      subtitle: 'Meta Ads • TikTok Ads • Brand Films',
-      tag: 'ROAS Focused',
-      description: 'Direct-response video creatives built to convert cold traffic into buyers. We deliver multiple hook variations and product glamour shots to scale your ad spend.',
-      deliverables: [
-        '3+ interchangeable hook variations per concept',
-        'Dynamic speed ramping & macro product shots',
-        'Clear benefit callouts & motion typography',
-        'Platform-specific aspect ratio exports (1:1, 9:16, 16:9)',
-        'Direct-response conversion optimization'
-      ]
-    },
-    {
-      id: 'post-production',
+      id: 'design',
       icon: Palette,
-      title: 'Color Grading & Audio Mastering',
-      subtitle: 'DaVinci Resolve • Sound Polish',
-      tag: 'Cinema Standard',
-      description: 'Industrial post-production finishing for indie filmmakers, commercial directors, and creators looking for that unmistakable high-budget cinema texture.',
+      title: 'Graphic Design',
+      subtitle: 'Posts • Posters • Carousels',
+      tag: 'On-Brand',
+      description: 'Posts, posters and carousels that explain your services clearly, built in Photoshop and CorelDraw to match your brand’s colors and style.',
       deliverables: [
-        'Sony, Arri, RED, Canon Log to Rec.709 color pipeline',
-        'Kodak & Fujifilm cinema print emulation',
-        'Skin tone purity and isolated color masks',
-        'iZotope RX spectral audio cleanup & de-noise',
-        'Lossless ProRes 422 HQ / 4444 master exports'
+        'Instagram posts and carousels',
+        'Festival and offer posters',
+        'Thumbnails and reel covers',
+        'Print designs (flyers, cards, packaging)',
+        'A consistent look across your page'
+      ]
+    },
+    {
+      id: 'ai',
+      icon: Bot,
+      title: 'AI Videos & Creatives',
+      subtitle: 'AI Avatars • AI Visuals • B-roll',
+      tag: 'New',
+      description: 'AI-generated characters, scenes and visuals to explain your products and ideas, perfect when you don’t have footage or want something eye-catching.',
+      deliverables: [
+        'AI avatar and explainer videos',
+        'AI-generated scenes and B-roll',
+        'Animated characters for awareness reels',
+        'AI images for posts and ads',
+        'Combined with real editing for a polished finish'
       ]
     }
   ];
@@ -88,14 +73,14 @@ export default function AgencyServices({ onSelectService }) {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
             <Zap className="w-3.5 h-3.5 text-blue-600" />
-            Agency Capabilities
+            Our Services
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
-            Tailored Video Solutions <br />
-            <span className="text-blue-600">Built to Scale Your Media</span>
+            Everything your brand needs <br />
+            <span className="text-blue-600">on Instagram</span>
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            Choose a dedicated post-production engine or combine services into a monthly retainer designed for maximum output.
+            Pick one service or combine them into a monthly plan. Every plan starts with a free sample reel concept and a quick Instagram audit.
           </p>
         </div>
 
@@ -155,7 +140,7 @@ export default function AgencyServices({ onSelectService }) {
                     onClick={() => onSelectService(service.title)}
                     className="w-full py-3 rounded-xl bg-slate-50 hover:bg-blue-600 text-slate-700 hover:text-white font-semibold text-sm border border-slate-200 hover:border-transparent transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
                   >
-                    <span>Request {service.title}</span>
+                    <span>Get Started: {service.title}</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>

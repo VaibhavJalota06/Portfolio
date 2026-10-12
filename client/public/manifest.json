@@ -1,17 +1,16 @@
 {
-  "short_name": "Portfolio",
-  "name": "Cinematic Editor & Colorist Portfolio",
-  "description": "Industry-grade film editing, color grading, and narrative portfolio showcase.",
+  "short_name": "Cutframe",
+  "name": "Cutframe Studio — Media & Video Agency",
+  "description": "High-retention video editing, AI video, YouTube and ad creative production.",
   "icons": [
     {
       "src": "favicon.svg",
       "type": "image/svg+xml",
-      "sizes": "192x192 512x512"
+      "sizes": "any"
     }
   ],
   "start_url": ".",
-  "background_color": "#070708",
-  "theme_color": "#ff9f1c",
-  "display": "standalone",
-  "orientation": "portrait"
+  "background_color": "#FFFFFF",
+  "theme_color": "#2563EB",
+  "display": "standalone"
 }

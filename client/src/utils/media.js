@@ -4,6 +4,10 @@ export function isEmbedType(type) {
   return ['youtube', 'vimeo', 'gdrive', 'loom', 'streamable', 'tiktok', 'instagram', 'dailymotion', 'wistia'].includes(type);
 }
 
+// Drive files can be photos or videos; everything else non-image is a video
+export const isVideoItem = (item) =>
+  item.type === 'gdrive' ? (item.mime || '').startsWith('video/') : item.type !== 'image';
+
 // Detect type of media and parse key parameters
 export function getMediaInfo(url) {
   if (!url) {
@@ -11,7 +15,7 @@ export function getMediaInfo(url) {
   }
 
   // YouTube
-  const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|watch\?v=|shorts\/)|youtu\.be\/)([^"&?\/ ]{11})/;
+  const ytRegex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|watch\?v=|shorts\/)|youtu\.be\/)([^"&?/ ]{11})/;
   const ytMatch = url.match(ytRegex);
   if (ytMatch && ytMatch[1]) {
     const id = ytMatch[1];
@@ -24,7 +28,7 @@ export function getMediaInfo(url) {
   }
 
   // Vimeo
-  const vimeoRegex = /(?:vimeo\.com\/(?:channels\/[^\/]+\/|groups\/[^\/]+\/videos\/|album\/\d+\/video\/|video\/|showcase\/[^\/]+\/)?|player\.vimeo\.com\/video\/)(\d+)/;
+  const vimeoRegex = /(?:vimeo\.com\/(?:channels\/[^/]+\/|groups\/[^/]+\/videos\/|album\/\d+\/video\/|video\/|showcase\/[^/]+\/)?|player\.vimeo\.com\/video\/)(\d+)/;
   const vimeoMatch = url.match(vimeoRegex);
   if (vimeoMatch && vimeoMatch[1]) {
     const id = vimeoMatch[1];
@@ -45,7 +49,7 @@ export function getMediaInfo(url) {
       type: 'gdrive',
       id,
       embedUrl: `https://drive.google.com/file/d/${id}/preview`,
-      thumbnailUrl: `https://lh3.googleusercontent.com/d/${id}`
+      thumbnailUrl: `https://lh3.googleusercontent.com/d/${id}=w800`
     };
   }
 
@@ -76,7 +80,7 @@ export function getMediaInfo(url) {
   }
 
   // TikTok
-  const tiktokRegex = /(?:tiktok\.com\/@[^\/]+\/video\/|vm\.tiktok\.com\/|vt\.tiktok\.com\/)(\d+)/;
+  const tiktokRegex = /(?:tiktok\.com\/@[^/]+\/video\/|vm\.tiktok\.com\/|vt\.tiktok\.com\/)(\d+)/;
   const tiktokMatch = url.match(tiktokRegex);
   if (tiktokMatch && tiktokMatch[1]) {
     const id = tiktokMatch[1];

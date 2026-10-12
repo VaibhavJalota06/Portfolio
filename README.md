@@ -1,34 +1,10 @@
-# Cinematic Video Editing Portfolio Website
+# Cutframe Studio — Agency Website
 
-A high-end, premium portfolio website for video editors to showcase their work using a bento-style grid. Features direct HTML5 MP4 hover-playback loop, YouTube & Vimeo embedded previews, and an Admin mode to drag-to-reorder, resize, edit, and delete portfolio items in real-time.
+Agency site for Cutframe Studio: portfolio grid, services, process, results, FAQ, and a **discovery-call booking** flow connected to **Google Calendar** (free/busy, automatic Google Meet invites). Portfolio videos sync automatically from a **Google Drive** folder. A PIN-protected admin (`/#cutframe-admin`) manages projects, the client inbox, and site settings.
 
----
-
-## Technical Stack
-
-- **Frontend:** React, Vite, Tailwind CSS, `@dnd-kit` (drag-to-reorder)
-- **Backend:** Node.js, Express, SQLite (`better-sqlite3`)
-- **Aesthetic:** Cinematic dark mode (deep black `#070708` background, saturated amber `#ff9f1c` accent, animated film-grain overlay, 24fps live timecode ticker)
-
----
-
-## Repository Structure
-
-```
-├── client/              # React frontend (Vite)
-│   ├── src/             # Frontend source code
-│   │   ├── components/  # React components (Grid, Tile, AdminPanel, Toast, FilmGrain)
-│   │   ├── utils/       # Utility functions (Media URL parser and detector)
-│   │   └── index.css    # Typography, animations, and Bento grid layout CSS
-│   └── package.json     # Client dependencies
-├── server/              # Express backend
-│   ├── db.js            # SQLite database initialization
-│   ├── seed.js          # Database seeding script
-│   ├── server.js        # Express routes and REST API endpoints
-│   └── package.json     # Server dependencies
-├── package.json         # Concurrently script configuration
-└── README.md            # This documentation
-```
+- **Frontend:** React 19, Vite, Tailwind CSS v4, `@dnd-kit` (admin drag-to-reorder) — `client/`
+- **Backend:** Node.js, Express, SQLite via `sql.js` — `server/`
+- **Google setup:** see [docs/GOOGLE-SETUP.md](docs/GOOGLE-SETUP.md)
 
 ---
 
@@ -44,7 +20,7 @@ npm run setup
 ```
 
 ### 2. Seed the Database
-Populate the SQLite database with 7 high-fidelity cinematic sample portfolio items:
+Populate the database with sample portfolio items (**this deletes existing items**):
 ```bash
 npm run seed
 ```
@@ -66,3 +42,8 @@ The server runs on [http://localhost:5000](http://localhost:5000) and the fronte
 - **`PUT /api/items/:id`**: Update an existing portfolio item.
 - **`DELETE /api/items/:id`**: Remove a portfolio item.
 - **`PATCH /api/items/reorder`**: Batch reorder items (receives array of item IDs).
+- **`GET /api/booking/slots?date=YYYY-MM-DD`**: Free discovery-call times (IST) for a day.
+- **`POST /api/booking`**: Book a call → Google Calendar event + Meet link, copy in the admin inbox.
+- **`GET /api/google/status`**, **`GET /api/google/connect`**, **`POST /api/google/sync`** (admin): Google connection + Drive sync.
+
+Admin endpoints require the `x-admin-pin` header once a PIN is set. Run server checks with `npm test --prefix server`.
