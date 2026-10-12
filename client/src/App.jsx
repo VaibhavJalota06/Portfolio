@@ -90,121 +90,11 @@ export default function App() {
   const [messagesLoading, setMessagesLoading] = useState(false);
 
   // Custom Aesthetic Enhanced States & Refs
-  const [isHoveringInteractive, setIsHoveringInteractive] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [isHeroMuted, setIsHeroMuted] = useState(true);
   const [isHeroPlaying, setIsHeroPlaying] = useState(true);
   
   // Share Modal
   const [showShareModal, setShowShareModal] = useState(false);
-
-  // Toggle modal-open class on body to reveal native OS cursor during Lightbox/Modal previews
-  const isModalOpen = Boolean(activeLightboxItem || showContactForm || showCommandPalette || itemToDelete || showShareModal || showDiscoveryModal);
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.classList.add('modal-open');
-    } else {
-      document.body.classList.remove('modal-open');
-    }
-    return () => {
-      document.body.classList.remove('modal-open');
-    };
-  }, [isModalOpen]);
-
-  const audioRef = useRef(null);
-  const heroVideoRef = useRef(null);
-  const lightboxVideoRef = useRef(null);
-
-  // Reset loop state when closing lightbox
-  useEffect(() => {
-    if (!activeLightboxItem) {
-      setIsLightboxLooping(false);
-    }
-  }, [activeLightboxItem]);
-
-  // Refs for zero-render DOM-based high-performance cursor & ambient glow tracking
-  const cursorDotRef = useRef(null);
-  const cursorRingRef = useRef(null);
-  const glowRef = useRef(null);
-
-  // 1. High-Performance Mouse coordinate tracker for custom cursor & ambient glow (direct DOM mutation, 0% React render overhead)
-  useEffect(() => {
-    let mouseX = -1000;
-    let mouseY = -1000;
-    let ringX = -1000;
-    let ringY = -1000;
-
-    const handleMouseMove = (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      
-      // Direct positioning for inner dot (instant track)
-      if (cursorDotRef.current) {
-        cursorDotRef.current.style.left = `${mouseX}px`;
-        cursorDotRef.current.style.top = `${mouseY}px`;
-      }
-      
-      // Direct positioning for background glow
-      if (glowRef.current) {
-        glowRef.current.style.background = `radial-gradient(600px circle at ${mouseX}px ${mouseY}px, rgba(255, 159, 28, 0.055), transparent 80%)`;
-      }
-    };
-
-    let frameId;
-    const tick = () => {
-      // Direct positioning for outer ring (interpolated lagging lag track)
-      if (cursorRingRef.current) {
-        // First frame initialization fix
-        if (ringX === -1000) {
-          ringX = mouseX;
-          ringY = mouseY;
-        } else {
-          ringX += (mouseX - ringX) * 0.65;
-          ringY += (mouseY - ringY) * 0.65;
-        }
-        cursorRingRef.current.style.left = `${ringX}px`;
-        cursorRingRef.current.style.top = `${ringY}px`;
-      }
-      frameId = requestAnimationFrame(tick);
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    frameId = requestAnimationFrame(tick);
-
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      cancelAnimationFrame(frameId);
-    };
-  }, []);
-
-  // 1b. Mouseover interactive elements tracker for custom cursor reactions
-  useEffect(() => {
-    if (isAdmin) {
-      setIsHoveringInteractive(false);
-      return;
-    }
-    const handleMouseOver = (e) => {
-      const target = e.target;
-      if (!target) return;
-      
-      const isInteractive = 
-        target.tagName === 'BUTTON' || 
-        target.tagName === 'A' || 
-        target.tagName === 'SELECT' ||
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.closest('button') || 
-        target.closest('a') || 
-        target.closest('.cursor-pointer') ||
-        target.closest('[role="button"]');
-        
-      setIsHoveringInteractive(!!isInteractive);
-    };
-    
-    window.addEventListener('mouseover', handleMouseOver);
-    return () => window.removeEventListener('mouseover', handleMouseOver);
-  }, [isAdmin]);
 
 
 
@@ -715,43 +605,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Film Clapperboard Slate Intro Loader */}
-      {loading && (
-        <div 
-          className="fixed inset-0 bg-cinema-black z-50 flex items-center justify-center flex-col animate-fade-out" 
-          style={{ animationDelay: '1.4s', animationFillMode: 'forwards' }}
-        >
-          {/* Film slate box */}
-          <div className="relative w-80 bg-cinema-card border-2 border-white rounded-lg p-6 font-mono text-[10px] text-white uppercase tracking-wider overflow-hidden shadow-[0_0_50px_rgba(255,159,28,0.08)]">
-            {/* Clapper Arm */}
-            <div className="absolute top-0 left-0 right-0 h-8 bg-white text-cinema-black font-bold flex items-center justify-between px-4 text-xs animate-clack origin-bottom-left border-b-2 border-white">
-              <span>///</span> <span>SLATE TIMELINE</span> <span>///</span>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4 w-full pt-6 text-left mt-2">
-              <div className="border-r border-white/20 pr-2 pb-2">
-                <span className="text-[8px] text-cinema-muted font-semibold">PROD:</span>
-                <div className="font-bold truncate mt-0.5 text-xs text-accent">{settings?.editor_name || "ALEX KANE"}</div>
-              </div>
-              <div className="pb-2">
-                <span className="text-[8px] text-cinema-muted font-semibold">ROLL:</span>
-                <div className="font-bold mt-0.5 text-xs text-white">A-01</div>
-              </div>
-              <div className="border-t border-r border-white/20 pt-2 pr-2">
-                <span className="text-[8px] text-cinema-muted font-semibold">TAKE:</span>
-                <div className="font-bold mt-0.5 text-xs text-white">01</div>
-              </div>
-              <div className="border-t border-white/20 pt-2">
-                <span className="text-[8px] text-cinema-muted font-semibold">SOUND:</span>
-                <div className="font-bold mt-0.5 text-xs text-accent">SYNCED</div>
-              </div>
-            </div>
-            <div className="w-full border-t border-white/20 mt-4 pt-3 text-[8px] text-center text-cinema-muted animate-pulse">
-              [ INITIALIZING SHOWCASE CORE ]
-            </div>
-          </div>
-        </div>
-      )}
+
 
 
 
