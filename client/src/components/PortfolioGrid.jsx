@@ -145,8 +145,8 @@ export default function PortfolioGrid({
   return (
     <>
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 sm:gap-5">
-        {items.slice(0, visibleCount).map((item) => (
-          <PublicTile key={item.id} item={item} onClick={onClickTile} />
+        {items.slice(0, visibleCount).map((item, index) => (
+          <PublicTile key={item.id} item={item} index={index} onClick={onClickTile} />
         ))}
       </div>
       {visibleCount < items.length && (

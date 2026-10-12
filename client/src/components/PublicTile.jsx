@@ -5,7 +5,7 @@ import { getMediaInfo, isVideoItem } from '../utils/media';
 const FALLBACK = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="9"><rect width="16" height="9" fill="#e2e8f0"/></svg>');
 
 // Public portfolio tile: media keeps its natural aspect ratio (masonry), nothing is cropped.
-export default function PublicTile({ item, onClick }) {
+export default function PublicTile({ item, index = 0, onClick }) {
   const [loaded, setLoaded] = useState(false);
   const media = getMediaInfo(item.url);
   const video = isVideoItem(item);
@@ -14,6 +14,7 @@ export default function PublicTile({ item, onClick }) {
   const src = item.type === 'image' ? item.url : media.thumbnailUrl;
   // Known shape -> reserve the space now, so the page doesn't jump while images load
   const aspect = item.aspect || (['youtube', 'vimeo'].includes(item.type) ? '16/9' : null);
+  const isEager = index < 6;
 
   return (
     <button
@@ -21,20 +22,33 @@ export default function PublicTile({ item, onClick }) {
       onClick={() => onClick?.(item)}
       aria-label={`Open ${label}`}
       className="group relative block w-full mb-4 sm:mb-5 break-inside-avoid overflow-hidden rounded-2xl bg-slate-100 text-left shadow-sm hover:shadow-xl ring-1 ring-slate-200/70 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer focus-ring"
+      style={aspect ? { aspectRatio: aspect } : undefined}
     >
+      {/* Skeleton shimmer while loading */}
+      {!loaded && (
+        <div 
+          className="absolute inset-0 bg-slate-200/80 animate-pulse flex items-center justify-center pointer-events-none"
+        >
+          <div className="w-10 h-10 rounded-full bg-slate-300/80 flex items-center justify-center shadow-inner">
+            <Play className="w-4 h-4 text-slate-400 fill-slate-400 ml-0.5" />
+          </div>
+        </div>
+      )}
+
       {item.type === 'mp4' ? (
         <video src={item.url} muted playsInline preload="metadata" className="block w-full h-auto" onLoadedData={() => setLoaded(true)} />
       ) : (
         <img
           src={src || FALLBACK}
           alt={label}
-          loading="lazy"
+          loading={isEager ? 'eager' : 'lazy'}
+          fetchPriority={isEager ? 'high' : 'auto'}
           decoding="async"
           referrerPolicy="no-referrer"
           onLoad={() => setLoaded(true)}
           onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK; setLoaded(true); }}
           style={aspect ? { aspectRatio: aspect } : undefined}
-          className={`block w-full ${aspect ? 'object-cover' : 'h-auto'} transition-all duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : `opacity-0 ${aspect ? '' : 'min-h-48'}`}`}
+          className={`block w-full ${aspect ? 'object-cover h-full' : 'h-auto'} transition-all duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : 'opacity-0 min-h-48'}`}
         />
       )}
 
