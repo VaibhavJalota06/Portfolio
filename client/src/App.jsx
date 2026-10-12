@@ -155,19 +155,19 @@ export default function App() {
 
   // Inject OG / Twitter meta tags dynamically
   useEffect(() => {
-    const name = settings?.editor_name || 'ALEX KANE';
-    const desc = settings?.hero_tagline || 'Cinematic editor and colorist portfolio';
+    const name = settings?.editor_name || 'Cutframe Studio';
+    const desc = settings?.hero_tagline || 'We engineer high-retention videos that scale modern brands and creators.';
     const setMeta = (prop, content, attr = 'property') => {
       let el = document.querySelector(`meta[${attr}="${prop}"]`);
       if (!el) { el = document.createElement('meta'); el.setAttribute(attr, prop); document.head.appendChild(el); }
       el.setAttribute('content', content);
     };
-    document.title = `${name.toUpperCase()} | Cinematic Editor & Colorist`;
-    setMeta('og:title', `${name} | Portfolio`);
+    document.title = `${name} | High-Retention Media & Video Agency`;
+    setMeta('og:title', `${name} | High-Retention Media Agency`);
     setMeta('og:description', desc);
     setMeta('og:type', 'website');
     setMeta('twitter:card', 'summary_large_image', 'name');
-    setMeta('twitter:title', `${name} | Portfolio`, 'name');
+    setMeta('twitter:title', `${name} | High-Retention Media Agency`, 'name');
     setMeta('twitter:description', desc, 'name');
   }, [settings]);
 
@@ -487,7 +487,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen bg-white text-slate-900 animate-fade-in">
 
       {/* Contact Form Modal */}
       {showContactForm && <ContactForm onClose={() => setShowContactForm(false)} settings={settings} />}
@@ -889,33 +889,36 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Tags filter row */}
+                  {/* Agency Category filter row */}
                   {(() => {
-                    const allTags = [...new Set(filteredItems.flatMap(i => Array.isArray(i.tags) ? i.tags : []))];
-                    if (allTags.length === 0) return null;
+                    const agencyCategories = [
+                      'All Work',
+                      'AI Videos',
+                      'Short-Form / Reels',
+                      'YouTube Long-Form',
+                      'Ad Creatives',
+                      'Thumbnails & Packaging'
+                    ];
+
                     return (
-                      <div className="flex flex-wrap gap-2 mb-8">
-                        <button 
-                          onClick={() => setActiveTagFilter('')}
-                          className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide transition-all cursor-pointer border ${
-                            !activeTagFilter 
-                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                              : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-600'
-                          }`}>
-                          ALL TAGS
-                        </button>
-                        {allTags.map(tag => (
-                          <button 
-                            key={tag} 
-                            onClick={() => setActiveTagFilter(activeTagFilter === tag ? '' : tag)}
-                            className={`px-3.5 py-1.5 rounded-full text-xs font-mono font-medium tracking-wide transition-all cursor-pointer border ${
-                              activeTagFilter === tag 
-                                ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                                : 'bg-white border-slate-200 text-slate-600 hover:border-blue-300 hover:text-blue-600'
-                            }`}>
-                            {tag}
-                          </button>
-                        ))}
+                      <div className="flex flex-wrap gap-2.5 mb-8">
+                        {agencyCategories.map(cat => {
+                          const isAll = cat === 'All Work';
+                          const isSelected = isAll ? !activeTagFilter : activeTagFilter === cat;
+
+                          return (
+                            <button 
+                              key={cat} 
+                              onClick={() => setActiveTagFilter(isAll ? '' : (activeTagFilter === cat ? '' : cat))}
+                              className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-normal transition-all duration-150 cursor-pointer border active:scale-[0.98] ${
+                                isSelected 
+                                  ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
+                                  : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                              }`}>
+                              {cat}
+                            </button>
+                          );
+                        })}
                       </div>
                     );
                   })()}

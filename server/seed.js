@@ -18,11 +18,22 @@ try {
     {
       url: 'https://assets.mixkit.co/videos/preview/mixkit-cinematic-shot-of-a-man-with-a-camera-42861-large.mp4',
       type: 'mp4',
-      title: "Cutframe Agency Master Showreel 2026",
+      title: "Cutframe Agency Master Showreel",
       size: 'large',
       sort_order: 0,
-      description: 'The pinnacle of our high-retention video production. Commercial campaigns, viral YouTube storytelling, and high-impact color grading across 180M+ aggregate impressions.',
-      tags: JSON.stringify(['Showreel', 'Agency Master', 'Commercials']),
+      description: 'High-impact commercial campaigns, viral YouTube storytelling, and high-impact color grading across 180M+ aggregate impressions.',
+      tags: JSON.stringify(['Ad Creatives', 'YouTube Long-Form']),
+      is_featured: 1,
+      is_published: 1
+    },
+    {
+      url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+      type: 'image',
+      title: 'Generative AI Brand Film & Synthetic B-Roll',
+      size: 'wide',
+      sort_order: 1,
+      description: 'Next-gen Runway Gen-3 and Midjourney generative visuals for high-converting brand commercials and futuristic product sequences.',
+      tags: JSON.stringify(['AI Videos', 'Ad Creatives']),
       is_featured: 1,
       is_published: 1
     },
@@ -31,9 +42,9 @@ try {
       type: 'image',
       title: 'Short-Form Viral Retention Engine',
       size: 'tall',
-      sort_order: 1,
-      description: 'Scaled creator channel by 240k followers in 60 days. Includes custom kinetic typography, visual hook interruptions every 3.5 seconds, and immersive SFX layering.',
-      tags: JSON.stringify(['Short-Form', 'Reels', 'TikTok', 'Viral']),
+      sort_order: 2,
+      description: 'Scaled creator channel by 240k followers in 60 days. Includes custom kinetic typography, visual hook interruptions every 3.5 seconds, and sound design.',
+      tags: JSON.stringify(['Short-Form / Reels']),
       is_featured: 1,
       is_published: 1
     },
@@ -42,21 +53,10 @@ try {
       type: 'youtube',
       title: 'YouTube Long-Form Docuseries - 1.4M Views',
       size: 'wide',
-      sort_order: 2,
-      description: 'Comprehensive pacing reconstruction and multicam assembly. Boosted average percentage viewed from 34% to 58%, earning spot on the YouTube trending tab.',
-      tags: JSON.stringify(['YouTube', 'Long-Form', 'Docuseries']),
-      is_featured: 1,
-      is_published: 1
-    },
-    {
-      url: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80',
-      type: 'image',
-      title: 'DaVinci Resolve S-Log3 Cinema Color Master',
-      size: 'small',
       sort_order: 3,
-      description: 'Hollywood cinema color pipeline with custom Kodak 2383 print curve, skin tone fidelity protection, and balanced shadow dynamic range.',
-      tags: JSON.stringify(['Color Grading', 'DaVinci Resolve', 'Cinema']),
-      is_featured: 0,
+      description: 'Comprehensive pacing reconstruction and multicam assembly. Boosted average percentage viewed from 34% to 58%, earning spot on the YouTube trending tab.',
+      tags: JSON.stringify(['YouTube Long-Form']),
+      is_featured: 1,
       is_published: 1
     },
     {
@@ -66,29 +66,29 @@ try {
       size: 'large',
       sort_order: 4,
       description: 'High-converting video ad creative for DTC brand launch. 3 hook variations, seamless speed ramping, macro product shots, and direct-response callouts.',
-      tags: JSON.stringify(['Commercial', 'Paid Ads', 'ROAS', 'Vimeo']),
+      tags: JSON.stringify(['Ad Creatives']),
       is_featured: 1,
       is_published: 1
     },
     {
-      url: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80',
+      url: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
       type: 'image',
-      title: 'High-Retention Video Podcast Production',
-      size: 'wide',
+      title: 'High-CTR YouTube Packaging & Thumbnails',
+      size: 'small',
       sort_order: 5,
-      description: 'Studio multicam switching, broadcast audio restoration, and automated highlight extraction for weekly high-profile executive interviews.',
-      tags: JSON.stringify(['Podcast', 'Multicam', 'Audio Polish']),
-      is_featured: 0,
+      description: 'Psychologically tested thumbnail packaging and typography designed to double organic click-through rates across tech, gaming, and finance channels.',
+      tags: JSON.stringify(['Thumbnails & Packaging', 'YouTube Long-Form']),
+      is_featured: 1,
       is_published: 1
     },
     {
       url: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',
       type: 'mp4',
-      title: 'Sound Design & Foley Reconstruction',
+      title: 'AI Avatar & Multilingual Video Dubbing',
       size: 'small',
       sort_order: 6,
-      description: 'Custom acoustic Foley and spatial sound layering for an outdoor lifestyle brand commercial, engineered to -14 LUFS standards.',
-      tags: JSON.stringify(['Sound Design', 'Foley', 'Audio Mastering']),
+      description: 'Neural voice cloning with hyper-realistic lip-syncing for global product launches across 5 languages.',
+      tags: JSON.stringify(['AI Videos', 'Short-Form / Reels']),
       is_featured: 0,
       is_published: 1
     }
@@ -102,31 +102,20 @@ try {
 
   seedTransaction(sampleItems);
 
-  // Update settings table with Cutframe Studio agency brand data
+  // Update website settings
   const updateSetting = db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)');
-  const agencySettings = {
-    editor_name: "Cutframe Studio",
-    hero_tagline: "We engineer high-retention videos that scale modern brands and creators.",
-    showreel_url: "https://assets.mixkit.co/videos/preview/mixkit-cinematic-shot-of-a-man-with-a-camera-42861-large.mp4",
-    bio_text: "Cutframe Studio is a full-service media production and post-production engine. We transform raw footage into magnetic, high-retaining short-form assets, cinematic YouTube stories, and commercial ad creatives designed to maximize reach, retention, and return on ad spend.",
-    location_info: "FULL-SERVICE MEDIA AGENCY • DAVINCI RESOLVE / PREMIERE PRO / AFTER EFFECTS",
-    contact_email: "hello@cutframestudio.com",
-    contact_github: "github.com/cutframestudio",
-    contact_vimeo: "vimeo.com/cutframestudio",
-    gallery_title: "AGENCY VIDEO SHOWCASE",
-    gallery_description: "Filter our recent viral short-form campaigns, YouTube long-form stories, and high-conversion commercial ads.",
-    hero_label: "CUTFRAME STUDIO • FULL-SERVICE MEDIA ENGINE",
-    instagram_url: "instagram.com/cutframestudio",
-    behance_url: "",
-    available_for_work: "1",
-    theme_accent: "blue"
-  };
-
-  for (const [k, v] of Object.entries(agencySettings)) {
-    updateSetting.run(k, v);
-  }
+  const updateSettingsTransaction = db.transaction(() => {
+    updateSetting.run('editor_name', 'Cutframe Studio');
+    updateSetting.run('hero_tagline', 'We engineer high-retention videos that scale modern brands and creators.');
+    updateSetting.run('bio_text', 'Cutframe Studio is a full-service media production and post-production engine. We transform raw footage and ideas into magnetic, high-retaining short-form assets, cinematic YouTube stories, and commercial ad creatives.');
+    updateSetting.run('hero_label', 'CUTFRAME STUDIO • VIDEO & MEDIA ENGINE');
+    updateSetting.run('theme_accent', 'blue');
+    updateSetting.run('contact_email', 'hello@cutframestudio.com');
+    updateSetting.run('rate_currency', '₹');
+  });
+  updateSettingsTransaction();
 
   console.log('Seeding complete. Seeded 7 Cutframe Studio agency items and updated agency settings successfully.');
 } catch (error) {
-  console.error('Error seeding database:', error);
+  console.error('Error during database seeding:', error);
 }

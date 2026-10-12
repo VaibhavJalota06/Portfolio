@@ -19,18 +19,15 @@ export default function AgencyHero({ onOpenDiscovery }) {
   ];
 
   return (
-    <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden bg-gradient-to-b from-blue-50/40 via-white to-white">
-      {/* Subtle geometric grid background accent */}
+    <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-28 overflow-hidden bg-white">
+      {/* Crisp subtle micro-grid */}
       <div 
-        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{
-          backgroundImage: `radial-gradient(#2563EB 1px, transparent 1px)`,
+          backgroundImage: `radial-gradient(#0F172A 1px, transparent 1px)`,
           backgroundSize: '24px 24px'
         }}
       />
-
-      {/* Decorative gradient glow blobs */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-blue-400/10 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         

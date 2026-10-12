@@ -1,15 +1,29 @@
 import React from 'react';
-import { Smartphone, Youtube, ShoppingBag, Palette, ArrowRight, Check, Zap, Clock, Shield } from 'lucide-react';
+import { Smartphone, Youtube, ShoppingBag, Palette, Bot, ArrowRight, Check, Zap, Sparkles } from 'lucide-react';
 
 export default function AgencyServices({ onSelectService }) {
   const services = [
+    {
+      id: 'ai-videos',
+      icon: Bot,
+      title: 'AI Video Creation & Generative Media',
+      subtitle: 'Runway Gen-3 • Midjourney • AI Avatars',
+      tag: 'Next-Gen AI',
+      description: 'Cutting-edge AI-generated video production, hyper-realistic B-roll synthesis, AI voice cloning, and generative visual effects tailored for high-impact social and commercial campaigns.',
+      deliverables: [
+        'Custom cinematic AI B-roll generation (Runway Gen-3 / Kling / Sora)',
+        'AI script ideation & automated retention storyboard analysis',
+        'Neural voice cloning & pristine multilingual dubbing',
+        'Generative image-to-video animations & product visualizers',
+        'Hybrid AI + Human precision post-production finish'
+      ]
+    },
     {
       id: 'short-form',
       icon: Smartphone,
       title: 'Short-Form Content Engine',
       subtitle: 'Reels • TikTok • YouTube Shorts',
       tag: 'Viral Retention',
-      turnaround: '24–48 Hours',
       description: 'We turn podcasts, raw talking heads, and vlog footage into punchy, high-retaining short-form assets that capture algorithms and drive organic followers.',
       deliverables: [
         'Aggressive hook editing (0–3s retention)',
@@ -25,7 +39,6 @@ export default function AgencyServices({ onSelectService }) {
       title: 'YouTube Long-Form Production',
       subtitle: 'Docuseries • Vlogs • Video Podcasts',
       tag: 'Audience Loyalty',
-      turnaround: '3–4 Days',
       description: 'Full-spectrum editing engineered around the retention curve. We eliminate viewer drop-off points and build compelling pacing that maximizes watch time and RPM.',
       deliverables: [
         'Complete pacing & story structure assembly',
@@ -41,7 +54,6 @@ export default function AgencyServices({ onSelectService }) {
       title: 'Commercial & Paid Ad Creatives',
       subtitle: 'Meta Ads • TikTok Ads • Brand Films',
       tag: 'ROAS Focused',
-      turnaround: '48 Hours',
       description: 'Direct-response video creatives built to convert cold traffic into buyers. We deliver multiple hook variations and product glamour shots to scale your ad spend.',
       deliverables: [
         '3+ interchangeable hook variations per concept',
@@ -57,7 +69,6 @@ export default function AgencyServices({ onSelectService }) {
       title: 'Color Grading & Audio Mastering',
       subtitle: 'DaVinci Resolve • Sound Polish',
       tag: 'Cinema Standard',
-      turnaround: '48 Hours',
       description: 'Industrial post-production finishing for indie filmmakers, commercial directors, and creators looking for that unmistakable high-budget cinema texture.',
       deliverables: [
         'Sony, Arri, RED, Canon Log to Rec.709 color pipeline',
@@ -104,12 +115,8 @@ export default function AgencyServices({ onSelectService }) {
                       <Icon className="w-6 h-6" />
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-semibold font-mono">
+                      <span className="px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold font-mono">
                         {service.tag}
-                      </span>
-                      <span className="flex items-center gap-1 text-xs text-slate-500 font-medium font-mono">
-                        <Clock className="w-3.5 h-3.5 text-slate-400" />
-                        {service.turnaround}
                       </span>
                     </div>
                   </div>
