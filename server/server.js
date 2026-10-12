@@ -1,6 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 dotenv.config();
 const { default: db } = await import('./db.js');
 const google = await import('./google.js');
@@ -392,6 +395,14 @@ app.get('/api/cron', (req, res) => {
 
 setInterval(syncDriveSafe, 5 * 60 * 1000);
 syncDriveSafe();
+
+// ─── WEBSITE (built client) ─────────────────────────────────────────────────
+// In production one service serves both the API and the website (client/dist), so no separate host is needed.
+const clientDist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../client/dist');
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
+  app.get(/^\/(?!api\/).*/, (req, res) => res.sendFile(path.join(clientDist, 'index.html')));
+}
 
 // ─── START ───────────────────────────────────────────────────────────────────
 

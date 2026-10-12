@@ -8,6 +8,15 @@ Agency site for Cutframe Studio: portfolio grid, services, process, results, FAQ
 
 ---
 
+## Hosting (free)
+
+One free Render web service runs both the API and the website (`server/` serves `client/dist`).
+- Render's install step builds the website automatically (`postinstall` in `server/package.json`).
+- Render only auto-deploys on changes inside `server/`. After a website-only change, use **Manual Deploy** in Render.
+- Data survives restarts via the Supabase backup (`SUPABASE_URL`, `SUPABASE_KEY`, `STATE_TOKEN`; set them **only** on the live server).
+- A free cron-job.org ping to `/api/cron?key=CRON_SECRET` every 10 minutes keeps the free server awake and syncs Drive.
+- Admin: `https://YOUR-SITE/#cutframe-admin` (private, PIN-protected).
+
 ## Installation & Setup
 
 ### Prerequisites
