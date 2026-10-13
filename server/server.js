@@ -234,6 +234,12 @@ app.put('/api/settings', verifyAdmin, (req, res) => {
 
 // ─── CONTACT FORM ────────────────────────────────────────────────────────────
 
+// Fire-and-forget Gmail alert: a failed email must never fail the client's submission.
+function alertOwner(subject, text, replyTo) {
+  if (!google.isConnected()) return;
+  google.notifyOwner(subject, text, replyTo).catch((err) => console.error('Owner alert email failed:', err.message));
+}
+
 app.post('/api/contact', (req, res) => {
   const { name, email, message } = req.body;
   if (!name || !email || !message) return res.status(400).json({ error: 'All fields are required.' });
@@ -246,6 +252,7 @@ app.post('/api/contact', (req, res) => {
     console.log(`Message: ${message}`);
     console.log(`Time:    ${new Date().toISOString()}`);
     console.log('===============================================\n');
+    alertOwner(`New message from ${name.trim()}`, `From: ${name.trim()} <${email.trim()}>\n\n${message.trim()}`, email.trim());
     res.json({ message: 'Message received. Thank you!' });
   } catch (error) {
     console.error('Error saving contact message:', error);
@@ -323,13 +330,12 @@ app.post('/api/booking', async (req, res) => {
       calendarEvent = true;
     }
 
-    db.prepare('INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)').run(
-      booking.name, booking.email,
-      `[DISCOVERY CALL] ${date} at ${time} IST (${google.CALL_MINUTES} min)
+    const details = `[DISCOVERY CALL] ${date} at ${time} IST (${google.CALL_MINUTES} min)
 Focus: ${booking.topic}
 Channel: ${booking.channelUrl || 'N/A'}
-Meet: ${meetLink || (calendarEvent ? 'created' : 'Google Calendar not connected — send the invite manually')}`
-    );
+Meet: ${meetLink || (calendarEvent ? 'created' : 'Google Calendar not connected — send the invite manually')}`;
+    db.prepare('INSERT INTO contact_messages (name, email, message) VALUES (?, ?, ?)').run(booking.name, booking.email, details);
+    alertOwner(`📞 ${booking.name} booked a call: ${date} at ${time} IST`, `Client: ${booking.name} <${booking.email}>\n\n${details}`, booking.email);
     res.json({ ok: true, date, time, minutes: google.CALL_MINUTES, meetLink, calendarEvent });
   } catch (error) {
     console.error('Error booking call:', error.message);
@@ -388,7 +394,6 @@ app.post('/api/google/sync', verifyAdmin, async (req, res) => {
   res.json(result);
 });
 
-// Public, cheap: pinged by the server's own keep-awake timer (below) and, as a backup, GitHub Actions.
 // Streams a published Drive video. Drive's iframe player breaks on iOS (double controls, squashed reels).
 // Only ids already in the public portfolio are served, so this never exposes other files in the owner's Drive.
 app.get('/api/drive/:id/video', async (req, res) => {
@@ -411,7 +416,8 @@ app.get('/api/drive/:id/video', async (req, res) => {
   }
 });
 
-app.get('/api/health',(req, res) => res.json({ ok: true }));
+// Public, cheap: pinged by the server's own keep-awake timer (below) and, as a backup, GitHub Actions.
+app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 // Hit every ~10 min by a free external cron (cron-job.org): keeps a free-tier host awake and syncs Drive.
 app.get('/api/cron', (req, res) => {

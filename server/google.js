@@ -6,6 +6,7 @@ const SCOPES = [
   'https://www.googleapis.com/auth/calendar.events',
   'https://www.googleapis.com/auth/calendar.freebusy',
   'https://www.googleapis.com/auth/drive.readonly',
+  'https://www.googleapis.com/auth/gmail.insert', // new-lead alerts land in the owner's inbox
 ].join(' ');
 
 export const SLOTS = ['11:00', '12:30', '14:00', '15:30', '16:30', '17:30', '19:00']; // IST
@@ -121,6 +122,30 @@ export async function bookCall({ name, email, date, time, topic, channelUrl }) {
     }
   );
   return { meetLink: event.hangoutLink || '', eventLink: event.htmlLink || '' };
+}
+
+// ─── GMAIL (new-lead alerts) ─────────────────────────────────────────────────
+
+// Imported (not sent) so it arrives like normal mail from "Cutframe Website" and the phone notifies;
+// mail you send yourself often doesn't. Reply goes straight to the client.
+export async function notifyOwner(subject, text, replyTo = '') {
+  const b64 = (s) => Buffer.from(s, 'utf8').toString('base64');
+  const safe = (s) => String(s).replace(/[\r\n]/g, ' ');
+  const mime = [
+    'From: Cutframe Website <noreply@cutframestudio.in>',
+    `To: ${safe(process.env.OWNER_EMAIL || 'me')}`,
+    ...(replyTo ? [`Reply-To: ${safe(replyTo)}`] : []),
+    `Subject: =?UTF-8?B?${b64(subject)}?=`,
+    `Date: ${new Date().toUTCString()}`,
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: base64',
+    '',
+    b64(text),
+  ].join('\r\n');
+  await gapi('https://gmail.googleapis.com/gmail/v1/users/me/messages/import?neverMarkSpam=true', {
+    method: 'POST',
+    body: JSON.stringify({ raw: Buffer.from(mime).toString('base64url'), labelIds: ['INBOX', 'UNREAD'] }),
+  });
 }
 
 // ─── DRIVE ───────────────────────────────────────────────────────────────────
