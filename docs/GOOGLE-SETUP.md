@@ -1,7 +1,7 @@
 # Connect Google Calendar + Drive (one-time, ~10 minutes)
 
 After this:
-- **Book a call** only offers times that are free on your Google Calendar. Each booking creates a calendar event with a Google Meet link. Google emails the invite to the client, and the event appears on your calendar (and goes to `OWNER_EMAIL` too, if set).
+- **Book a call** only offers times that are free on your Google Calendar. Each booking creates a calendar event with a Google Meet link. Google emails the invite to the client, the event appears on your calendar, and an alert email lands in your Gmail inbox (needs the Gmail API enabled and Google reconnected once).
 - **Drive folder**: any video or image you drop into your portfolio folder appears in the Work section within 5 minutes. Deleting it from Drive removes it from the site.
 
 ## 1. Google Cloud project

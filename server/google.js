@@ -100,9 +100,7 @@ export async function freeSlots(date) {
 export async function bookCall({ name, email, date, time, topic, channelUrl }) {
   const start = istDate(date, time);
   const end = new Date(start.getTime() + CALL_MINUTES * 60000);
-  const attendees = [{ email, displayName: name }];
-  const owner = process.env.OWNER_EMAIL;
-  if (owner && owner.toLowerCase() !== email.toLowerCase()) attendees.push({ email: owner });
+  const attendees = [{ email, displayName: name }]; // the owner is the organizer and is alerted by notifyOwner
 
   const event = await gapi(
     'https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&sendUpdates=all',
@@ -133,7 +131,7 @@ export async function notifyOwner(subject, text, replyTo = '') {
   const safe = (s) => String(s).replace(/[\r\n]/g, ' ');
   const mime = [
     'From: Cutframe Website <noreply@cutframestudio.in>',
-    `To: ${safe(process.env.OWNER_EMAIL || 'me')}`,
+    'To: undisclosed-recipients:;', // imported straight into the connected account's inbox
     ...(replyTo ? [`Reply-To: ${safe(replyTo)}`] : []),
     `Subject: =?UTF-8?B?${b64(subject)}?=`,
     `Date: ${new Date().toUTCString()}`,
