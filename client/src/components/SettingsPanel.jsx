@@ -18,6 +18,10 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
   const [adminPin, setAdminPin]             = useState('');
   const [themeAccent, setThemeAccent]       = useState('blue');
   
+  // Analytics & SEO
+  const [gaMeasurementId, setGaMeasurementId]         = useState('');
+  const [googleSiteVerification, setGoogleSiteVerification] = useState('');
+
   // Structured Rate Card Fields
   const [rateCurrency, setRateCurrency]           = useState('₹');
   const [rateEditorialDay, setRateEditorialDay]   = useState('25,000');
@@ -51,6 +55,8 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
       setRateNarrativeBase(settings.rate_narrative_base || '75,000');
       setRateEquipmentSpecs(settings.rate_equipment_specs || '');
       setRateCredits(settings.rate_credits || '');
+      setGaMeasurementId(settings.ga_measurement_id || '');
+      setGoogleSiteVerification(settings.google_site_verification || '');
     }
   }, [settings]);
 
@@ -78,7 +84,9 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
       rate_color_spot:     rateColorSpot.trim(),
       rate_narrative_base: rateNarrativeBase.trim(),
       rate_equipment_specs: rateEquipmentSpecs.trim(),
-      rate_credits:        rateCredits.trim()
+      rate_credits:        rateCredits.trim(),
+      ga_measurement_id:   gaMeasurementId.trim(),
+      google_site_verification: googleSiteVerification.trim()
     });
   };
 
@@ -254,7 +262,44 @@ export default function SettingsPanel({ settings, onSaveSettings }) {
           </div>
         </div>
 
-        {/* Row 7: Admin PIN + Theme Accent */}
+        {/* Row 7: Analytics & Search Console */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-cinema-border/30">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="gaMeasurementId" className={labelClass + ' flex items-center gap-1.5'}>
+              <Globe className="w-3 h-3 text-accent" /> GOOGLE ANALYTICS 4 MEASUREMENT ID
+            </label>
+            <input 
+              id="gaMeasurementId" 
+              type="text" 
+              value={gaMeasurementId} 
+              onChange={e => setGaMeasurementId(e.target.value)}
+              placeholder="e.g. G-XXXXXXXXXX" 
+              className={fieldClass} 
+            />
+            <p className="text-[10px] text-cinema-muted font-mono">
+              From Google Analytics (Web Stream). Tracks visitor traffic, reels clicked, and consultation bookings.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label htmlFor="googleSiteVerification" className={labelClass + ' flex items-center gap-1.5'}>
+              <Globe className="w-3 h-3 text-accent" /> GOOGLE SEARCH CONSOLE VERIFICATION
+            </label>
+            <input 
+              id="googleSiteVerification" 
+              type="text" 
+              value={googleSiteVerification} 
+              onChange={e => setGoogleSiteVerification(e.target.value)}
+              placeholder="e.g. google-site-verification token or code" 
+              className={fieldClass} 
+            />
+            <p className="text-[10px] text-cinema-muted font-mono">
+              HTML tag verification token to verify cutframestudio.in on Google Search Console.
+            </p>
+          </div>
+        </div>
+
+        {/* Row 8: Admin PIN + Theme Accent */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-cinema-border/30">
           <div className="flex flex-col gap-2 max-w-xs">
             <label htmlFor="adminPin" className={labelClass + ' flex items-center gap-1.5'}><Lock className="w-3 h-3" /> ADMIN PIN <span className="text-cinema-muted/50 normal-case font-sans">(leave blank to keep current)</span></label>
