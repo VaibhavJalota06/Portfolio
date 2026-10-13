@@ -438,7 +438,7 @@ app.get('/api/drive/:id/video', async (req, res) => {
 });
 
 // Public, cheap: pinged by the server's own keep-awake timer (below) and, as a backup, GitHub Actions.
-app.get('/api/health', (req, res) => res.json({ ok: true, ip: req.ip })); // TEMP: verifying per-visitor IP behind Render
+app.get('/api/health', (req, res) => res.json({ ok: true, ip: req.ip, xff: req.headers['x-forwarded-for'], cf: req.headers['cf-connecting-ip'], tci: req.headers['true-client-ip'] })); // TEMP: verifying per-visitor IP behind Render
 
 // Hit every ~10 min by a free external cron (cron-job.org): keeps a free-tier host awake and syncs Drive.
 app.get('/api/cron', (req, res) => {
