@@ -170,23 +170,6 @@ export default function App() {
     };
   };
 
-  // Inject CSS accent theme variables dynamically based on settings
-  useEffect(() => {
-    const accent = settings?.theme_accent || 'blue';
-    const palettes = {
-      blue:  { base: '#2563EB', hover: '#1D4ED8', dark: '#1E40AF', light: '#3B82F6' },
-      amber: { base: '#ff9f1c', hover: '#e58f13', dark: '#cc7f10', light: '#ffb347' },
-      green: { base: '#10b981', hover: '#059669', dark: '#047857', light: '#34d399' },
-      cyan:  { base: '#06b6d4', hover: '#0891b2', dark: '#0e7490', light: '#22d3ee' },
-      red:   { base: '#ef4444', hover: '#dc2626', dark: '#b91c1c', light: '#f87171' }
-    };
-    const colors = palettes[accent] || palettes.blue;
-    document.documentElement.style.setProperty('--color-accent', colors.base);
-    document.documentElement.style.setProperty('--color-accent-hover', colors.hover);
-    document.documentElement.style.setProperty('--color-accent-dark', colors.dark);
-    document.documentElement.style.setProperty('--color-accent-light', colors.light);
-  }, [settings]);
-
   // Fetch client messages for inbox
   const fetchMessages = async () => {
     setMessagesLoading(true);
@@ -314,6 +297,7 @@ export default function App() {
 
   const handleSaveSettings = async (updatedSettings) => {
     const { admin_pin: _pin, ...visible } = updatedSettings; // the PIN never lives in client state
+    if (_pin) sessionStorage.setItem('admin_pin', _pin); // keep this session's requests authorised
     const next = { ...settings, ...visible, has_admin_pin: (settings?.has_admin_pin || updatedSettings.admin_pin) ? '1' : '' };
     setSettings(next);
     try { localStorage.setItem('portfolio_settings', JSON.stringify(next)); } catch {}
@@ -325,7 +309,7 @@ export default function App() {
         body: JSON.stringify(updatedSettings)
       });
       if (res.ok) {
-        showToast('Website identity settings updated');
+        showToast('Settings saved');
       } else if (res.status === 401) {
         showToast('Theme updated locally (Admin PIN required for global default)', 'info');
       } else {
@@ -448,7 +432,7 @@ export default function App() {
   };
 
   return (
-    <div className={`relative min-h-screen ${isAdmin ? 'cinema-dark bg-cinema-black' : 'bg-white text-slate-900'}`}>
+    <div className={`relative min-h-screen ${isAdmin ? 'bg-slate-50' : 'bg-white text-slate-900'}`}>
 
       {/* Cinematic Custom Delete Confirmation Modal */}
       {itemToDelete && (
@@ -513,27 +497,30 @@ export default function App() {
 
       {/* Admin PIN Lock Screen */}
       {isAdmin && settings?.has_admin_pin && !pinVerified && (
-        <div className="cinema-dark fixed inset-0 z-[60] bg-cinema-black flex items-center justify-center p-6">
-          <div className="w-full max-w-sm bg-cinema-card border border-cinema-border rounded-xl p-8 text-center">
-            <Lock className="w-10 h-10 text-accent mx-auto mb-4" />
-            <h2 className="text-lg font-display font-bold mb-1">Admin Access</h2>
-            <p className="text-xs text-cinema-muted mb-6 font-mono">Enter your PIN to continue</p>
+        <div className="fixed inset-0 z-[60] bg-slate-50 flex items-center justify-center p-6">
+          <div className="w-full max-w-sm bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
+            <span className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-5 h-5" />
+            </span>
+            <h2 className="text-lg font-display font-bold text-slate-900">Admin access</h2>
+            <p className="text-sm text-slate-500 mt-1 mb-6">Enter your PIN to continue</p>
             <input
               type="password" inputMode="numeric" maxLength={6}
+              aria-label="Admin PIN"
               value={pinInput} onChange={e => setPinInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
               onKeyDown={e => e.key === 'Enter' && handleVerifyPin()}
               placeholder="••••"
-              className="w-full bg-cinema-black border border-cinema-border rounded px-4 py-3 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-accent mb-4"
+              className="w-full bg-white border border-slate-300 rounded-lg px-4 py-3 text-center text-2xl tracking-[0.5em] text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 mb-4"
               autoFocus
             />
-            {pinError && <p className="text-red-400 text-xs font-mono mb-4">{pinError}</p>}
+            {pinError && <p className="text-red-600 text-sm mb-4">{pinError}</p>}
             <button onClick={handleVerifyPin} disabled={pinChecking || !pinInput}
-              className="w-full py-3 bg-accent hover:bg-accent-hover text-cinema-black font-bold rounded transition-colors disabled:opacity-50 cursor-pointer">
-              {pinChecking ? 'Verifying...' : 'Enter Studio'}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 cursor-pointer focus-ring">
+              {pinChecking ? 'Checking…' : 'Unlock'}
             </button>
             <a href="#" onClick={() => window.location.hash = ''}
-              className="block mt-4 text-xs text-cinema-muted hover:text-white transition-colors cursor-pointer">
-              ← Back to Portfolio
+              className="block mt-4 text-sm text-slate-500 hover:text-slate-900 transition-colors cursor-pointer">
+              ← Back to website
             </a>
           </div>
         </div>
@@ -545,21 +532,24 @@ export default function App() {
 
 
       {isAdmin ? (
-        <header className="sticky top-0 z-40 bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between gap-4 text-white">
-          <div className="flex items-center gap-3">
-            <Film className="w-5 h-5 text-blue-500" />
-            <span className="font-bold text-sm text-white font-display">
-              Cutframe Studio <span className="text-blue-400 font-mono text-xs">/ Admin Portal</span>
-            </span>
+        <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2.5">
+              <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-700 to-sky-500 flex items-center justify-center shadow-sm">
+                <Film className="w-4 h-4 text-white" />
+              </span>
+              <span className="font-display font-bold text-slate-900 whitespace-nowrap">Cutframe <span className="text-blue-600">Studio</span></span>
+              <span className="ml-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-medium">Admin</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => { window.location.hash = ''; }}
+              aria-label="View site"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium transition-colors focus-ring cursor-pointer"
+            >
+              <Eye className="w-4 h-4" /> <span className="hidden sm:inline">View site</span>
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={() => { window.location.hash = ''; }}
-            className="flex items-center gap-2 px-4 py-1.5 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white rounded text-xs font-mono font-medium transition-all focus-ring cursor-pointer"
-          >
-            <Eye className="w-3.5 h-3.5 text-blue-400" />
-            BACK TO PORTFOLIO
-          </button>
         </header>
       ) : (
         <AgencyNavbar
@@ -567,205 +557,157 @@ export default function App() {
         />
       )}
       {isAdmin ? (
-        /* --- DEDICATED FULLSCREEN ADMIN WORKSPACE --- */
-        <main className="max-w-7xl mx-auto px-6 py-12 animate-fade-in flex flex-col gap-8">
-          {/* Workspace Title & Stats Row */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-cinema-border gap-4">
-            <div>
-              <div className="text-accent font-mono text-xs tracking-wider mb-1 uppercase">
-                [SYSTEM_TIMELINE_ADMIN]
-              </div>
-              <h1 className="text-2xl md:text-3xl font-display font-bold uppercase tracking-tight text-white">
-                PROJECT TIMELINE DASHBOARD
-              </h1>
-            </div>
-            
-            {/* Real-time split counts */}
-            <div className="flex flex-wrap gap-3 font-mono text-[10px] text-cinema-muted">
-              <div className="bg-cinema-card border border-cinema-border px-3 py-1.5 rounded flex gap-2">
-                TOTAL: <span className="text-accent font-bold">{items.length} CLIPS</span>
-              </div>
-              <div className="bg-cinema-card border border-cinema-border px-3 py-1.5 rounded flex gap-2">
-                YT: <span className="text-red-400 font-bold">{items.filter(i => i.type === 'youtube').length}</span>
-              </div>
-              <div className="bg-cinema-card border border-cinema-border px-3 py-1.5 rounded flex gap-2">
-                VM: <span className="text-blue-400 font-bold">{items.filter(i => i.type === 'vimeo').length}</span>
-              </div>
-              <div className="bg-cinema-card border border-cinema-border px-3 py-1.5 rounded flex gap-2">
-                MP4: <span className="text-accent font-bold">{items.filter(i => i.type === 'mp4').length}</span>
-              </div>
-              <div className="bg-cinema-card border border-cinema-border px-3 py-1.5 rounded flex gap-2">
-                IMG: <span className="text-emerald-400 font-bold">{items.filter(i => i.type === 'image').length}</span>
-              </div>
-            </div>
-          </div>
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 animate-fade-in text-slate-900">
+          {(() => {
+            const live = items.filter(i => i.is_published !== false).length;
+            const tabs = [
+              { id: 'edit', label: 'Portfolio', count: items.length },
+              { id: 'preview', label: 'Live preview' },
+              { id: 'inbox', label: 'Inbox', count: messages.length },
+              { id: 'settings', label: 'Settings' },
+            ];
+            const videos = items.filter(isVideoItem);
+            const photos = items.filter(i => !isVideoItem(i));
+            const filtered = adminTypeFilter === 'videos' ? videos : adminTypeFilter === 'photos' ? photos : items;
+            const filters = [
+              { id: 'all', label: 'All', count: items.length },
+              { id: 'videos', label: 'Videos', count: videos.length },
+              { id: 'photos', label: 'Photos', count: photos.length },
+            ];
 
-          <Suspense fallback={null}>
-          {/* Admin panel item creation/updating form */}
-          <AdminPanel
-            onSave={handleSaveItem}
-            editingItem={editingItem}
-            onCancelEdit={() => setEditingItem(null)}
-          />
+            return (
+              <>
+                <div className="mb-6">
+                  <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+                  <p className="mt-1 text-sm text-slate-500">
+                    {live} live on the site · {items.length - live} hidden · {messages.length} {messages.length === 1 ? 'message' : 'messages'}
+                  </p>
+                </div>
 
-          {/* Google Calendar + Drive connection */}
-          <GooglePanel showToast={showToast} onSynced={() => fetchItems(true)} />
+                <nav className="flex gap-1 p-1 mb-8 bg-slate-200/60 rounded-xl w-full sm:w-fit overflow-x-auto" aria-label="Admin sections" style={{ scrollbarWidth: 'none' }}>
+                  {tabs.map(t => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      onClick={() => setAdminGridTab(t.id)}
+                      aria-current={adminGridTab === t.id ? 'page' : undefined}
+                      className={`shrink-0 px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer focus-ring ${
+                        adminGridTab === t.id ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      {t.label}
+                      {t.count > 0 && (
+                        <span className={`ml-1.5 px-1.5 py-0.5 rounded-md text-xs ${t.id === 'inbox' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-600'}`}>{t.count}</span>
+                      )}
+                    </button>
+                  ))}
+                </nav>
 
-          {/* Website settings panel */}
-          <SettingsPanel
-            settings={settings}
-            onSaveSettings={handleSaveSettings}
-          />
-          </Suspense>
+                {adminGridTab === 'settings' && (
+                  <Suspense fallback={null}>
+                    <div className="flex flex-col gap-6">
+                      <GooglePanel showToast={showToast} onSynced={() => fetchItems(true)} />
+                      <SettingsPanel onSaveSettings={handleSaveSettings} />
+                    </div>
+                  </Suspense>
+                )}
 
-          {/* Portfolio grid edit space */}
-          <div className="mt-10">
-            {/* Top bar: Layout/Preview tabs + Type filter + hint */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-cinema-border/50 pb-3 mb-6 gap-3">
-              {/* Left: Edit / Preview / Inbox tabs */}
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setAdminGridTab('edit')}
-                  className={`text-xs font-mono font-medium pb-2 border-b-2 transition-all cursor-pointer focus-ring ${
-                    adminGridTab === 'edit'
-                      ? 'border-accent text-accent'
-                      : 'border-transparent text-cinema-muted hover:text-white'
-                  }`}
-                >
-                  [LAYOUT_EDITOR]
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAdminGridTab('preview')}
-                  className={`text-xs font-mono font-medium pb-2 border-b-2 transition-all cursor-pointer focus-ring ${
-                    adminGridTab === 'preview'
-                      ? 'border-accent text-accent'
-                      : 'border-transparent text-cinema-muted hover:text-white'
-                  }`}
-                >
-                  [LIVE_PREVIEW]
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAdminGridTab('inbox')}
-                  className={`text-xs font-mono font-medium pb-2 border-b-2 transition-all cursor-pointer focus-ring ${
-                    adminGridTab === 'inbox'
-                      ? 'border-accent text-accent'
-                      : 'border-transparent text-cinema-muted hover:text-white'
-                  }`}
-                >
-                  [CLIENT_INBOX] {messages.length > 0 && <span className="text-red-400 font-bold ml-1">({messages.length})</span>}
-                </button>
-              </div>
-
-              {/* Right: Type filter pills */}
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-cinema-muted uppercase mr-1">Filter:</span>
-                {[
-                  { id: 'all',    label: 'All',    count: items.length },
-                  { id: 'videos', label: 'Videos', count: items.filter(i => ['youtube','vimeo','mp4','gdrive'].includes(i.type)).length },
-                  { id: 'photos', label: 'Photos', count: items.filter(i => i.type === 'image').length },
-                ].map(f => (
-                  <button
-                    key={f.id}
-                    type="button"
-                    onClick={() => setAdminTypeFilter(f.id)}
-                    className={`px-3 py-1 rounded text-[10px] font-mono font-semibold tracking-wide transition-all cursor-pointer focus-ring ${
-                      adminTypeFilter === f.id
-                        ? 'bg-accent text-cinema-black'
-                        : 'border border-cinema-border text-cinema-muted hover:text-white'
-                    }`}
-                  >
-                    {f.label} <span className="opacity-60">({f.count})</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Empty state when filter yields nothing */}
-            {(() => {
-              const VIDEO_TYPES = ['youtube', 'vimeo', 'mp4', 'gdrive'];
-              const adminFiltered = adminTypeFilter === 'videos'
-                ? items.filter(i => VIDEO_TYPES.includes(i.type))
-                : adminTypeFilter === 'photos'
-                  ? items.filter(i => i.type === 'image')
-                  : items;
-
-              if (adminGridTab === 'inbox') {
-                return (
-                  <div className="bg-cinema-card border border-cinema-border rounded-lg p-6 animate-fade-in flex flex-col gap-4">
-                    <div className="flex items-center justify-between pb-3 border-b border-cinema-border/50">
-                      <h2 className="text-sm font-mono text-cinema-muted uppercase">Client Messages / Inquiries</h2>
+                {adminGridTab === 'inbox' && (
+                  <section className="bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200">
+                      <h2 className="font-semibold">Bookings &amp; messages</h2>
                       <button onClick={fetchMessages} disabled={messagesLoading}
-                        className="text-[10px] font-mono border border-cinema-border hover:border-accent/40 text-cinema-muted hover:text-white px-2.5 py-1 rounded transition-colors cursor-pointer focus-ring">
-                        {messagesLoading ? 'REFRESHING...' : 'REFRESH LIST'}
+                        className="text-sm text-slate-600 hover:text-slate-900 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors cursor-pointer focus-ring disabled:opacity-50">
+                        {messagesLoading ? 'Refreshing…' : 'Refresh'}
                       </button>
                     </div>
                     {messages.length === 0 ? (
-                      <div className="text-center py-12 text-cinema-muted font-mono text-xs">
-                        [ NO MESSAGES RECEIVED ]
-                      </div>
+                      <p className="text-center py-16 text-sm text-slate-500">No messages yet. Discovery-call bookings and contact messages show up here.</p>
                     ) : (
-                      <div className="flex flex-col gap-4 max-h-[600px] overflow-y-auto pr-2">
+                      <ul className="divide-y divide-slate-100">
                         {messages.map(msg => (
-                          <div key={msg.id} className="bg-cinema-black border border-cinema-border/60 hover:border-cinema-border rounded p-4 flex flex-col sm:flex-row sm:items-start justify-between gap-4 transition-colors">
-                            <div className="flex flex-col gap-1.5 flex-1 min-w-0">
-                              <div className="flex items-center flex-wrap gap-2 text-xs">
-                                <span className="font-bold text-white">{msg.name}</span>
-                                <a href={`mailto:${msg.email}`} className="text-accent hover:underline font-mono text-[10px] truncate">{msg.email}</a>
-                                <span className="text-[9px] text-cinema-muted font-mono ml-auto">
-                                  {new Date(msg.created_at).toLocaleString()}
-                                </span>
+                          <li key={msg.id} className="px-5 py-4 flex items-start gap-4">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-baseline flex-wrap gap-x-2 gap-y-0.5">
+                                <span className="font-semibold">{msg.name}</span>
+                                <a href={`mailto:${msg.email}`} className="text-sm text-blue-600 hover:underline truncate">{msg.email}</a>
+                                <span className="text-xs text-slate-500 sm:ml-auto">{new Date(msg.created_at).toLocaleString()}</span>
                               </div>
-                              <p className="text-xs text-cinema-muted whitespace-pre-wrap leading-relaxed">
-                                {msg.message}
-                              </p>
+                              <p className="mt-1.5 text-sm text-slate-600 whitespace-pre-wrap leading-relaxed">{msg.message}</p>
                             </div>
                             <button onClick={() => handleDeleteMessage(msg.id)}
-                              className="self-end sm:self-start p-1.5 bg-red-950/45 hover:bg-red-600 border border-red-900/30 text-red-200 hover:text-white rounded transition-colors cursor-pointer focus-ring"
-                              title="Delete Message">
-                              <Trash2 className="w-3.5 h-3.5" />
+                              className="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer focus-ring"
+                              title="Delete message" aria-label={`Delete message from ${msg.name}`}>
+                              <Trash2 className="w-4 h-4" />
                             </button>
-                          </div>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </section>
+                )}
+
+                {(adminGridTab === 'edit' || adminGridTab === 'preview') && (
+                  <>
+                    {adminGridTab === 'edit' && (
+                      <Suspense fallback={null}>
+                        <AdminPanel
+                          onSave={handleSaveItem}
+                          editingItem={editingItem}
+                          onCancelEdit={() => setEditingItem(null)}
+                        />
+                      </Suspense>
+                    )}
+
+                    <div className="flex items-center justify-between gap-3 mb-5 flex-wrap">
+                      <p className="text-sm text-slate-500">
+                        {adminGridTab === 'edit' ? 'Drag to reorder. Use each tile’s controls to resize, hide or edit.' : 'This is how visitors see your Work section.'}
+                      </p>
+                      <div className="flex gap-2">
+                        {filters.map(f => (
+                          <button
+                            key={f.id}
+                            type="button"
+                            onClick={() => setAdminTypeFilter(f.id)}
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer focus-ring ${
+                              adminTypeFilter === f.id ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:border-slate-300'
+                            }`}
+                          >
+                            {f.label} <span className="opacity-60">{f.count}</span>
+                          </button>
                         ))}
                       </div>
+                    </div>
+
+                    {filtered.length === 0 ? (
+                      <div className="py-20 text-center text-sm text-slate-500 border border-dashed border-slate-300 rounded-2xl">
+                        No {adminTypeFilter === 'all' ? 'items' : adminTypeFilter} yet. Add one above or sync your Drive folder in Settings.
+                      </div>
+                    ) : adminGridTab === 'edit' ? (
+                      <PortfolioGrid
+                        items={filtered}
+                        isAdmin={true}
+                        onEdit={(item) => {
+                          setEditingItem(item);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        onDelete={handleDeleteItem}
+                        onResize={handleResizeItem}
+                        onReorder={handleReorderItems}
+                        onTogglePublish={handleTogglePublish}
+                      />
+                    ) : (
+                      <PortfolioGrid
+                        items={filtered}
+                        isAdmin={false}
+                        onClickTile={setActiveLightboxItem}
+                      />
                     )}
-                  </div>
-                );
-              }
-
-              if (adminFiltered.length === 0) {
-                return (
-                  <div className="flex flex-col items-center justify-center py-20 text-cinema-muted border border-dashed border-cinema-border/50 rounded-lg">
-                    <div className="text-4xl mb-3 opacity-20">{adminTypeFilter === 'videos' ? '🎬' : adminTypeFilter === 'photos' ? '🖼' : '📂'}</div>
-                    <p className="text-xs font-mono tracking-wider uppercase">No {adminTypeFilter === 'all' ? 'items' : adminTypeFilter} yet — add one above</p>
-                  </div>
-                );
-              }
-
-              return adminGridTab === 'edit' ? (
-                <PortfolioGrid
-                  items={adminFiltered}
-                  isAdmin={true}
-                  onEdit={(item) => {
-                    setEditingItem(item);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  onDelete={handleDeleteItem}
-                  onResize={handleResizeItem}
-                  onReorder={handleReorderItems}
-                  onTogglePublish={handleTogglePublish}
-                />
-              ) : (
-                <PortfolioGrid
-                  items={adminFiltered}
-                  isAdmin={false}
-                  onClickTile={setActiveLightboxItem}
-                />
-              );
-            })()}
-          </div>
+                  </>
+                )}
+              </>
+            );
+          })()}
         </main>
       ) : (
         /* --- PUBLIC CINEMATIC PORTFOLIO VIEW --- */
@@ -1030,11 +972,18 @@ export default function App() {
 
             {/* Content Container */}
             <div 
-              className="w-full max-w-5xl aspect-video bg-black/40 border border-cinema-border rounded-lg overflow-hidden relative shadow-2xl"
+              className="max-w-5xl bg-black/40 border border-cinema-border rounded-lg overflow-hidden relative shadow-2xl"
               onClick={(e) => e.stopPropagation()} // Prevent closing modal when clicking media
-              style={{
-                animation: 'zoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards'
-              }}
+              style={(() => {
+                // Size the box to the item's real shape (most reels are 9:16), as large as fits on screen
+                const [w, h] = String(activeLightboxItem.aspect || '16/9').split('/').map(Number);
+                const ratio = w > 0 && h > 0 ? w / h : 16 / 9;
+                return {
+                  aspectRatio: ratio,
+                  width: `min(100%, calc(75svh * ${ratio}))`,
+                  animation: 'zoomIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+                };
+              })()}
             >
               {mediaType === 'image' && (
                 <img
@@ -1096,7 +1045,7 @@ export default function App() {
                 <span>{(Array.isArray(activeLightboxItem.tags) && activeLightboxItem.tags[0]) || (isVideoItem(activeLightboxItem) ? 'Video' : 'Photo')}</span>
                 
                 {/* Loop Video Selector */}
-                {isVideoItem(activeLightboxItem) && (
+                {isVideoItem(activeLightboxItem) && mediaType !== 'gdrive' && (
                   <button
                     type="button"
                     onClick={() => setIsLightboxLooping(!isLightboxLooping)}
@@ -1134,7 +1083,7 @@ export default function App() {
               )}
 
               {/* Keyboard Shortcut Hints Bar */}
-              <div className="flex items-center justify-center gap-3 text-[10px] font-mono text-cinema-muted mt-3 pt-3 border-t border-cinema-border/40 flex-wrap">
+              <div className="hidden [@media(hover:hover)]:flex items-center justify-center gap-3 text-[10px] font-mono text-cinema-muted mt-3 pt-3 border-t border-cinema-border/40 flex-wrap">
                 <span><kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">←</kbd> <kbd className="px-1.5 py-0.5 rounded bg-cinema-dark border border-cinema-border/60 text-white">→</kbd> NAVIGATE</span>
                 {isVideoItem(activeLightboxItem) && (
                   <>

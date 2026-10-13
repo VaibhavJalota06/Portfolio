@@ -264,7 +264,7 @@ export default function PortfolioTile({
             type="button"
             {...dragHandleProps}
             style={{ touchAction: 'none' }}
-            className="h-7 w-7 flex items-center justify-center bg-cinema-black/90 backdrop-blur-md border border-cinema-border/80 text-cinema-muted hover:text-accent hover:border-accent/40 rounded transition-all cursor-grab active:cursor-grabbing focus-ring"
+            className="h-8 w-8 flex items-center justify-center bg-white/95 backdrop-blur-md border border-slate-200 text-slate-600 hover:text-blue-600 rounded-lg shadow-sm transition-colors cursor-grab active:cursor-grabbing focus-ring"
             title="Drag to reorder"
           >
             <Move className="w-3.5 h-3.5" />
@@ -274,23 +274,24 @@ export default function PortfolioTile({
           <select
             value={item.size}
             onChange={(e) => onResize(item.id, e.target.value)}
-            className="h-7 px-2.5 bg-cinema-black/90 backdrop-blur-md border border-cinema-border/80 rounded text-[10px] font-mono font-semibold text-accent focus:outline-none cursor-pointer focus-ring"
+            className="h-8 px-2 bg-white/95 backdrop-blur-md border border-slate-200 rounded-lg shadow-sm text-xs font-medium text-slate-700 focus:outline-none cursor-pointer focus-ring"
+            aria-label="Tile size"
           >
-            <option value="small" className="bg-cinema-card text-white">1x1 Size</option>
-            <option value="wide" className="bg-cinema-card text-white">2x1 Size</option>
-            <option value="tall" className="bg-cinema-card text-white">1x2 Size</option>
-            <option value="large" className="bg-cinema-card text-white">2x2 Size</option>
-            <option value="banner" className="bg-cinema-card text-white">3x1 Size</option>
-            <option value="ultratall" className="bg-cinema-card text-white">1x3 Size</option>
-            <option value="full" className="bg-cinema-card text-white">4x2 Size</option>
+            <option value="small">1×1</option>
+            <option value="wide">2×1</option>
+            <option value="tall">1×2</option>
+            <option value="large">2×2</option>
+            <option value="banner">3×1</option>
+            <option value="ultratall">1×3</option>
+            <option value="full">Full width</option>
           </select>
         </div>
       )}
 
       {/* Draft status indicator (Top Right) */}
       {isAdmin && !item.is_published && (
-        <div className="absolute top-3 right-3 z-20 bg-red-950/90 border border-red-500/40 text-red-400 text-[9px] font-mono font-bold px-2 py-1 rounded shadow-lg select-none">
-          HIDDEN
+        <div className="absolute top-3 right-3 z-20 bg-white/95 border border-slate-200 text-slate-700 text-xs font-semibold px-2 py-1 rounded-lg shadow-sm select-none">
+          Hidden
         </div>
       )}
 
@@ -300,7 +301,7 @@ export default function PortfolioTile({
           <button
             type="button"
             onClick={() => onTogglePublish?.(item.id)}
-            className="p-1.5 bg-cinema-black/90 backdrop-blur-md border border-cinema-border/80 text-cinema-muted hover:text-accent hover:border-accent/40 rounded transition-colors focus-ring cursor-pointer"
+            className="p-2 bg-white/95 backdrop-blur-md border border-slate-200 text-slate-600 hover:text-blue-600 rounded-lg shadow-sm transition-colors focus-ring cursor-pointer"
             title={item.is_published ? 'Hide from website' : 'Show on website'}
             aria-label={item.is_published ? 'Hide from website' : 'Show on website'}
           >
@@ -309,16 +310,16 @@ export default function PortfolioTile({
           <button
             type="button"
             onClick={() => onEdit(item)}
-            className="p-1.5 bg-cinema-black/90 backdrop-blur-md border border-cinema-border/80 text-cinema-muted hover:text-accent hover:border-accent/40 rounded transition-colors focus-ring cursor-pointer"
-            title="Edit Project"
+            className="p-2 bg-white/95 backdrop-blur-md border border-slate-200 text-slate-600 hover:text-blue-600 rounded-lg shadow-sm transition-colors focus-ring cursor-pointer"
+            title="Edit" aria-label="Edit"
           >
             <Edit3 className="w-3.5 h-3.5" />
           </button>
           <button
             type="button"
             onClick={() => onDelete(item.id)}
-            className="p-1.5 bg-red-950/90 backdrop-blur-md border border-red-900/50 text-red-200 hover:text-white hover:bg-red-600 rounded transition-colors focus-ring cursor-pointer"
-            title="Delete Project"
+            className="p-2 bg-white/95 backdrop-blur-md border border-slate-200 text-red-600 hover:text-white hover:bg-red-600 rounded-lg shadow-sm transition-colors focus-ring cursor-pointer"
+            title="Delete" aria-label="Delete"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>

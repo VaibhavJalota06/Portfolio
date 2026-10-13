@@ -71,135 +71,120 @@ export default function AdminPanel({ onSave, editingItem, onCancelEdit }) {
   const removeTag = (t) => setTags(tags.filter(x => x !== t));
 
   const badgeColors = {
-    youtube: 'bg-red-500/10 text-red-400 border-red-500/30',
-    vimeo:   'bg-blue-500/10 text-blue-400 border-blue-500/30',
-    mp4:     'bg-accent/10 text-accent border-accent/30',
-    image:   'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+    youtube: 'bg-red-50 text-red-700 border-red-200',
+    vimeo:   'bg-sky-50 text-sky-700 border-sky-200',
+    gdrive:  'bg-amber-50 text-amber-700 border-amber-200',
+    mp4:     'bg-blue-50 text-blue-700 border-blue-200',
+    image:   'bg-emerald-50 text-emerald-700 border-emerald-200'
   };
 
-  return (
-    <div className="bg-cinema-card border border-cinema-border rounded-lg p-6 mb-8 relative animate-fade-in">
-      <div className="absolute top-0 left-6 transform -translate-y-1/2 bg-cinema-black px-2 border border-cinema-border/60 text-[9px] font-mono text-accent">
-        {editingItem ? '[EDIT_CLIP]' : '[NEW_CLIP]'}
-      </div>
+  const field = 'w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition';
+  const label = 'text-sm font-medium text-slate-700';
+  const hint = 'font-normal text-slate-400';
 
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-cinema-border">
-        <div className="flex items-center gap-3">
-          <h2 className="text-lg font-display font-bold">
-            {editingItem ? 'Edit Portfolio Item' : 'Add New Item'}
-          </h2>
-          {detectedType && (
-            <span className={`text-[10px] font-mono px-2 py-0.5 border rounded uppercase ${badgeColors[detectedType] || badgeColors.image}`}>
-              {detectedType}
+  return (
+    <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 mb-8 animate-fade-in">
+      <div className="flex items-center justify-between gap-3 mb-5">
+        <div className="flex items-center gap-2.5">
+          <h2 className="font-semibold">{editingItem ? 'Edit item' : 'Add to portfolio'}</h2>
+          {url && (
+            <span className={`text-xs font-medium px-2 py-0.5 border rounded-md capitalize ${badgeColors[detectedType] || badgeColors.image}`}>
+              {detectedType === 'gdrive' ? 'Google Drive' : detectedType}
             </span>
           )}
         </div>
         {editingItem && (
           <button type="button" onClick={resetForm}
-            className="flex items-center gap-1 text-xs text-cinema-muted hover:text-white transition-colors cursor-pointer focus-ring rounded px-2 py-1">
-            <X className="w-3.5 h-3.5" /> Cancel Edit
+            className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-900 transition-colors cursor-pointer focus-ring rounded px-2 py-1">
+            <X className="w-4 h-4" /> Cancel
           </button>
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-        {/* Row 1: URL + Title */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-mono text-cinema-muted">MEDIA URL <span className="text-red-400">*</span></label>
+          <label className="flex flex-col gap-1.5">
+            <span className={label}>Link <span className="text-red-500">*</span></span>
             <input type="text" value={url} onChange={e => setUrl(e.target.value)}
-              placeholder="YouTube / Vimeo / .mp4 / Image URL"
-              className="bg-cinema-black border border-cinema-border rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent transition-colors focus-ring" />
-          </div>
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-mono text-cinema-muted">TITLE <span className="text-cinema-muted/50">(optional)</span></label>
-            <input type="text" value={title} onChange={e => setTitle(e.target.value)}
-              placeholder="e.g. Nike Campaign Edit"
-              className="bg-cinema-black border border-cinema-border rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent transition-colors focus-ring" />
-          </div>
-        </div>
-
-        {/* Row 2: Description */}
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-mono text-cinema-muted">DESCRIPTION <span className="text-cinema-muted/50">(shown in lightbox)</span></label>
-          <textarea rows="2" value={description} onChange={e => setDescription(e.target.value)}
-            placeholder="Brief caption or notes about this project..."
-            className="bg-cinema-black border border-cinema-border rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent transition-colors focus-ring resize-none" />
-        </div>
-
-        {/* Row 3: Tags */}
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-mono text-cinema-muted flex items-center gap-1.5">
-            <Tag className="w-3 h-3" /> TAGS <span className="text-cinema-muted/50">(press Enter to add)</span>
+              placeholder="YouTube, Drive, Vimeo, .mp4 or image link" className={field} />
           </label>
-          <div className="flex flex-wrap gap-2 bg-cinema-black border border-cinema-border rounded px-3 py-2 min-h-[44px] items-center">
+          <label className="flex flex-col gap-1.5">
+            <span className={label}>Title <span className={hint}>(optional)</span></span>
+            <input type="text" value={title} onChange={e => setTitle(e.target.value)}
+              placeholder="e.g. Café launch reel" className={field} />
+          </label>
+        </div>
+
+        <label className="flex flex-col gap-1.5">
+          <span className={label}>Description <span className={hint}>(shown when opened)</span></span>
+          <textarea rows="2" value={description} onChange={e => setDescription(e.target.value)}
+            placeholder="Short caption about this project" className={`${field} resize-none`} />
+        </label>
+
+        <div className="flex flex-col gap-1.5">
+          <span className={`${label} flex items-center gap-1.5`}><Tag className="w-3.5 h-3.5 text-slate-400" /> Tags <span className={hint}>(press Enter to add)</span></span>
+          <div className="flex flex-wrap gap-2 bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 min-h-[40px] items-center focus-within:border-blue-600 focus-within:ring-4 focus-within:ring-blue-100 transition">
             {tags.map(t => (
-              <span key={t} className="flex items-center gap-1 px-2 py-0.5 bg-accent/10 text-accent border border-accent/30 text-xs rounded font-mono">
+              <span key={t} className="flex items-center gap-1 pl-2 pr-1 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-md">
                 {t}
-                <button type="button" onClick={() => removeTag(t)} className="hover:text-white cursor-pointer">×</button>
+                <button type="button" onClick={() => removeTag(t)} aria-label={`Remove tag ${t}`} className="px-1 hover:text-blue-900 cursor-pointer">×</button>
               </span>
             ))}
             <input
               value={tagInput} onChange={e => setTagInput(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTag(); } }}
-              placeholder={tags.length === 0 ? "Commercial, Music Video, Short Film..." : "Add tag..."}
-              className="flex-1 min-w-[140px] bg-transparent text-sm text-white focus:outline-none placeholder:text-cinema-muted/40" />
+              placeholder={tags.length === 0 ? 'Reels, AI Videos, Posters…' : 'Add tag…'}
+              aria-label="Add tag"
+              className="flex-1 min-w-[140px] bg-transparent text-sm text-slate-900 focus:outline-none placeholder:text-slate-400" />
           </div>
         </div>
 
-        {/* Row 4: Size + Toggles */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
-          <div className="flex flex-col gap-2">
-            <label className="text-xs font-mono text-cinema-muted">GRID SIZE</label>
-            <select value={size} onChange={e => setSize(e.target.value)}
-              className="bg-cinema-black border border-cinema-border rounded px-4 py-2.5 text-sm text-white focus:outline-none focus:border-accent transition-colors focus-ring cursor-pointer">
+          <label className="flex flex-col gap-1.5">
+            <span className={label}>Tile size</span>
+            <select value={size} onChange={e => setSize(e.target.value)} className={`${field} cursor-pointer`}>
               <option value="small">Small (1×1)</option>
               <option value="wide">Wide (2×1)</option>
               <option value="tall">Tall (1×2)</option>
               <option value="large">Large (2×2)</option>
               <option value="banner">Banner (3×1)</option>
-              <option value="ultratall">Ultra Tall (1×3)</option>
-              <option value="full">Full Width (4×1)</option>
+              <option value="ultratall">Extra tall (1×3)</option>
+              <option value="full">Full width (4×1)</option>
             </select>
-          </div>
+          </label>
 
-          {/* Toggle buttons */}
           <div className="flex items-center gap-3">
-            {/* Featured toggle */}
-            <button type="button" onClick={() => setIsFeatured(f => !f)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded border text-xs font-mono font-semibold transition-all cursor-pointer focus-ring flex-1 justify-center ${
-                isFeatured ? 'bg-yellow-500/10 border-yellow-500/40 text-yellow-400' : 'border-cinema-border text-cinema-muted hover:text-white'
+            <button type="button" onClick={() => setIsFeatured(f => !f)} aria-pressed={isFeatured}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors cursor-pointer focus-ring ${
+                isFeatured ? 'bg-amber-50 border-amber-300 text-amber-800' : 'border-slate-300 text-slate-600 hover:bg-slate-50'
               }`}>
-              <Star className={`w-3.5 h-3.5 ${isFeatured ? 'fill-yellow-400' : ''}`} />
-              {isFeatured ? 'Featured' : 'Pin to Top'}
+              <Star className={`w-4 h-4 ${isFeatured ? 'fill-amber-400 text-amber-500' : ''}`} />
+              {isFeatured ? 'Pinned to top' : 'Pin to top'}
             </button>
-
-            {/* Published toggle */}
-            <button type="button" onClick={() => setIsPublished(p => !p)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded border text-xs font-mono font-semibold transition-all cursor-pointer focus-ring flex-1 justify-center ${
-                isPublished ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400' : 'bg-red-500/5 border-red-500/30 text-red-400'
+            <button type="button" onClick={() => setIsPublished(p => !p)} aria-pressed={isPublished}
+              className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors cursor-pointer focus-ring ${
+                isPublished ? 'bg-emerald-50 border-emerald-300 text-emerald-800' : 'border-slate-300 text-slate-600 hover:bg-slate-50'
               }`}>
-              {isPublished ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-              {isPublished ? 'Published' : 'Draft'}
+              {isPublished ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+              {isPublished ? 'Visible on site' : 'Hidden'}
             </button>
           </div>
         </div>
 
-        {/* Submit */}
-        <div className="flex justify-end pt-2 border-t border-cinema-border/50 gap-3">
+        <div className="flex justify-end gap-3 pt-2">
           {editingItem && (
             <button type="button" onClick={resetForm}
-              className="px-5 py-2.5 border border-cinema-border text-cinema-muted hover:text-white rounded text-sm transition-colors focus-ring cursor-pointer">
+              className="px-4 py-2 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg text-sm font-medium transition-colors focus-ring cursor-pointer">
               Cancel
             </button>
           )}
-          <button type="submit"
-            className="flex items-center gap-2 px-6 py-2.5 bg-accent hover:bg-accent-hover text-cinema-black font-semibold rounded text-sm transition-colors focus-ring cursor-pointer">
+          <button type="submit" disabled={!url.trim()}
+            className="flex items-center gap-2 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg text-sm transition-colors focus-ring cursor-pointer disabled:opacity-50">
             {editingItem ? <Save className="w-4 h-4" /> : <PlusCircle className="w-4 h-4" />}
-            {editingItem ? 'Update Item' : 'Add to Portfolio'}
+            {editingItem ? 'Save changes' : 'Add to portfolio'}
           </button>
         </div>
       </form>
-    </div>
+    </section>
   );
 }

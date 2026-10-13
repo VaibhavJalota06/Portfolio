@@ -46,7 +46,12 @@ export default function PublicTile({ item, index = 0, onClick }) {
           decoding="async"
           referrerPolicy="no-referrer"
           onLoad={() => setLoaded(true)}
-          onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = FALLBACK; setLoaded(true); }}
+          onError={(e) => {
+            const img = e.currentTarget;
+            // Google's image server sometimes refuses bursts of requests: retry once before showing the placeholder.
+            if (src && !img.dataset.retried) { img.dataset.retried = '1'; setTimeout(() => { img.src = src; }, 1500); return; }
+            img.onerror = null; img.src = FALLBACK; setLoaded(true);
+          }}
           style={aspect ? { aspectRatio: aspect } : undefined}
           className={`block w-full ${aspect ? 'object-cover h-full' : 'h-auto'} transition-all duration-500 group-hover:scale-[1.03] ${loaded ? 'opacity-100' : 'opacity-0 min-h-48'}`}
         />

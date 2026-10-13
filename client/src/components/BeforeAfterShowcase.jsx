@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Sparkles, CheckCircle2, XCircle, Zap, Scissors, Type, Volume2, Film, ArrowRight, MoveHorizontal, Play, Eye } from 'lucide-react';
+import { Sparkles, CheckCircle2, XCircle, Zap, Scissors, Type, Volume2, ArrowRight, MoveHorizontal } from 'lucide-react';
 
 const comparisonPoints = [
   {

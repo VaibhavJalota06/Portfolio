@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Clapperboard, Palette, Bot, Globe, ArrowRight, Check, Zap, MessageCircle, Calendar } from 'lucide-react';
+import { LayoutGrid, Clapperboard, Palette, Bot, Globe, Check, Zap, MessageCircle, Calendar } from 'lucide-react';
 import { getWhatsAppUrl } from '../contact';
 
 export default function AgencyServices({ onSelectService }) {

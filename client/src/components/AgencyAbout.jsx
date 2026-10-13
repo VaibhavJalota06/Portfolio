@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, LayoutGrid, Clapperboard, Palette, Bot, FileText, CalendarCheck, FolderUp, MessageSquareText, PackageCheck, Linkedin, Instagram, Mail } from 'lucide-react';
+import { Users, FileText, CalendarCheck, FolderUp, MessageSquareText, PackageCheck, Linkedin, Instagram, Mail } from 'lucide-react';
 import { CONTACT } from '../contact';
 
 
