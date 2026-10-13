@@ -1,4 +1,4 @@
-// Deploy trigger: Completely removed false stats and arbitrary numbers
+// Deploy trigger: Locked headline to strictly 2 lines with whitespace-nowrap blue tagline
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';

@@ -3,7 +3,7 @@ import { ArrowRight, Play, MessageCircle } from 'lucide-react';
 import { CONTACT, getWhatsAppUrl } from '../contact';
 
 const TAGLINE_PHRASES = [
-  'scale across every platform.',
+  'scale across platforms.',
   'dominate short-form video.',
   'turn viewers into clients.',
   'grow on social media.'
@@ -41,12 +41,12 @@ function TypewriterText({ phrases }) {
   }, [text, isDeleting, phraseIndex, phrases]);
 
   return (
-    <span className="inline-block text-blue-600">
+    <span className="inline-flex items-center whitespace-nowrap text-blue-600">
       <span>{text || '\u00A0'}</span>
       {/* Blinking navigator line cursor */}
       <span
         aria-hidden="true"
-        className="inline-block w-[3px] sm:w-[4px] h-[0.85em] ml-1 bg-blue-600 align-middle animate-cursor-blink rounded-xs shadow-xs"
+        className="inline-block w-[3px] sm:w-[4px] h-[0.85em] ml-1 bg-blue-600 align-middle animate-cursor-blink rounded-xs shadow-xs shrink-0"
       />
     </span>
   );
@@ -73,15 +73,18 @@ export default function AgencyHero({ onOpenDiscovery }) {
           </div>
         </div>
 
-        <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-[1.15]">
-            <span className="block">We help brands</span>
-            <span className="block mt-1 sm:mt-2 text-blue-600 min-h-[2.4em] sm:min-h-[1.25em] flex items-center justify-center">
+        <div className="text-center max-w-5xl mx-auto">
+          {/* Exactly 2 lines: Line 1 stable, Line 2 single-line blue typewriter */}
+          <h1 className="tracking-tight leading-[1.12]">
+            <span className="block text-3xl sm:text-5xl md:text-6xl font-bold text-slate-900">
+              We help brands
+            </span>
+            <span className="block mt-1 sm:mt-2 text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-blue-600 whitespace-nowrap h-[1.25em] flex items-center justify-center overflow-visible">
               <TypewriterText phrases={TAGLINE_PHRASES} />
             </span>
           </h1>
 
-          <p className="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
             Reels, Shorts, commercial videos, graphics and complete content management that build trust and drive real growth.
           </p>
 
