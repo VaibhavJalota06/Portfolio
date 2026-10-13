@@ -10,7 +10,8 @@ export default function AgencyMarqueeStats() {
     'INSTAGRAM REELS & YOUTUBE SHORTS',
     'SOCIAL MEDIA MANAGEMENT',
     'AD CREATIVES & COMMERCIAL EDITS',
-    'SOUND DESIGN & SFX'
+    'SOUND DESIGN & SFX',
+    'WEBSITE DESIGN & DEVELOPMENT'
   ];
 
   return (

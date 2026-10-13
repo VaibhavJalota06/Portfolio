@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Clapperboard, Palette, Bot, ArrowRight, Check, Zap, MessageCircle, Calendar } from 'lucide-react';
+import { LayoutGrid, Clapperboard, Palette, Bot, Globe, ArrowRight, Check, Zap, MessageCircle, Calendar } from 'lucide-react';
 import { getWhatsAppUrl } from '../contact';
 
 export default function AgencyServices({ onSelectService }) {
@@ -62,6 +62,21 @@ export default function AgencyServices({ onSelectService }) {
         'Animated characters for awareness reels',
         'AI images for posts and ads',
         'Combined with real editing for a polished finish'
+      ]
+    },
+    {
+      id: 'website',
+      icon: Globe,
+      title: 'Website Design & Development',
+      subtitle: 'Landing Pages • Brand Sites • Portfolios',
+      tag: 'Full-Service',
+      description: 'Custom-built, mobile-first websites that look premium and load fast — landing pages, brand sites, portfolios and e-commerce storefronts designed to convert visitors into customers.',
+      deliverables: [
+        'Custom responsive design (mobile-first)',
+        'Fast-loading, SEO-optimized pages',
+        'Contact forms, booking and WhatsApp integration',
+        'Domain setup and hosting guidance',
+        'Ongoing maintenance and content updates'
       ]
     }
   ];

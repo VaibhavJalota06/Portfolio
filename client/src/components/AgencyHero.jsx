@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Play, MessageCircle } from 'lucide-react';
-import { CONTACT, getWhatsAppUrl } from '../contact';
+import { getWhatsAppUrl } from '../contact';
 
 const TAGLINE_PHRASES = [
   'scale across platforms.',
   'dominate short-form video.',
   'turn viewers into clients.',
+  'build a stunning website.',
   'grow on social media.'
 ];
 
@@ -85,7 +86,7 @@ export default function AgencyHero({ onOpenDiscovery }) {
           </h1>
 
           <p className="mt-6 text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Reels, Shorts, commercial videos, graphics and complete content management that build trust and drive real growth.
+            Reels, Shorts, commercial videos, graphics, websites and complete content management that build trust and drive real growth.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -115,16 +116,6 @@ export default function AgencyHero({ onOpenDiscovery }) {
             </a>
           </div>
 
-          {/* Floating High-Retention Waveform Indicator */}
-          <div className="mt-10 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-slate-900/90 text-white text-xs font-mono shadow-xl border border-slate-800 animate-float">
-            <span className="flex items-center gap-1 text-blue-400">
-              <span className="w-1 h-3 bg-blue-400 rounded-full animate-pulse" />
-              <span className="w-1 h-5 bg-blue-500 rounded-full animate-pulse [animation-delay:150ms]" />
-              <span className="w-1 h-2 bg-blue-400 rounded-full animate-pulse [animation-delay:300ms]" />
-              <span className="w-1 h-4 bg-blue-500 rounded-full animate-pulse [animation-delay:450ms]" />
-            </span>
-            <span className="text-slate-300 font-sans font-medium">4K 60FPS Masters · Word-by-Word Dynamic Captions · Audio Normalized</span>
-          </div>
 
         </div>
 
