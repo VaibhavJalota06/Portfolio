@@ -10,7 +10,6 @@ import AgencyServices from './components/AgencyServices';
 import AgencyAbout from './components/AgencyAbout';
 import { CONTACT, getWhatsAppUrl } from './contact';
 import BeforeAfterShowcase from './components/BeforeAfterShowcase';
-import AgencyEstimator from './components/AgencyEstimator';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
 import GooglePanel from './components/GooglePanel';
@@ -845,12 +844,6 @@ export default function App() {
                 setShowDiscoveryModal(true);
               }} />
 
-              {/* Interactive Scope & Pricing Estimator */}
-              <AgencyEstimator onOpenDiscovery={(pkgName) => {
-                setSelectedService(pkgName);
-                setShowDiscoveryModal(true);
-              }} />
-
               {/* 7. Frequently Asked Questions */}
               <AgencyFAQ />
 
@@ -893,7 +886,6 @@ export default function App() {
                       <li><a href="#work" className="hover:text-white transition-colors">Our Work</a></li>
                       <li><a href="#about" className="hover:text-white transition-colors">About Us</a></li>
                       <li><a href="#services" className="hover:text-white transition-colors">Agency Services</a></li>
-                      <li><a href="#pricing" className="hover:text-white transition-colors">Plans & Scope</a></li>
                       <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
                     </ul>
                   </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutGrid, Clapperboard, Palette, Bot, ArrowRight, Check, Zap, MessageCircle } from 'lucide-react';
+import { LayoutGrid, Clapperboard, Palette, Bot, ArrowRight, Check, Zap, MessageCircle, Calendar } from 'lucide-react';
 import { getWhatsAppUrl } from '../contact';
 
 export default function AgencyServices({ onSelectService }) {
@@ -141,8 +141,8 @@ export default function AgencyServices({ onSelectService }) {
                     onClick={() => onSelectService(service.title)}
                     className="w-full py-3 rounded-xl bg-slate-50 hover:bg-blue-600 text-slate-700 hover:text-white font-semibold text-sm border border-slate-200 hover:border-transparent transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
                   >
-                    <span>Get Started: {service.title}</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <Calendar className="w-4 h-4" />
+                    <span>Book a Free Call</span>
                   </button>
                   <a
                     href={getWhatsAppUrl(`Hi Vaibhav, I'm interested in your ${service.title} service for my brand.`)}
