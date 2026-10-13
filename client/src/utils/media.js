@@ -49,7 +49,7 @@ export function getMediaInfo(url) {
       type: 'gdrive',
       id,
       embedUrl: `https://drive.google.com/file/d/${id}/preview`,
-      thumbnailUrl: `https://lh3.googleusercontent.com/d/${id}=w800`
+      thumbnailUrl: `https://lh3.googleusercontent.com/d/${id}=w800-rw`
     };
   }
 

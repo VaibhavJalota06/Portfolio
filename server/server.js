@@ -404,11 +404,17 @@ syncDriveSafe();
 // In production one service serves both the API and the website (client/dist), so no separate host is needed.
 const clientDist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../client/dist');
 if (fs.existsSync(clientDist)) {
-  app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
+  app.use(express.static(clientDist, {
+    index: false, extensions: ['html'], maxAge: '1h',
+    // Vite's hashed bundles never change, so browsers can keep them for a year.
+    setHeaders: (res, file) => { if (file.includes(`${path.sep}assets${path.sep}`)) res.setHeader('Cache-Control', 'public, max-age=31536000, immutable'); },
+  }));
   app.get(/^\/(?!api\/).*/, (req, res) => {
     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
+    // The app only lives at "/" (views use #hashes); anything else is a 404 for Google, but visitors still get the homepage.
+    if (req.path !== '/') res.status(404);
     res.sendFile(path.join(clientDist, 'index.html'));
   });
 }

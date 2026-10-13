@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { Film, Eye, Mail, Lock, X, ChevronLeft, ChevronRight, Trash2, MessageCircle, Instagram, Linkedin } from 'lucide-react';
 import Toast from './components/Toast';
-import AdminPanel from './components/AdminPanel';
-import SettingsPanel from './components/SettingsPanel';
+const AdminPanel = lazy(() => import('./components/AdminPanel')); // admin/legal only: kept out of the main bundle
+const SettingsPanel = lazy(() => import('./components/SettingsPanel')); // admin/legal only: kept out of the main bundle
 import PortfolioGrid from './components/PortfolioGrid';
 import AgencyNavbar from './components/AgencyNavbar';
 import AgencyHero from './components/AgencyHero';
@@ -13,8 +13,8 @@ import { CONTACT, getWhatsAppUrl } from './contact';
 import BeforeAfterShowcase from './components/BeforeAfterShowcase';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
-import GooglePanel from './components/GooglePanel';
-import LegalPolicies from './components/LegalPolicies';
+const GooglePanel = lazy(() => import('./components/GooglePanel')); // admin/legal only: kept out of the main bundle
+const LegalPolicies = lazy(() => import('./components/LegalPolicies')); // admin/legal only: kept out of the main bundle
 import { getMediaInfo, isEmbedType, isVideoItem } from './utils/media';
 
 // Private admin link: not linked anywhere on the public site. Protected by the admin PIN as well.
@@ -135,24 +135,6 @@ export default function App() {
       fetchItems(false);
     }
   }, [isAdmin, pinVerified, settings]);
-
-  // Inject OG / Twitter meta tags dynamically
-  useEffect(() => {
-    const name = settings?.editor_name || 'Cutframe Studio';
-    const desc = settings?.hero_tagline || 'High-retention video editing, shorts, reels and content management for brands, businesses and creators.';
-    const setMeta = (prop, content, attr = 'property') => {
-      let el = document.querySelector(`meta[${attr}="${prop}"]`);
-      if (!el) { el = document.createElement('meta'); el.setAttribute(attr, prop); document.head.appendChild(el); }
-      el.setAttribute('content', content);
-    };
-    document.title = `${name} | High-Retention Video & Content Studio`;
-    setMeta('og:title', `${name} | We help brands scale across platforms`);
-    setMeta('og:description', desc);
-    setMeta('og:type', 'website');
-    setMeta('twitter:card', 'summary_large_image', 'name');
-    setMeta('twitter:title', `${name} | We help brands scale across platforms`, 'name');
-    setMeta('twitter:description', desc, 'name');
-  }, [settings]);
 
   // PIN verify function
   const handleVerifyPin = async () => {
@@ -618,6 +600,7 @@ export default function App() {
             </div>
           </div>
 
+          <Suspense fallback={null}>
           {/* Admin panel item creation/updating form */}
           <AdminPanel
             onSave={handleSaveItem}
@@ -633,6 +616,7 @@ export default function App() {
             settings={settings}
             onSaveSettings={handleSaveSettings}
           />
+          </Suspense>
 
           {/* Portfolio grid edit space */}
           <div className="mt-10">
@@ -796,7 +780,7 @@ export default function App() {
 
           return (
             <>
-              {legalTab ? <LegalPolicies initialTab={legalTab} /> : <>
+              {legalTab ? <Suspense fallback={null}><LegalPolicies initialTab={legalTab} /></Suspense> : <>
               {/* 1. Agency Hero */}
               <AgencyHero onOpenDiscovery={() => { setSelectedService(''); setShowDiscoveryModal(true); }} />
 
@@ -915,11 +899,11 @@ export default function App() {
                       </span>
                     </div>
                     <span className="text-slate-700">|</span>
-                    <span className="text-slate-500 text-[11px]">© {new Date().getFullYear()}</span>
+                    <span className="text-slate-400 text-[11px]">© {new Date().getFullYear()}</span>
                   </div>
 
                   {/* Center: Inline Navigation & Legal Policies */}
-                  <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] sm:text-xs font-medium">
+                  <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] sm:text-xs font-medium [&>a]:py-1.5">
                     <a href="#work" className="hover:text-white transition-colors">Work</a>
                     <span className="text-slate-700">·</span>
                     <a href="#difference" className="hover:text-white transition-colors">The Difference</a>
@@ -982,6 +966,14 @@ export default function App() {
                   </div>
 
                 </div>
+                {/* Crawlable links to the static service pages (built by scripts/service-pages.mjs) */}
+                <nav aria-label="Services" className="max-w-7xl mx-auto mt-4 pt-4 border-t border-slate-800 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-slate-400 [&>a]:py-1.5">
+                  <a href="/reels-video-editing-delhi" className="hover:text-white">Reels &amp; Video Editing</a>
+                  <a href="/instagram-page-management" className="hover:text-white">Instagram Page Management</a>
+                  <a href="/graphic-design" className="hover:text-white">Graphic Design</a>
+                  <a href="/ai-videos" className="hover:text-white">AI Videos</a>
+                  <a href="/website-design" className="hover:text-white">Website Design</a>
+                </nav>
               </footer>
             </>
           );
@@ -1068,7 +1060,7 @@ export default function App() {
               {mediaType === 'gdrive' && (activeLightboxItem.mime || '').startsWith('image/') && (
                 <img
                   referrerPolicy="no-referrer"
-                  src={`https://lh3.googleusercontent.com/d/${media.id}=w2000`}
+                  src={`https://lh3.googleusercontent.com/d/${media.id}=w2000-rw`}
                   alt={activeLightboxItem.title || 'Portfolio work'}
                   className="w-full h-full object-contain"
                 />
