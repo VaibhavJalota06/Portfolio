@@ -35,42 +35,62 @@ export default function AgencyAbout() {
             </h2>
             <p className="mt-4 text-base text-slate-500 font-medium">Video editing &amp; Instagram content studio · Delhi &amp; all India</p>
           </div>
-          <div className="space-y-5 text-base sm:text-lg text-slate-600 leading-relaxed lg:pt-10">
+          <div className="space-y-6 text-base sm:text-lg text-slate-600 leading-relaxed lg:pt-4">
             <p>
               Cutframe Studio is a video editing and Instagram content studio based in Delhi. We work with brands,
               businesses, creators, clinics and doctors across India. We handle the reels, posts and page management,
               so you can focus on running your business.
             </p>
-            <p>
-              The studio is run by <strong className="text-slate-900 font-semibold">Vaibhav Jalota</strong>, its founder.
-              You talk directly to the person creating your content, with no middlemen, no handoffs and quick replies on WhatsApp.
-            </p>
-            <div className="pt-2 flex flex-wrap items-center gap-2.5">
-              <a
-                href={CONTACT.linkedinUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium text-xs transition-colors"
-              >
-                <Linkedin className="w-3.5 h-3.5" />
-                <span>LinkedIn</span>
-              </a>
-              <a
-                href={CONTACT.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 font-medium text-xs transition-colors"
-              >
-                <Instagram className="w-3.5 h-3.5" />
-                <span>Instagram</span>
-              </a>
-              <a
-                href={`mailto:${CONTACT.email}`}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition-colors"
-              >
-                <Mail className="w-3.5 h-3.5" />
-                <span>{CONTACT.email}</span>
-              </a>
+
+            {/* Founder Profile Card */}
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-5">
+              <div className="relative shrink-0">
+                <img
+                  src="/founder.jpg"
+                  alt="Vaibhav Jalota, Founder of Cutframe Studio"
+                  className="w-24 h-28 sm:w-28 sm:h-32 object-cover object-top rounded-xl border border-slate-200 shadow-md"
+                  loading="lazy"
+                />
+                <span className="absolute -bottom-2 -right-1 px-2 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold font-mono tracking-wider shadow-sm">
+                  FOUNDER
+                </span>
+              </div>
+              <div className="space-y-2 text-center sm:text-left flex-1">
+                <div>
+                  <h3 className="text-lg font-bold text-slate-900">Vaibhav Jalota</h3>
+                  <p className="text-xs text-blue-600 font-semibold font-mono">Founder &amp; Creative Lead</p>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  You talk directly to the person creating and overseeing your content — no middlemen, no handoffs, and quick replies on WhatsApp.
+                </p>
+                <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                  <a
+                    href={CONTACT.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium text-xs transition-colors"
+                  >
+                    <Linkedin className="w-3.5 h-3.5" />
+                    <span>LinkedIn</span>
+                  </a>
+                  <a
+                    href={CONTACT.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 font-medium text-xs transition-colors"
+                  >
+                    <Instagram className="w-3.5 h-3.5" />
+                    <span>Instagram</span>
+                  </a>
+                  <a
+                    href={`mailto:${CONTACT.email}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition-colors"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>Email</span>
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
