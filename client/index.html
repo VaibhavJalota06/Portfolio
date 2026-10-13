@@ -35,6 +35,29 @@
       gtag('js', new Date());
       gtag('config', 'G-6XEF9QBCFZ');
     </script>
+
+    <!-- Business info for Google / AI search (keep in sync with src/contact.js) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "Cutframe Studio",
+      "url": "https://cutframestudio.in",
+      "logo": "https://cutframestudio.in/favicon.svg",
+      "image": "https://cutframestudio.in/og-image.jpg",
+      "description": "Video editing and Instagram content studio in Delhi: reels, shorts, graphic design, AI videos, page management and website design for brands, businesses and creators.",
+      "email": "vaibhav@cutframestudio.in",
+      "telephone": "+91-92175-84204",
+      "founder": { "@type": "Person", "name": "Vaibhav Jalota" },
+      "address": { "@type": "PostalAddress", "addressLocality": "Delhi", "addressRegion": "DL", "addressCountry": "IN" },
+      "areaServed": [{ "@type": "City", "name": "Delhi" }, { "@type": "Country", "name": "India" }],
+      "sameAs": [
+        "https://instagram.com/studiocutframe",
+        "https://www.linkedin.com/company/cutframe-studio"
+      ],
+      "knowsAbout": ["Reels editing", "YouTube Shorts editing", "Instagram page management", "Social media management", "Graphic design", "AI video creation", "Website design"]
+    }
+    </script>
   </head>
   <body>
     <!-- Boot loader: visible instantly on load/refresh, hidden by main.jsx once the app has rendered.
@@ -59,7 +82,23 @@
       <div class="bar"></div>
     </div>
     <script>setTimeout(function () { var l = document.getElementById('boot-loader'); if (l) l.remove(); }, 6000);</script>
-    <div id="root"></div>
+    <!-- Static text for crawlers that don't run JavaScript; React replaces it on render. -->
+    <div id="root">
+      <main>
+        <h1>Cutframe Studio: Reels, Video Editing &amp; Instagram Page Management in Delhi</h1>
+        <p>Cutframe Studio is a video editing and Instagram content studio in Delhi, run by founder Vaibhav Jalota. We help brands, businesses and creators across India grow on Instagram and YouTube.</p>
+        <h2>Services</h2>
+        <ul>
+          <li>Social media &amp; Instagram page management: planning, posting, profiles</li>
+          <li>Reels &amp; video editing: reels, YouTube Shorts, long-form YouTube</li>
+          <li>Graphic design: posts, posters, carousels</li>
+          <li>AI videos &amp; creatives: AI avatars, AI visuals, B-roll</li>
+          <li>Website design &amp; development: landing pages, brand sites, portfolios</li>
+        </ul>
+        <h2>Contact</h2>
+        <p>Email <a href="mailto:vaibhav@cutframestudio.in">vaibhav@cutframestudio.in</a>, WhatsApp <a href="https://wa.me/919217584204">+91 92175 84204</a>, Instagram <a href="https://instagram.com/studiocutframe">@studiocutframe</a>.</p>
+      </main>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

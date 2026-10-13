@@ -136,7 +136,7 @@ export default function App() {
     }
   }, [isAdmin, pinVerified, settings]);
 
-  // Inject OG / Twitter meta tags, Google Analytics 4 & Search Console dynamically
+  // Inject OG / Twitter meta tags dynamically
   useEffect(() => {
     const name = settings?.editor_name || 'Cutframe Studio';
     const desc = settings?.hero_tagline || 'High-retention video editing, shorts, reels and content management for brands, businesses and creators.';
@@ -152,37 +152,6 @@ export default function App() {
     setMeta('twitter:card', 'summary_large_image', 'name');
     setMeta('twitter:title', `${name} | We help brands scale across platforms`, 'name');
     setMeta('twitter:description', desc, 'name');
-
-    // Google Search Console Verification
-    if (settings?.google_site_verification) {
-      let token = settings.google_site_verification.trim();
-      // If user pasted whole tag <meta name="google-site-verification" content="..." />
-      const match = token.match(/content=["']([^"']+)["']/i);
-      if (match) token = match[1];
-      setMeta('google-site-verification', token, 'name');
-    }
-
-    // Google Analytics 4 (gtag.js)
-    const gaId = settings?.ga_measurement_id?.trim();
-    if (gaId && /^G-[A-Z0-9]+$/i.test(gaId)) {
-      if (!document.getElementById('ga-script')) {
-        const script = document.createElement('script');
-        script.id = 'ga-script';
-        script.async = true;
-        script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`;
-        document.head.appendChild(script);
-
-        const inlineScript = document.createElement('script');
-        inlineScript.id = 'ga-init-script';
-        inlineScript.innerHTML = `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${gaId}', { send_page_view: true });
-        `;
-        document.head.appendChild(inlineScript);
-      }
-    }
   }, [settings]);
 
   // PIN verify function
