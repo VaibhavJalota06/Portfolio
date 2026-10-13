@@ -7,7 +7,7 @@ export default function AgencyFAQ() {
   const faqs = [
     {
       q: 'Who do you work with?',
-      a: 'Brands and businesses of all kinds: food and product brands, clinics and doctors, coaches, creators and local businesses that want a strong Instagram presence.'
+      a: 'Brands and businesses of all kinds: food and product brands, clinics and doctors, coaches, creators and local businesses that want a strong online presence and video content across platforms.'
     },
     {
       q: 'How do I send you my videos?',
@@ -36,7 +36,7 @@ export default function AgencyFAQ() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 scroll-reveal">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
             <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
             Frequently Asked Questions
@@ -56,7 +56,7 @@ export default function AgencyFAQ() {
             return (
               <div
                 key={idx}
-                className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200"
+                className={`bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200 scroll-reveal stagger-${(idx % 4) + 1}`}
               >
                 <button
                   type="button"

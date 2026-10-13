@@ -4,7 +4,7 @@ import { CONTACT } from '../contact';
 
 
 const services = [
-  { icon: LayoutGrid, title: 'Instagram page management', text: 'Content plan, posting and a consistent look for your page, so it stays active without taking your time.' },
+  { icon: LayoutGrid, title: 'Social media & page management', text: 'Content planning, regular posting and a consistent look for your pages across platforms, so they stay active without taking your time.' },
   { icon: Clapperboard, title: 'Reels & video editing', text: 'Short, engaging reels from your raw clips: hooks, captions, music and pacing that keep people watching.' },
   { icon: Palette, title: 'Graphic design', text: 'Posts, posters and carousels that explain your services clearly and match your brand.' },
   { icon: Bot, title: 'AI videos & creatives', text: 'AI-generated visuals, avatars and B-roll to explain your products and ideas when you don’t have footage.' },
@@ -24,7 +24,7 @@ export default function AgencyAbout() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Who we are */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start scroll-reveal">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
               <Users className="w-3.5 h-3.5 text-blue-600" />
@@ -43,7 +43,7 @@ export default function AgencyAbout() {
             </p>
 
             {/* Founder Profile Card */}
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-5">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-5 scroll-reveal stagger-1">
               <div className="relative shrink-0">
                 <img
                   src="/founder.jpg"
@@ -97,8 +97,8 @@ export default function AgencyAbout() {
 
         {/* What we do */}
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {services.map(({ icon: Icon, title, text }) => (
-            <div key={title} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+          {services.map(({ icon: Icon, title, text }, i) => (
+            <div key={title} className={`bg-white border border-slate-200 rounded-2xl p-6 shadow-sm scroll-reveal stagger-${(i % 4) + 1}`}>
               <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4">
                 <Icon className="w-5 h-5" />
               </div>
@@ -110,7 +110,7 @@ export default function AgencyAbout() {
 
         {/* How working with us works */}
         <div className="mt-20">
-          <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="text-center max-w-2xl mx-auto mb-10 scroll-reveal">
             <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">How working with us works</h3>
             <p className="mt-3 text-slate-600">
               Book a quick call to talk through your goals, and we'll create a tailored plan for your brand.
@@ -118,7 +118,7 @@ export default function AgencyAbout() {
           </div>
           <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
             {steps.map(({ icon: Icon, title, text }, i) => (
-              <li key={title} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+              <li key={title} className={`bg-white border border-slate-200 rounded-2xl p-6 shadow-sm scroll-reveal stagger-${(i % 5) + 1}`}>
                 <div className="flex items-center gap-3 mb-4">
                   <span className="w-9 h-9 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
                   <Icon className="w-5 h-5 text-blue-600" />

@@ -22,7 +22,7 @@ export default function DiscoveryModal({ isOpen, onClose, initialService = '', s
     channelUrl: '',
     date: '',
     timeSlot: '',
-    topics: initialService || 'Instagram Page Management'
+    topics: initialService || 'Social Media & Page Management'
   });
 
   // Brief Form fields
@@ -30,7 +30,7 @@ export default function DiscoveryModal({ isOpen, onClose, initialService = '', s
     name: '',
     email: '',
     brandUrl: '',
-    service: initialService || 'Instagram Page Management',
+    service: initialService || 'Social Media & Page Management',
     volume: '8–12 posts / reels a month',
     budget: 'Not sure yet: suggest a plan',
     message: ''
@@ -174,11 +174,11 @@ Focus: ${callData.topics}`,
   };
 
   const serviceOptions = [
-    'Instagram Page Management',
+    'Social Media & Page Management',
     'Reels & Video Editing',
     'Graphic Design',
     'AI Videos & Creatives',
-    'Complete Instagram Package'
+    'Full Creative Package'
   ];
 
   // Lock body scroll when modal is open
@@ -429,13 +429,13 @@ Focus: ${callData.topics}`,
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Instagram / Website
+                    Social Profiles / Website
                   </label>
                   <input
                     type="text"
                     value={callData.channelUrl}
                     onChange={(e) => setCallData({ ...callData, channelUrl: e.target.value })}
-                    placeholder="@yourbrand or website"
+                    placeholder="@yourbrand or website / channels"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-600 text-sm text-slate-900 bg-white"
                   />
                 </div>
@@ -515,13 +515,13 @@ Focus: ${callData.topics}`,
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                    Instagram / Website
+                    Social Profiles / Website
                   </label>
                   <input
                     type="text"
                     value={formData.brandUrl}
                     onChange={(e) => setFormData({ ...formData, brandUrl: e.target.value })}
-                    placeholder="@yourbrand or website"
+                    placeholder="@yourbrand or website / channels"
                     className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-600 text-sm text-slate-900 bg-white"
                   />
                 </div>
@@ -593,7 +593,7 @@ Focus: ${callData.topics}`,
                   rows={3}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="Tell us about your business, your Instagram handle and what you want to achieve…"
+                  placeholder="Tell us about your brand, your social channels and what content you need…"
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-blue-600 text-sm text-slate-900 placeholder:text-slate-400 bg-white resize-none"
                 />
               </div>
@@ -619,7 +619,7 @@ Focus: ${callData.topics}`,
         {/* Footer Guarantee */}
         <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-500 shrink-0">
           <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>100% Confidential • Direct Creative Consultation</span>
+          <span>Strictly Confidential • Direct Creative Consultation</span>
         </div>
       </div>
     </div>

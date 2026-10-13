@@ -1,3 +1,4 @@
+// Deploy trigger: bidirectional scroll reveal & multi-platform page management update
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';

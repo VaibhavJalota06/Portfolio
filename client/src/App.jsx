@@ -79,6 +79,45 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
+  // Bidirectional Scroll-Reveal Observer (animates smoothly on both scroll down & up)
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+          } else {
+            entry.target.classList.remove('revealed');
+          }
+        });
+      },
+      {
+        threshold: 0.12,
+        rootMargin: '0px 0px -30px 0px'
+      }
+    );
+
+    const observeAll = () => {
+      document.querySelectorAll('.scroll-reveal').forEach((el) => {
+        observer.observe(el);
+      });
+    };
+
+    observeAll();
+
+    const mutationObserver = new MutationObserver(() => {
+      observeAll();
+    });
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mutationObserver.disconnect();
+    };
+  }, []);
+
   // Synchronize portfolio items based on user view (admin vs public) and login status
   useEffect(() => {
     if (isAdmin && (pinVerified || (settings && !settings.has_admin_pin))) {
@@ -91,7 +130,7 @@ export default function App() {
   // Inject OG / Twitter meta tags dynamically
   useEffect(() => {
     const name = settings?.editor_name || 'Cutframe Studio';
-    const desc = settings?.hero_tagline || 'Reels, posts and Instagram page management for brands, businesses and creators.';
+    const desc = settings?.hero_tagline || 'High-retention video editing, shorts, reels and content management for brands, businesses and creators.';
     const setMeta = (prop, content, attr = 'property') => {
       let el = document.querySelector(`meta[${attr}="${prop}"]`);
       if (!el) { el = document.createElement('meta'); el.setAttribute(attr, prop); document.head.appendChild(el); }
@@ -756,7 +795,7 @@ export default function App() {
               <section id="work" className="py-20 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   {/* Section Title */}
-                  <div className="text-center max-w-3xl mx-auto mb-10">
+                  <div className="text-center max-w-3xl mx-auto mb-10 scroll-reveal">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
                       <Film className="w-3.5 h-3.5 text-blue-600" />
                       Our Work
@@ -778,7 +817,7 @@ export default function App() {
                     const agencyCategories = ['All Work', ...core.filter(c => used.has(c)), ...[...used].filter(t => !core.includes(t)).sort()];
 
                     return (
-                      <div className="flex flex-wrap gap-2.5 mb-8">
+                      <div className="flex flex-wrap gap-2.5 mb-8 scroll-reveal stagger-1">
                         {agencyCategories.map(cat => {
                           const isAll = cat === 'All Work';
                           const isSelected = isAll ? !activeTagFilter : activeTagFilter === cat;
@@ -852,7 +891,7 @@ export default function App() {
               {/* 8. Agency Footer */}
               <footer className="bg-slate-900 text-white py-16 px-6 border-t border-slate-800">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
-                  <div className="md:col-span-2 space-y-4">
+                  <div className="md:col-span-2 space-y-4 scroll-reveal">
                     <div className="flex items-center gap-2.5">
                       <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
                         <Film className="w-5 h-5 text-white" />
@@ -878,7 +917,7 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="scroll-reveal stagger-1">
                     <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
                       Navigation
                     </h4>
@@ -890,7 +929,7 @@ export default function App() {
                     </ul>
                   </div>
 
-                  <div>
+                  <div className="scroll-reveal stagger-2">
                     <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
                       Direct Inquiries
                     </h4>
@@ -1086,7 +1125,7 @@ export default function App() {
       {/* Floating WhatsApp button (public site) */}
       {!isAdmin && (
         <a
-          href={getWhatsAppUrl("Hi Vaibhav, I have a quick question about Cutframe Studio's video editing & Instagram services.")}
+          href={getWhatsAppUrl("Hi Vaibhav, I have a quick question about Cutframe Studio's video editing & content management services.")}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on WhatsApp"

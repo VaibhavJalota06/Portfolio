@@ -7,16 +7,16 @@ export default function AgencyServices({ onSelectService }) {
     {
       id: 'page-management',
       icon: LayoutGrid,
-      title: 'Instagram Page Management',
-      subtitle: 'Planning • Posting • Profile',
+      title: 'Social Media & Page Management',
+      subtitle: 'Planning • Posting • Profiles',
       tag: 'Most Popular',
-      description: 'We run your Instagram for you: a monthly content plan, regular posting and a page that looks consistent and trustworthy to new customers.',
+      description: 'We manage your brand’s social pages across platforms: a monthly content strategy, scheduled posting, and profiles that look consistent and trustworthy to new customers.',
       deliverables: [
         'Monthly content strategy',
-        'Monthly content calendar',
+        'Monthly content & posting calendar',
         'Captions and hashtags written for you',
-        'Regular posting on your schedule',
-        'Profile, highlights and bio cleanup'
+        'Regular scheduled posting',
+        'Profile, bio and highlights cleanup'
       ]
     },
     {
@@ -42,11 +42,11 @@ export default function AgencyServices({ onSelectService }) {
       tag: 'On-Brand',
       description: 'Posts, posters and carousels that explain your services clearly, built in Photoshop and CorelDraw to match your brand’s colors and style.',
       deliverables: [
-        'Instagram posts and carousels',
+        'Social media posts and carousels',
         'Festival and offer posters',
         'Thumbnails and reel covers',
         'Print designs (flyers, cards, packaging)',
-        'A consistent look across your page'
+        'A consistent look across your accounts'
       ]
     },
     {
@@ -71,28 +71,28 @@ export default function AgencyServices({ onSelectService }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-16 scroll-reveal">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
             <Zap className="w-3.5 h-3.5 text-blue-600" />
             Our Services
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
             Everything your brand needs <br />
-            <span className="text-blue-600">on Instagram</span>
+            <span className="text-blue-600">across social media</span>
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            Pick one service or combine them into a monthly plan. Transparent pricing with no long-term lock-in.
+            Pick one service or combine them into a monthly plan tailored to your brand. Flexible terms with no long-term lock-in.
           </p>
         </div>
 
         {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {services.map((service) => {
+          {services.map((service, index) => {
             const Icon = service.icon;
             return (
               <div
                 key={service.id}
-                className="group relative bg-white border border-slate-200 hover:border-blue-400/80 rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+                className={`group relative bg-white border border-slate-200 hover:border-blue-400/80 rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between scroll-reveal stagger-${(index % 4) + 1}`}
               >
                 <div>
                   {/* Top Bar */}

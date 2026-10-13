@@ -6,7 +6,7 @@ const TAGLINE_PHRASES = [
   'scale across every platform.',
   'dominate short-form video.',
   'turn viewers into clients.',
-  'grow on Instagram & YouTube.'
+  'grow across social media.'
 ];
 
 function TypewriterText({ phrases }) {
