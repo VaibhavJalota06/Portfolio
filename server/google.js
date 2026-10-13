@@ -152,6 +152,13 @@ async function listChildren(folderId) {
   return files;
 }
 
+// Raw file bytes (Range passed through) so the site can play Drive videos in a native <video>.
+export async function driveMedia(id, range) {
+  return fetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}?alt=media`, {
+    headers: { Authorization: `Bearer ${await accessToken()}`, ...(range && { Range: range }) },
+  });
+}
+
 // Maps a top-level Drive sub-folder name to one of the site's category filters.
 export function categoryFor(folderName) {
   const n = folderName.toLowerCase();

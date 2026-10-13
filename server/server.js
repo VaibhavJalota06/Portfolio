@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { Readable, pipeline } from 'stream';
 dotenv.config();
 const { default: db } = await import('./db.js');
 const google = await import('./google.js');
@@ -388,7 +389,29 @@ app.post('/api/google/sync', verifyAdmin, async (req, res) => {
 });
 
 // Public, cheap: pinged by the server's own keep-awake timer (below) and, as a backup, GitHub Actions.
-app.get('/api/health', (req, res) => res.json({ ok: true }));
+// Streams a published Drive video. Drive's iframe player breaks on iOS (double controls, squashed reels).
+// Only ids already in the public portfolio are served, so this never exposes other files in the owner's Drive.
+app.get('/api/drive/:id/video', async (req, res) => {
+  const ok = db.prepare("SELECT 1 FROM portfolio_items WHERE drive_id = ? AND is_published = 1 AND mime LIKE 'video/%'").get(req.params.id);
+  if (!ok) return res.sendStatus(404);
+  try {
+    const up = await google.driveMedia(req.params.id, req.headers.range);
+    if (!up.ok) return res.sendStatus(up.status === 416 ? 416 : 502);
+    res.status(up.status);
+    for (const h of ['content-type', 'content-length', 'content-range']) {
+      const v = up.headers.get(h);
+      if (v) res.setHeader(h, v);
+    }
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    pipeline(Readable.fromWeb(up.body), res, () => {}); // destroys the upstream download if the viewer closes
+  } catch (err) {
+    console.error('Drive stream failed:', err.message);
+    if (!res.headersSent) res.sendStatus(502);
+  }
+});
+
+app.get('/api/health',(req, res) => res.json({ ok: true }));
 
 // Hit every ~10 min by a free external cron (cron-job.org): keeps a free-tier host awake and syncs Drive.
 app.get('/api/cron', (req, res) => {

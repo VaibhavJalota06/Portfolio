@@ -993,10 +993,10 @@ export default function App() {
                 />
               )}
 
-              {mediaType === 'mp4' && (
-                <video 
+              {(mediaType === 'mp4' || (mediaType === 'gdrive' && isVideoItem(activeLightboxItem))) && (
+                <video
                   ref={lightboxVideoRef}
-                  src={activeLightboxItem.url} 
+                  src={mediaType === 'gdrive' ? `/api/drive/${media.id}/video` : activeLightboxItem.url}
                   controls 
                   autoPlay 
                   playsInline
@@ -1014,7 +1014,7 @@ export default function App() {
                 />
               )}
 
-              {isEmbedType(mediaType) && !(mediaType === 'gdrive' && (activeLightboxItem.mime || '').startsWith('image/')) && (
+              {isEmbedType(mediaType) && !(mediaType === 'gdrive' && /^(image|video)\//.test(activeLightboxItem.mime || '')) && (
                 <iframe
                   key={`${activeLightboxItem.id}-${isLightboxLooping}`} // Force reload when loop switches
                   src={mediaType === 'youtube' 
@@ -1044,7 +1044,7 @@ export default function App() {
                 <span>{(Array.isArray(activeLightboxItem.tags) && activeLightboxItem.tags[0]) || (isVideoItem(activeLightboxItem) ? 'Video' : 'Photo')}</span>
                 
                 {/* Loop Video Selector */}
-                {isVideoItem(activeLightboxItem) && mediaType !== 'gdrive' && (
+                {isVideoItem(activeLightboxItem) && (
                   <button
                     type="button"
                     onClick={() => setIsLightboxLooping(!isLightboxLooping)}
