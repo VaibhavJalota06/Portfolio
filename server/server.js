@@ -243,7 +243,23 @@ function alertOwner(subject, text, replyTo) {
 // Honeypot: the forms carry a hidden "website" field only bots fill. Answer as if it worked so they move on.
 const isBot = (req) => Boolean(req.body?.website);
 
-app.post('/api/contact', (req, res) => {
+// ponytail: in-memory per-IP cap shared by contact + booking, resets on restart (same trade-off as the PIN lockout).
+const FORM_MAX = 5;
+const FORM_WINDOW_MS = 60 * 60 * 1000;
+const formHits = new Map(); // ip -> timestamps of recent submissions
+function formLimit(req, res, next) {
+  const now = Date.now();
+  const recent = (formHits.get(req.ip) || []).filter((t) => now - t < FORM_WINDOW_MS);
+  if (recent.length >= FORM_MAX) {
+    return res.status(429).json({ error: 'Too many submissions from your network. Please try again in an hour, or message us on WhatsApp.' });
+  }
+  recent.push(now);
+  formHits.set(req.ip, recent);
+  if (formHits.size > 5000) formHits.clear(); // bound memory if something floods us from many IPs
+  next();
+}
+
+app.post('/api/contact', formLimit, (req, res) => {
   if (isBot(req)) return res.json({ message: 'Message received. Thank you!' });
   const { name, email, message } = req.body;
   if (!name || !email || !message) return res.status(400).json({ error: 'All fields are required.' });
@@ -313,7 +329,7 @@ app.get('/api/booking/slots', async (req, res) => {
   }
 });
 
-app.post('/api/booking', async (req, res) => {
+app.post('/api/booking', formLimit, async (req, res) => {
   if (isBot(req)) return res.json({ ok: true, date: req.body.date, time: req.body.time, minutes: google.CALL_MINUTES, meetLink: '', calendarEvent: false });
   const { name = '', email = '', date = '', time = '', topic = '', channelUrl = '' } = req.body || {};
   const clean = (v, max) => String(v).trim().slice(0, max);
