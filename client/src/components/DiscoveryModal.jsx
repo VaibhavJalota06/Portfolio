@@ -115,7 +115,8 @@ export default function DiscoveryModal({ isOpen, onClose, initialService = '', s
           date: callData.date,
           time: callData.timeSlot,
           topic: callData.topics,
-          channelUrl: callData.channelUrl
+          channelUrl: callData.channelUrl,
+          website: e.target.website?.value || ''
         })
       });
       const data = await res.json().catch(() => ({}));
@@ -161,7 +162,7 @@ Focus: ${callData.topics}`,
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ ...payload, website: e.target.website?.value || '' })
       });
       if (!res.ok) throw new Error();
 
@@ -345,6 +346,7 @@ Focus: ${callData.topics}`,
           ) : activeTab === 'call' ? (
             /* Discovery Call Form with Date/Time Picker */
             <form onSubmit={handleBookDiscoveryCall} className="space-y-4">
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" /> {/* spam honeypot: bots fill it, people never see it */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
@@ -486,6 +488,7 @@ Focus: ${callData.topics}`,
           ) : (
             /* Project Scope Brief Form */
             <form onSubmit={handleSubmitBrief} className="space-y-4">
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" /> {/* spam honeypot: bots fill it, people never see it */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
