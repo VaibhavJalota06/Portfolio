@@ -1,4 +1,4 @@
-// Deploy trigger: Sleek single-row minimalist footer update
+// Deploy trigger: Ultra-compact single-row horizontal bar footer
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';

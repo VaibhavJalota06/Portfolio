@@ -896,45 +896,53 @@ export default function App() {
 
               </>}
 
-              {/* 8. Sleek Minimalist Single-Row Footer */}
-              <footer className="bg-slate-900 text-white py-8 px-6 border-t border-slate-800">
-                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 text-xs text-slate-400">
+              {/* 8. Sleek Ultra-Compact Single-Row Horizontal Footer */}
+              <footer className="bg-slate-900 text-white py-5 px-6 border-t border-slate-800">
+                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-slate-400">
                   
                   {/* Left: Brand & Copyright */}
-                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                  <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-xs">
-                        <Film className="w-4 h-4 text-white" />
+                      <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center text-white shadow-xs">
+                        <Film className="w-3.5 h-3.5 text-white" />
                       </div>
-                      <span className="text-base font-bold tracking-tight text-white font-display">
+                      <span className="text-sm font-bold tracking-tight text-white font-display">
                         Cutframe <span className="text-blue-400">Studio</span>
                       </span>
                     </div>
-                    <span className="text-slate-700 hidden sm:inline">|</span>
-                    <span className="text-slate-500">© {new Date().getFullYear()} Cutframe Studio</span>
+                    <span className="text-slate-700">|</span>
+                    <span className="text-slate-500 text-[11px]">© {new Date().getFullYear()}</span>
                   </div>
 
-                  {/* Center: Navigation & Statutory Policies */}
-                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-medium">
+                  {/* Center: Inline Navigation & Legal Policies */}
+                  <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] sm:text-xs font-medium">
                     <a href="#work" className="hover:text-white transition-colors">Work</a>
+                    <span className="text-slate-700">·</span>
                     <a href="#difference" className="hover:text-white transition-colors">The Difference</a>
+                    <span className="text-slate-700">·</span>
                     <a href="#services" className="hover:text-white transition-colors">Services</a>
+                    <span className="text-slate-700">·</span>
                     <a href="#about" className="hover:text-white transition-colors">About</a>
+                    <span className="text-slate-700">·</span>
                     <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
-                    <span className="text-slate-700 hidden md:inline">•</span>
-                    <a href="#privacy" className="text-slate-400 hover:text-blue-400 transition-colors">Privacy (DPDP)</a>
+                    <span className="text-slate-700 mx-1">|</span>
+                    <a href="#privacy" className="text-slate-400 hover:text-blue-400 transition-colors">Privacy</a>
+                    <span className="text-slate-700">·</span>
                     <a href="#terms" className="text-slate-400 hover:text-blue-400 transition-colors">Terms</a>
+                    <span className="text-slate-700">·</span>
                     <a href="#refund" className="text-slate-400 hover:text-blue-400 transition-colors">Refunds</a>
+                    <span className="text-slate-700">·</span>
                     <a href="#grievance" className="text-slate-400 hover:text-blue-400 transition-colors">Grievance</a>
                   </div>
 
-                  {/* Right: Social & Contact Links */}
-                  <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
+                  {/* Right: Direct Contact & Social Links */}
+                  <div className="flex items-center gap-3.5 text-[11px] sm:text-xs font-medium">
                     <a
                       href={CONTACT.whatsappUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
+                      title="Chat on WhatsApp"
                     >
                       <MessageCircle className="w-3.5 h-3.5" />
                       <span>WhatsApp</span>
@@ -944,6 +952,7 @@ export default function App() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1.5 text-pink-400 hover:text-pink-300 transition-colors"
+                      title="Follow on Instagram"
                     >
                       <Instagram className="w-3.5 h-3.5" />
                       <span>Instagram</span>
@@ -953,6 +962,7 @@ export default function App() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors"
+                      title="Connect on LinkedIn"
                     >
                       <Linkedin className="w-3.5 h-3.5" />
                       <span>LinkedIn</span>
@@ -960,6 +970,7 @@ export default function App() {
                     <a
                       href={`mailto:${CONTACT.email}`}
                       className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors"
+                      title="Send email"
                     >
                       <Mail className="w-3.5 h-3.5" />
                       <span>Email</span>
