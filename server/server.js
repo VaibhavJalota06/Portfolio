@@ -1,4 +1,4 @@
-// Deploy trigger: Agency-wide on-site shooting and universal brand messaging
+// Deploy trigger: 5-part dynamic animation overhaul (kinetic marquee, countup, split slider, aurora glow, magnetic cursor)
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';

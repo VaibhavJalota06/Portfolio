@@ -6,6 +6,7 @@ import SettingsPanel from './components/SettingsPanel';
 import PortfolioGrid from './components/PortfolioGrid';
 import AgencyNavbar from './components/AgencyNavbar';
 import AgencyHero from './components/AgencyHero';
+import AgencyMarqueeStats from './components/AgencyMarqueeStats';
 import AgencyServices from './components/AgencyServices';
 import AgencyAbout from './components/AgencyAbout';
 import { CONTACT, getWhatsAppUrl } from './contact';
@@ -798,6 +799,9 @@ export default function App() {
               {legalTab ? <LegalPolicies initialTab={legalTab} /> : <>
               {/* 1. Agency Hero */}
               <AgencyHero onOpenDiscovery={() => { setSelectedService(''); setShowDiscoveryModal(true); }} />
+
+              {/* 2. Kinetic Infinite Marquee & Live Stats Strip */}
+              <AgencyMarqueeStats />
 
               {/* 3. Agency Video Showcase Matrix */}
               <section id="work" className="py-20 bg-white">

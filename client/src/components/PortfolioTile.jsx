@@ -21,6 +21,7 @@ export default function PortfolioTile({
   const tileRef = useRef(null);
   const [tiltStyle, setTiltStyle] = useState('');
   const [glareStyle, setGlareStyle] = useState({ opacity: 0 });
+  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
 
   // Scroll-triggered fade-in via IntersectionObserver
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function PortfolioTile({
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
+    setCursorPos({ x, y });
     
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
@@ -120,6 +122,21 @@ export default function PortfolioTile({
           className="absolute inset-0 pointer-events-none z-30 transition-opacity duration-300 rounded-lg"
           style={glareStyle}
         />
+      )}
+
+      {/* Floating Magnetic Preview Pill */}
+      {!isAdmin && isHovered && (
+        <div 
+          className="absolute z-40 pointer-events-none hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-600 text-white font-mono text-[10px] font-bold tracking-wider shadow-2xl border border-white/20 transition-transform duration-75"
+          style={{
+            left: cursorPos.x,
+            top: cursorPos.y,
+            transform: 'translate(-50%, -140%)'
+          }}
+        >
+          <Play className="w-3 h-3 fill-white" />
+          <span>PREVIEW</span>
+        </div>
       )}
 
       {/* Media container */}

@@ -54,15 +54,20 @@ function TypewriterText({ phrases }) {
 
 export default function AgencyHero({ onOpenDiscovery }) {
   return (
-    <section className="relative pt-32 pb-20 sm:pt-40 sm:pb-24 overflow-hidden bg-white">
+    <section className="relative pt-32 pb-16 sm:pt-40 sm:pb-20 overflow-hidden bg-white">
+      {/* Subtle Dot Grid Background */}
       <div
         className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{ backgroundImage: 'radial-gradient(#0F172A 1px, transparent 1px)', backgroundSize: '24px 24px' }}
       />
 
+      {/* Organic Aurora Ambient Glow Blobs */}
+      <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[650px] sm:w-[900px] h-[350px] bg-gradient-to-tr from-blue-500/15 via-indigo-500/10 to-transparent blur-3xl pointer-events-none rounded-full animate-glow z-0" />
+      <div className="absolute top-1/3 -right-20 w-[400px] h-[400px] bg-sky-400/10 blur-3xl pointer-events-none rounded-full animate-float z-0" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold tracking-wide shadow-sm">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold tracking-wide shadow-sm animate-float">
             <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
             <span>Cutframe Studio · High-Retention Video &amp; Content Studio</span>
           </div>
@@ -82,7 +87,7 @@ export default function AgencyHero({ onOpenDiscovery }) {
             <button
               type="button"
               onClick={onOpenDiscovery}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base shadow-lg shadow-blue-600/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2.5 cursor-pointer focus-ring"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-base shadow-lg shadow-blue-600/25 hover:shadow-blue-600/40 hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2.5 cursor-pointer focus-ring"
             >
               <span>Book a Free Call</span>
               <ArrowRight className="w-4 h-4" />
@@ -91,19 +96,31 @@ export default function AgencyHero({ onOpenDiscovery }) {
               href={getWhatsAppUrl("Hi Vaibhav, I checked out Cutframe Studio and I'd like to discuss video editing & content for my brand.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-base shadow-lg shadow-emerald-500/20 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 focus-ring"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-base shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/35 hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 focus-ring"
             >
               <MessageCircle className="w-4 h-4" />
               <span>WhatsApp Us</span>
             </a>
             <a
               href="#work"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold text-base border border-slate-200 shadow-sm transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 focus-ring"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 font-semibold text-base border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 focus-ring"
             >
               <Play className="w-4 h-4 text-blue-600 fill-blue-600" />
               <span>See Our Work</span>
             </a>
           </div>
+
+          {/* Floating High-Retention Waveform Indicator */}
+          <div className="mt-10 inline-flex items-center gap-3 px-4 py-2 rounded-full bg-slate-900/90 text-white text-xs font-mono shadow-xl border border-slate-800 animate-float">
+            <span className="flex items-center gap-1 text-blue-400">
+              <span className="w-1 h-3 bg-blue-400 rounded-full animate-pulse" />
+              <span className="w-1 h-5 bg-blue-500 rounded-full animate-pulse [animation-delay:150ms]" />
+              <span className="w-1 h-2 bg-blue-400 rounded-full animate-pulse [animation-delay:300ms]" />
+              <span className="w-1 h-4 bg-blue-500 rounded-full animate-pulse [animation-delay:450ms]" />
+            </span>
+            <span className="text-slate-300 font-sans font-medium">4K 60FPS Masters · Word-by-Word Dynamic Captions · Audio Normalized</span>
+          </div>
+
         </div>
 
       </div>
