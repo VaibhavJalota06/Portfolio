@@ -13,7 +13,7 @@ import BeforeAfterShowcase from './components/BeforeAfterShowcase';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
 import GooglePanel from './components/GooglePanel';
-import PrivacyPolicy from './components/PrivacyPolicy';
+import LegalPolicies from './components/LegalPolicies';
 import { getMediaInfo, isEmbedType, isVideoItem } from './utils/media';
 
 // Private admin link: not linked anywhere on the public site. Protected by the admin PIN as well.
@@ -27,7 +27,7 @@ export default function App() {
   const [editingItem, setEditingItem] = useState(null);
   const [toast, setToast] = useState(null);
   const [activeLightboxItem, setActiveLightboxItem] = useState(null);
-  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [legalTab, setLegalTab] = useState('');
   const lightboxVideoRef = useRef(null);
   const [isLightboxLooping, setIsLightboxLooping] = useState(false);
   const [settings, setSettings] = useState(() => {
@@ -60,8 +60,13 @@ export default function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      setShowPrivacy(hash === '#privacy');
-      if (hash === '#privacy') window.scrollTo(0, 0);
+      const legalHashes = ['#privacy', '#terms', '#refund', '#grievance'];
+      if (legalHashes.includes(hash)) {
+        setLegalTab(hash.replace('#', ''));
+        window.scrollTo(0, 0);
+      } else {
+        setLegalTab('');
+      }
       if (hash === ADMIN_HASH) {
         setIsAdmin(true);
       } else {
@@ -79,7 +84,7 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Bidirectional Scroll-Reveal Observer (animates smoothly on both scroll down & up)
+  // Smooth Scroll-Reveal Observer (elements animate in smoothly and stay visible)
   useEffect(() => {
     if (typeof IntersectionObserver === 'undefined') return;
 
@@ -88,19 +93,22 @@ export default function App() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add('revealed');
-          } else {
-            entry.target.classList.remove('revealed');
           }
         });
       },
       {
-        threshold: 0.12,
-        rootMargin: '0px 0px -30px 0px'
+        threshold: 0.02,
+        rootMargin: '0px 0px 100px 0px'
       }
     );
 
     const observeAll = () => {
       document.querySelectorAll('.scroll-reveal').forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        // If already in viewport on load, reveal immediately
+        if (rect.top < window.innerHeight) {
+          el.classList.add('revealed');
+        }
         observer.observe(el);
       });
     };
@@ -787,7 +795,7 @@ export default function App() {
 
           return (
             <>
-              {showPrivacy ? <PrivacyPolicy contactEmail={CONTACT.email} /> : <>
+              {legalTab ? <LegalPolicies initialTab={legalTab} /> : <>
               {/* 1. Agency Hero */}
               <AgencyHero onOpenDiscovery={() => { setSelectedService(''); setShowDiscoveryModal(true); }} />
 
@@ -923,6 +931,7 @@ export default function App() {
                     </h4>
                     <ul className="space-y-2.5 text-sm text-slate-400">
                       <li><a href="#work" className="hover:text-white transition-colors">Our Work</a></li>
+                      <li><a href="#difference" className="hover:text-white transition-colors">The Difference</a></li>
                       <li><a href="#about" className="hover:text-white transition-colors">About Us</a></li>
                       <li><a href="#services" className="hover:text-white transition-colors">Agency Services</a></li>
                       <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
@@ -930,6 +939,18 @@ export default function App() {
                   </div>
 
                   <div className="scroll-reveal stagger-2">
+                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
+                      Statutory Policies
+                    </h4>
+                    <ul className="space-y-2.5 text-sm text-slate-400">
+                      <li><a href="#privacy" className="hover:text-white transition-colors">Privacy Policy (DPDP)</a></li>
+                      <li><a href="#terms" className="hover:text-white transition-colors">Terms of Service</a></li>
+                      <li><a href="#refund" className="hover:text-white transition-colors">Refund &amp; Cancellation</a></li>
+                      <li><a href="#grievance" className="hover:text-white transition-colors">Grievance Redressal</a></li>
+                    </ul>
+                  </div>
+
+                  <div className="scroll-reveal stagger-3">
                     <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
                       Direct Inquiries
                     </h4>
@@ -944,7 +965,7 @@ export default function App() {
                 </div>
 
                 <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-                  <p>© {new Date().getFullYear()} Cutframe Studio. All rights reserved. · <a href="#privacy" className="hover:text-slate-300 underline-offset-2 hover:underline">Privacy Policy</a></p>
+                  <p>© {new Date().getFullYear()} Cutframe Studio. All rights reserved. · <a href="#privacy" className="hover:text-slate-300 underline-offset-2 hover:underline">Privacy (DPDP)</a> · <a href="#terms" className="hover:text-slate-300 underline-offset-2 hover:underline">Terms</a> · <a href="#refund" className="hover:text-slate-300 underline-offset-2 hover:underline">Refunds</a> · <a href="#grievance" className="hover:text-slate-300 underline-offset-2 hover:underline">Grievance</a></p>
                   <p className="text-[11px]">Delhi &amp; all India · Reels · Shorts · Commercial Edits · Page Management</p>
                 </div>
               </footer>

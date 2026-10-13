@@ -3,13 +3,6 @@ import { Users, LayoutGrid, Clapperboard, Palette, Bot, FileText, CalendarCheck,
 import { CONTACT } from '../contact';
 
 
-const services = [
-  { icon: LayoutGrid, title: 'Social media & page management', text: 'Content planning, regular posting and a consistent look for your pages across platforms, so they stay active without taking your time.' },
-  { icon: Clapperboard, title: 'Reels & video editing', text: 'Short, engaging reels from your raw clips: hooks, captions, music and pacing that keep people watching.' },
-  { icon: Palette, title: 'Graphic design', text: 'Posts, posters and carousels that explain your services clearly and match your brand.' },
-  { icon: Bot, title: 'AI videos & creatives', text: 'AI-generated visuals, avatars and B-roll to explain your products and ideas when you don’t have footage.' },
-];
-
 const steps = [
   { icon: CalendarCheck, title: 'Free discovery call', text: 'Book a call or message us on WhatsApp to discuss your brand and content goals.' },
   { icon: FileText, title: 'Custom plan & quote', text: 'We prepare a clear monthly plan and quote tailored to your needs, with no hidden costs.' },
@@ -93,19 +86,6 @@ export default function AgencyAbout() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* What we do */}
-        <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {services.map(({ icon: Icon, title, text }, i) => (
-            <div key={title} className={`bg-white border border-slate-200 rounded-2xl p-6 shadow-sm scroll-reveal stagger-${(i % 4) + 1}`}>
-              <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-4">
-                <Icon className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-              <p className="mt-2 text-sm text-slate-600 leading-relaxed">{text}</p>
-            </div>
-          ))}
         </div>
 
         {/* How working with us works */}

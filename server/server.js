@@ -1,4 +1,4 @@
-// Deploy trigger: bidirectional scroll reveal & multi-platform page management update
+// Deploy trigger: Statutory Indian legal policies & cache-busting index.html
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -405,7 +405,12 @@ syncDriveSafe();
 const clientDist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../client/dist');
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist, { index: false, maxAge: '1h' }));
-  app.get(/^\/(?!api\/).*/, (req, res) => res.sendFile(path.join(clientDist, 'index.html')));
+  app.get(/^\/(?!api\/).*/, (req, res) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
 }
 
 // ─── START (Cutframe Studio Engine · Animated Multi-Platform Hero) ───────────
