@@ -1,0 +1,7 @@
+#!/bin/sh
+# Render's root directory is server/, so it only auto-deploys when server/ changes.
+# When a commit touches client/, record the client tree's hash in server/.client-build so it deploys too.
+if git diff --cached --name-only | grep -q '^client/'; then
+  git ls-files -s client | git hash-object --stdin > server/.client-build
+  git add server/.client-build
+fi

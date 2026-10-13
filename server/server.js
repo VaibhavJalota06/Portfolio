@@ -387,7 +387,7 @@ app.post('/api/google/sync', verifyAdmin, async (req, res) => {
   res.json(result);
 });
 
-// Public, cheap: pinged every ~10 min (GitHub Actions) so the free Render instance never sleeps.
+// Public, cheap: pinged by the server's own keep-awake timer (below) and, as a backup, GitHub Actions.
 app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 // Hit every ~10 min by a free external cron (cron-job.org): keeps a free-tier host awake and syncs Drive.
@@ -399,6 +399,13 @@ app.get('/api/cron', (req, res) => {
 
 setInterval(syncDriveSafe, 5 * 60 * 1000);
 syncDriveSafe();
+
+// Free keep-awake: Render sleeps a free instance after 15 min without *inbound* traffic, and GitHub's
+// scheduled pings run hours late. Calling our own public URL goes through Render's edge, so it counts.
+// (Render sets RENDER_EXTERNAL_URL; locally this does nothing.)
+if (process.env.RENDER_EXTERNAL_URL) {
+  setInterval(() => fetch(`${process.env.RENDER_EXTERNAL_URL}/api/health`).catch(() => {}), 10 * 60 * 1000);
+}
 
 // ─── WEBSITE (built client) ─────────────────────────────────────────────────
 // In production one service serves both the API and the website (client/dist), so no separate host is needed.
