@@ -7,7 +7,7 @@ const comparisonPoints = [
     title: 'The First Frame & Hook',
     icon: Zap,
     rawText: '“Hey guys, so today in this video I wanted to talk about...”',
-    rawBadge: 'Slow Intro (Drops 60% in 3s)',
+    rawBadge: 'Slow Intro',
     polishText: '🔥 “STOP WASTING AD SPEND: The 3-second hook that converts”',
     polishBadge: 'High-Retention Visual Hook',
     raw: {
@@ -199,7 +199,7 @@ export default function BeforeAfterShowcase({ onOpenDiscovery }) {
 
               <div className="flex items-center justify-between text-xs text-blue-300/80 font-mono">
                 <span>02 · 4K MASTER GRADE</span>
-                <span>RETENTION PEAK: 94%</span>
+                <span>STUDIO POLISHED</span>
               </div>
             </div>
 
@@ -232,7 +232,7 @@ export default function BeforeAfterShowcase({ onOpenDiscovery }) {
 
               <div className="flex items-center justify-between text-xs text-stone-400 font-mono">
                 <span>01 · RAW CAMERA CLIP</span>
-                <span>DROPOFF RISK: 68%</span>
+                <span>UNEDITED BASE</span>
               </div>
             </div>
 

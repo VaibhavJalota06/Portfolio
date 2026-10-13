@@ -6,7 +6,7 @@ const TAGLINE_PHRASES = [
   'scale across every platform.',
   'dominate short-form video.',
   'turn viewers into clients.',
-  'grow across social media.'
+  'grow on social media.'
 ];
 
 function TypewriterText({ phrases }) {
@@ -42,7 +42,7 @@ function TypewriterText({ phrases }) {
 
   return (
     <span className="inline-block text-blue-600">
-      <span>{text}</span>
+      <span>{text || '\u00A0'}</span>
       {/* Blinking navigator line cursor */}
       <span
         aria-hidden="true"
@@ -67,16 +67,18 @@ export default function AgencyHero({ onOpenDiscovery }) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold tracking-wide shadow-sm animate-float">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold tracking-wide shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
             <span>Cutframe Studio · High-Retention Video &amp; Content Studio</span>
           </div>
         </div>
 
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-[1.12] min-h-[2.3em] sm:min-h-[2.2em]">
-            We help brands <br className="hidden sm:inline" />
-            <TypewriterText phrases={TAGLINE_PHRASES} />
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-[1.15]">
+            <span className="block">We help brands</span>
+            <span className="block mt-1 sm:mt-2 text-blue-600 min-h-[2.4em] sm:min-h-[1.25em] flex items-center justify-center">
+              <TypewriterText phrases={TAGLINE_PHRASES} />
+            </span>
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">

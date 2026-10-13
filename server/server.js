@@ -1,4 +1,4 @@
-// Deploy trigger: 5-part dynamic animation overhaul (kinetic marquee, countup, split slider, aurora glow, magnetic cursor)
+// Deploy trigger: Completely removed false stats and arbitrary numbers
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
