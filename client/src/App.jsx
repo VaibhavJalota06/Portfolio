@@ -915,6 +915,7 @@ export default function App() {
                   <a href="/graphic-design" className="hover:text-white">Graphic Design</a>
                   <a href="/ai-videos" className="hover:text-white">AI Videos</a>
                   <a href="/website-design" className="hover:text-white">Website Design</a>
+                  <a href="/guides" className="hover:text-white">Guides</a>
                 </nav>
               </footer>
             </>

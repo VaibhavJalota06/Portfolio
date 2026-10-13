@@ -1,11 +1,12 @@
 import React from 'react';
-import { LayoutGrid, Clapperboard, Palette, Bot, Globe, Check, Zap, MessageCircle, Calendar } from 'lucide-react';
+import { LayoutGrid, Clapperboard, Palette, Bot, Globe, Check, Zap, MessageCircle, Calendar, ArrowRight } from 'lucide-react';
 import { getWhatsAppUrl } from '../contact';
 
 export default function AgencyServices({ onSelectService }) {
   const services = [
     {
       id: 'page-management',
+      page: '/instagram-page-management',
       icon: LayoutGrid,
       title: 'Social Media & Page Management',
       subtitle: 'Planning • Posting • Profiles',
@@ -21,6 +22,7 @@ export default function AgencyServices({ onSelectService }) {
     },
     {
       id: 'reels',
+      page: '/reels-video-editing-delhi',
       icon: Clapperboard,
       title: 'Reels & Video Editing',
       subtitle: 'Reels • Shorts • YouTube',
@@ -36,6 +38,7 @@ export default function AgencyServices({ onSelectService }) {
     },
     {
       id: 'design',
+      page: '/graphic-design',
       icon: Palette,
       title: 'Graphic Design',
       subtitle: 'Posts • Posters • Carousels',
@@ -51,6 +54,7 @@ export default function AgencyServices({ onSelectService }) {
     },
     {
       id: 'ai',
+      page: '/ai-videos',
       icon: Bot,
       title: 'AI Videos & Creatives',
       subtitle: 'AI Avatars • AI Visuals • B-roll',
@@ -66,6 +70,7 @@ export default function AgencyServices({ onSelectService }) {
     },
     {
       id: 'website',
+      page: '/website-design',
       icon: Globe,
       title: 'Website Design & Development',
       subtitle: 'Landing Pages • Brand Sites • Portfolios',
@@ -132,6 +137,9 @@ export default function AgencyServices({ onSelectService }) {
                   <p className="mt-4 text-sm text-slate-600 leading-relaxed">
                     {service.description}
                   </p>
+                  <a href={service.page} className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">
+                    More about {service.title} <ArrowRight className="w-4 h-4" />
+                  </a>
 
                   {/* Deliverables Checklist */}
                   <div className="mt-6 pt-6 border-t border-slate-100">

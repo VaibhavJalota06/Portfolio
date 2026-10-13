@@ -1,7 +1,8 @@
-// Runs after `vite build`: writes one static, crawlable HTML page per service into dist/
-// plus dist/sitemap.xml. Reuses the built CSS + GA tag from dist/index.html so pages match the site.
+// Runs after `vite build`: writes static, crawlable HTML pages into dist/ (one per service,
+// one per guide in guides.mjs, a /guides index) plus dist/sitemap.xml. Reuses the built CSS + GA tag from dist/index.html so pages match the site.
 // Tailwind scans this file, so classes used below end up in the CSS bundle.
 import fs from 'node:fs';
+import { guides } from './guides.mjs';
 
 const SITE = 'https://cutframestudio.in';
 const WA = 'https://wa.me/919217584204';
@@ -89,35 +90,31 @@ const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).re
 const shell = fs.readFileSync(new URL('index.html', dist), 'utf8');
 const head = [...shell.matchAll(/<link rel="stylesheet"[^>]*>|<script async src="https:\/\/www\.googletagmanager[\s\S]*?<\/script>\s*<script>[\s\S]*?<\/script>/g)].map((m) => m[0]).join('\n    ');
 
-const page = (s) => {
-  const url = `${SITE}/${s.slug}`;
-  const others = services.filter((o) => o !== s);
-  return `<!doctype html>
+// Shared document shell for every static page (service pages, guides, guides index).
+const doc = ({ title, description, url, type = 'website', graph, crumb, main }) => `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="theme-color" content="#2563EB" />
-    <title>${esc(s.title)}</title>
-    <meta name="description" content="${esc(s.description)}" />
+    <title>${esc(title)}</title>
+    <meta name="description" content="${esc(description)}" />
     <link rel="canonical" href="${url}" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="${type}" />
     <meta property="og:url" content="${url}" />
-    <meta property="og:title" content="${esc(s.title)}" />
-    <meta property="og:description" content="${esc(s.description)}" />
+    <meta property="og:title" content="${esc(title)}" />
+    <meta property="og:description" content="${esc(description)}" />
     <meta property="og:image" content="${SITE}/og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     ${head}
     ${ld({
       '@context': 'https://schema.org',
       '@graph': [
-        { '@type': 'Service', name: s.h1, description: s.description, url, serviceType: s.nav,
-          areaServed: [{ '@type': 'City', name: 'Delhi' }, { '@type': 'Country', name: 'India' }],
-          provider: { '@type': 'ProfessionalService', name: 'Cutframe Studio', url: SITE, telephone: '+91-92175-84204' } },
+        ...graph,
         { '@type': 'BreadcrumbList', itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Cutframe Studio', item: SITE },
-          { '@type': 'ListItem', position: 2, name: s.nav, item: url } ] },
+          ...crumb.map(([name, item], i) => ({ '@type': 'ListItem', position: i + 2, name, item })) ] },
       ],
     })}
   </head>
@@ -130,8 +127,47 @@ const page = (s) => {
     </header>
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6">
-      <nav aria-label="Breadcrumb" class="pt-6 text-sm text-slate-500"><a href="/" class="hover:text-blue-600">Home</a> / <span>${esc(s.nav)}</span></nav>
+      <nav aria-label="Breadcrumb" class="pt-6 text-sm text-slate-500"><a href="/" class="hover:text-blue-600">Home</a>${crumb.map(([name, item], i) => i === crumb.length - 1 ? ` / <span>${esc(name)}</span>` : ` / <a href="${item.replace(SITE, '')}" class="hover:text-blue-600">${esc(name)}</a>`).join('')}</nav>
+${main}
+    </main>
 
+    <footer class="mt-10 bg-slate-900 text-slate-300 text-sm">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-4">
+        <nav aria-label="Services" class="flex flex-wrap gap-x-4 gap-y-2">
+          ${services.map((o) => `<a href="/${o.slug}" class="hover:text-white py-1">${esc(o.nav)}</a>`).join('\n          ')}
+          <a href="/guides" class="hover:text-white py-1">Guides</a>
+        </nav>
+        <div class="flex flex-col sm:flex-row gap-3 justify-between text-slate-400">
+          <span>© Cutframe Studio · Delhi, India</span>
+          <span><a href="mailto:vaibhav@cutframestudio.in" class="hover:text-white">vaibhav@cutframestudio.in</a> · <a href="${WA}" class="hover:text-white">+91 92175 84204</a> · <a href="https://instagram.com/studiocutframe" class="hover:text-white">@studiocutframe</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+`;
+
+const faqSection = (faqs) => `
+      <section class="py-10 border-t border-slate-200">
+        <h2 class="font-display text-2xl sm:text-3xl font-bold">Frequently asked questions</h2>
+        <div class="mt-6 divide-y divide-slate-200">
+          ${faqs.map(([q, a]) => `<details class="py-4"><summary class="font-semibold cursor-pointer">${esc(q)}</summary><p class="mt-2 text-slate-600 leading-relaxed">${esc(a)}</p></details>`).join('\n          ')}
+        </div>
+      </section>`;
+
+const PROVIDER = { '@type': 'ProfessionalService', name: 'Cutframe Studio', url: SITE, telephone: '+91-92175-84204' };
+const AUTHOR = { '@type': 'Person', name: 'Vaibhav Jalota', jobTitle: 'Founder, Cutframe Studio', url: SITE };
+
+const servicePage = (s) => {
+  const url = `${SITE}/${s.slug}`;
+  const others = services.filter((o) => o !== s);
+  const related = guides.filter((g) => g.services.includes(s.slug));
+  return doc({
+    title: s.title, description: s.description, url,
+    graph: [{ '@type': 'Service', name: s.h1, description: s.description, url, serviceType: s.nav,
+      areaServed: [{ '@type': 'City', name: 'Delhi' }, { '@type': 'Country', name: 'India' }], provider: PROVIDER }],
+    crumb: [[s.nav, url]],
+    main: `
       <section class="py-10 sm:py-16">
         <h1 class="font-display text-3xl sm:text-5xl font-bold tracking-tight">${esc(s.h1)}</h1>
         <p class="mt-5 text-lg text-slate-700 leading-relaxed max-w-3xl">${esc(s.answer)}</p>
@@ -157,38 +193,76 @@ const page = (s) => {
           <li class="rounded-xl border border-slate-200 p-5"><strong class="block text-blue-600">3. Review &amp; publish</strong><span class="text-slate-600">You approve everything before it goes live.</span></li>
         </ol>
       </section>
-
+${faqSection(s.faqs)}
+${related.length ? `
       <section class="py-10 border-t border-slate-200">
-        <h2 class="font-display text-2xl sm:text-3xl font-bold">Frequently asked questions</h2>
-        <div class="mt-6 divide-y divide-slate-200">
-          ${s.faqs.map(([q, a]) => `<details class="py-4"><summary class="font-semibold cursor-pointer">${esc(q)}</summary><p class="mt-2 text-slate-600 leading-relaxed">${esc(a)}</p></details>`).join('\n          ')}
-        </div>
-      </section>
+        <h2 class="font-display text-xl font-bold">Helpful guides</h2>
+        <ul class="mt-4 flex flex-col gap-2">
+          ${related.map((g) => `<li><a href="/guides/${g.slug}" class="text-blue-600 hover:underline font-medium">${esc(g.h1)}</a></li>`).join('\n          ')}
+        </ul>
+      </section>` : ''}
 
       <section class="py-10 border-t border-slate-200">
         <h2 class="font-display text-xl font-bold">Other services</h2>
         <ul class="mt-4 flex flex-wrap gap-2">
           ${others.map((o) => `<li><a href="/${o.slug}" class="inline-block rounded-full border border-slate-300 hover:border-blue-600 hover:text-blue-600 px-4 py-2 text-sm">${esc(o.nav)}</a></li>`).join('\n          ')}
         </ul>
-      </section>
-    </main>
-
-    <footer class="mt-10 bg-slate-900 text-slate-300 text-sm">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row gap-3 justify-between">
-        <span>© Cutframe Studio · Delhi, India</span>
-        <span><a href="mailto:vaibhav@cutframestudio.in" class="hover:text-white">vaibhav@cutframestudio.in</a> · <a href="${WA}" class="hover:text-white">+91 92175 84204</a> · <a href="https://instagram.com/studiocutframe" class="hover:text-white">@studiocutframe</a></span>
-      </div>
-    </footer>
-  </body>
-</html>
-`;
+      </section>`,
+  });
 };
 
+const guidePage = (g) => {
+  const url = `${SITE}/guides/${g.slug}`;
+  const linked = services.filter((s) => g.services.includes(s.slug));
+  return doc({
+    title: g.title, description: g.description, url, type: 'article',
+    graph: [{ '@type': 'Article', headline: g.h1, description: g.description, url, mainEntityOfPage: url,
+      datePublished: g.date, dateModified: g.date, author: AUTHOR, publisher: PROVIDER, image: `${SITE}/og-image.jpg` }],
+    crumb: [['Guides', `${SITE}/guides`], [g.h1, url]],
+    main: `
+      <article class="py-10 sm:py-14 max-w-3xl">
+        <h1 class="font-display text-3xl sm:text-5xl font-bold tracking-tight">${esc(g.h1)}</h1>
+        <p class="mt-4 text-sm text-slate-500">By Vaibhav Jalota, founder of Cutframe Studio · <time datetime="${g.date}">${new Date(g.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</time></p>
+        <p class="mt-6 text-lg text-slate-700 leading-relaxed">${esc(g.answer)}</p>
+        ${g.sections.map((sec) => `
+        <h2 class="mt-10 font-display text-2xl font-bold">${esc(sec.h)}</h2>
+        ${(sec.p || []).map((p) => `<p class="mt-4 text-slate-700 leading-relaxed">${esc(p)}</p>`).join('\n        ')}
+        ${sec.list ? `<ul class="mt-4 list-disc pl-6 space-y-2 text-slate-700 leading-relaxed">${sec.list.map((li) => `<li>${esc(li)}</li>`).join('')}</ul>` : ''}`).join('\n')}
+        <div class="mt-12 rounded-2xl bg-blue-50 border border-blue-100 p-6">
+          <p class="font-semibold">Want this handled for you?</p>
+          <p class="mt-1 text-slate-700">${linked.map((s) => `<a href="/${s.slug}" class="text-blue-600 hover:underline">${esc(s.nav)}</a>`).join(' · ')}</p>
+          <a href="${WA}?text=${encodeURIComponent(`Hi, I read your guide "${g.h1}" and have a question.`)}" class="mt-4 inline-flex items-center rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5">Ask us on WhatsApp</a>
+        </div>
+      </article>
+${faqSection(g.faqs)}`,
+  });
+};
+
+const guidesIndex = () => doc({
+  title: 'Guides: Reels, Instagram & Websites for Businesses | Cutframe Studio',
+  description: 'Practical guides from Cutframe Studio on Instagram Reels, page management and websites for brands and small businesses in India.',
+  url: `${SITE}/guides`,
+  graph: [{ '@type': 'CollectionPage', name: 'Cutframe Studio guides', url: `${SITE}/guides` }],
+  crumb: [['Guides', `${SITE}/guides`]],
+  main: `
+      <section class="py-10 sm:py-14">
+        <h1 class="font-display text-3xl sm:text-5xl font-bold tracking-tight">Guides</h1>
+        <p class="mt-4 text-lg text-slate-700 max-w-3xl">Practical advice on Reels, Instagram and websites for brands and small businesses, from the team at Cutframe Studio.</p>
+        <ul class="mt-10 grid sm:grid-cols-2 gap-4">
+          ${guides.map((g) => `<li class="rounded-2xl border border-slate-200 p-6 hover:border-blue-400 transition-colors"><a href="/guides/${g.slug}" class="font-display text-xl font-bold hover:text-blue-600">${esc(g.h1)}</a><p class="mt-2 text-slate-600">${esc(g.description)}</p></li>`).join('\n          ')}
+        </ul>
+      </section>`,
+});
+
 const today = new Date().toISOString().slice(0, 10);
-for (const s of services) fs.writeFileSync(new URL(`${s.slug}.html`, dist), page(s));
+fs.mkdirSync(new URL('guides/', dist), { recursive: true });
+for (const s of services) fs.writeFileSync(new URL(`${s.slug}.html`, dist), servicePage(s));
+for (const g of guides) fs.writeFileSync(new URL(`guides/${g.slug}.html`, dist), guidePage(g));
+fs.writeFileSync(new URL('guides.html', dist), guidesIndex());
+const urls = [['', today], ...services.map((s) => [s.slug, today]), ['guides', today], ...guides.map((g) => [`guides/${g.slug}`, g.date])];
 fs.writeFileSync(new URL('sitemap.xml', dist), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${['', ...services.map((s) => s.slug)].map((p) => `  <url><loc>${SITE}/${p}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
+${urls.map(([p, d]) => `  <url><loc>${SITE}/${p}</loc><lastmod>${d}</lastmod></url>`).join('\n')}
 </urlset>
 `);
-console.log(`service pages: ${services.length} written`);
+console.log(`static pages: ${services.length} services, ${guides.length} guides written`);

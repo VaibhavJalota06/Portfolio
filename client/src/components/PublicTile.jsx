@@ -10,7 +10,8 @@ export default function PublicTile({ item, index = 0, onClick }) {
   const media = getMediaInfo(item.url);
   const video = isVideoItem(item);
   const category = (Array.isArray(item.tags) && item.tags[0]) || '';
-  const label = item.title || (category ? `${category} project` : 'Portfolio project');
+  // Descriptive alt text for image search, e.g. "Photoshop Projects – design by Cutframe Studio"
+  const label = `${item.title || category || 'Portfolio work'} – ${video ? 'video' : 'design'} by Cutframe Studio`;
   const src = item.type === 'image' ? item.url : media.thumbnailUrl;
   // Known shape -> reserve the space now, so the page doesn't jump while images load
   const aspect = item.aspect || (['youtube', 'vimeo'].includes(item.type) ? '16/9' : null);

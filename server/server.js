@@ -404,6 +404,8 @@ syncDriveSafe();
 // In production one service serves both the API and the website (client/dist), so no separate host is needed.
 const clientDist = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../client/dist');
 if (fs.existsSync(clientDist)) {
+  // /guides is both a page (guides.html) and a folder of articles; serve the page, not a directory redirect.
+  app.get('/guides', (req, res) => res.sendFile(path.join(clientDist, 'guides.html')));
   app.use(express.static(clientDist, {
     index: false, extensions: ['html'], maxAge: '1h',
     // Vite's hashed bundles never change, so browsers can keep them for a year.
