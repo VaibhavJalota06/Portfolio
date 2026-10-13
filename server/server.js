@@ -407,7 +407,7 @@ if (fs.existsSync(clientDist)) {
   app.get(/^\/(?!api\/).*/, (req, res) => res.sendFile(path.join(clientDist, 'index.html')));
 }
 
-// ─── START ───────────────────────────────────────────────────────────────────
+// ─── START (Cutframe Studio Engine) ──────────────────────────────────────────
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

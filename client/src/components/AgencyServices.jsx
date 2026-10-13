@@ -1,5 +1,6 @@
 import React from 'react';
-import { LayoutGrid, Clapperboard, Palette, Bot, ArrowRight, Check, Zap } from 'lucide-react';
+import { LayoutGrid, Clapperboard, Palette, Bot, ArrowRight, Check, Zap, MessageCircle } from 'lucide-react';
+import { getWhatsAppUrl } from '../contact';
 
 export default function AgencyServices({ onSelectService }) {
   const services = [
@@ -134,7 +135,7 @@ export default function AgencyServices({ onSelectService }) {
                 </div>
 
                 {/* Card CTA */}
-                <div className="mt-8 pt-4 border-t border-slate-100">
+                <div className="mt-8 pt-4 border-t border-slate-100 flex flex-col gap-2">
                   <button
                     type="button"
                     onClick={() => onSelectService(service.title)}
@@ -143,6 +144,15 @@ export default function AgencyServices({ onSelectService }) {
                     <span>Get Started: {service.title}</span>
                     <ArrowRight className="w-4 h-4" />
                   </button>
+                  <a
+                    href={getWhatsAppUrl(`Hi Vaibhav, I'm interested in your ${service.title} service for my brand.`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-2 rounded-xl text-center text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5" />
+                    <span>Chat on WhatsApp</span>
+                  </a>
                 </div>
               </div>
             );

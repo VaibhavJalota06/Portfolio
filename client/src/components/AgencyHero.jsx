@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Play, MessageCircle } from 'lucide-react';
-import { CONTACT } from '../contact';
+import { CONTACT, getWhatsAppUrl } from '../contact';
 
 export default function AgencyHero({ onOpenDiscovery }) {
   return (
@@ -37,7 +37,7 @@ export default function AgencyHero({ onOpenDiscovery }) {
               <ArrowRight className="w-4 h-4" />
             </button>
             <a
-              href={CONTACT.whatsappUrl}
+              href={getWhatsAppUrl("Hi Vaibhav, I checked out Cutframe Studio and I'd like to discuss video editing & Instagram content for my brand.")}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-base shadow-lg shadow-emerald-500/20 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 focus-ring"

@@ -10,3 +10,8 @@ export const CONTACT = {
   email: 'vaibhav@cutframestudio.in',
   website: 'https://cutframestudio.in',
 };
+
+export const getWhatsAppUrl = (message = '') => {
+  if (!message) return CONTACT.whatsappUrl;
+  return `https://wa.me/919217584204?text=${encodeURIComponent(message)}`;
+};

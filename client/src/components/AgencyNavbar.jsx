@@ -17,6 +17,7 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
     { label: 'Work', href: '#work' },
     { label: 'About', href: '#about' },
     { label: 'Services', href: '#services' },
+    { label: 'Plans & Scope', href: '#pricing' },
     { label: 'FAQ', href: '#faq' },
   ];
 
