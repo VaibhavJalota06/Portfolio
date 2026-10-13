@@ -826,97 +826,95 @@ export default function App() {
 
               </>}
 
-              {/* 8. Sleek Ultra-Compact Single-Row Horizontal Footer */}
-              <footer className="bg-slate-900 text-white py-5 px-6 border-t border-slate-800">
-                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-                  
-                  {/* Left: Brand & Copyright */}
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-md bg-blue-600 flex items-center justify-center text-white shadow-xs">
-                        <Film className="w-3.5 h-3.5 text-white" />
-                      </div>
-                      <span className="text-sm font-bold tracking-tight text-white font-display">
+              {/* 8. Footer: brand + services / studio / contact columns, legal bar */}
+              <footer className="bg-slate-900 text-slate-400 text-sm border-t border-slate-800">
+                <div className="max-w-7xl mx-auto px-6 pt-14 pb-10 grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10">
+                  {/* Brand */}
+                  <div className="col-span-2 lg:col-span-4">
+                    <a href="#" className="inline-flex items-center gap-2.5">
+                      <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-700 to-sky-500 flex items-center justify-center shadow-sm">
+                        <Film className="w-4 h-4 text-white" />
+                      </span>
+                      <span className="text-lg font-bold tracking-tight text-white font-display">
                         Cutframe <span className="text-blue-400">Studio</span>
                       </span>
+                    </a>
+                    <p className="mt-4 max-w-xs leading-relaxed">
+                      Reels, Instagram page management, design and websites for brands. On-site shoots in Delhi NCR, remote across India.
+                    </p>
+                    <div className="mt-5 flex gap-2">
+                      {[
+                        { href: CONTACT.whatsappUrl, label: 'WhatsApp', Icon: MessageCircle },
+                        { href: CONTACT.instagramUrl, label: 'Instagram', Icon: Instagram },
+                        { href: CONTACT.linkedinUrl, label: 'LinkedIn', Icon: Linkedin },
+                        { href: `mailto:${CONTACT.email}`, label: 'Email', Icon: Mail },
+                      ].map(({ href, label, Icon }) => (
+                        <a
+                          key={label}
+                          href={href}
+                          {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                          aria-label={label}
+                          title={label}
+                          className="w-10 h-10 rounded-full bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus-ring"
+                        >
+                          <Icon className="w-4 h-4" />
+                        </a>
+                      ))}
                     </div>
-                    <span className="text-slate-700">|</span>
-                    <span className="text-slate-400 text-[11px]">© {new Date().getFullYear()}</span>
                   </div>
 
-                  {/* Center: Inline Navigation & Legal Policies */}
-                  <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] sm:text-xs font-medium [&>a]:py-1.5">
-                    <a href="#work" className="hover:text-white transition-colors">Work</a>
-                    <span className="text-slate-700">·</span>
-                    <a href="#difference" className="hover:text-white transition-colors">The Difference</a>
-                    <span className="text-slate-700">·</span>
-                    <a href="#services" className="hover:text-white transition-colors">Services</a>
-                    <span className="text-slate-700">·</span>
-                    <a href="#about" className="hover:text-white transition-colors">About</a>
-                    <span className="text-slate-700">·</span>
-                    <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
-                    <span className="text-slate-700 mx-1">|</span>
-                    <a href="#privacy" className="text-slate-400 hover:text-blue-400 transition-colors">Privacy</a>
-                    <span className="text-slate-700">·</span>
-                    <a href="#terms" className="text-slate-400 hover:text-blue-400 transition-colors">Terms</a>
-                    <span className="text-slate-700">·</span>
-                    <a href="#refund" className="text-slate-400 hover:text-blue-400 transition-colors">Refunds</a>
-                    <span className="text-slate-700">·</span>
-                    <a href="#grievance" className="text-slate-400 hover:text-blue-400 transition-colors">Grievance</a>
-                  </div>
+                  {/* Services (crawlable links to the static pages built by scripts/service-pages.mjs) */}
+                  <nav aria-label="Services" className="lg:col-span-3">
+                    <h3 className="text-white font-semibold mb-4">Services</h3>
+                    <ul className="space-y-2.5">
+                      <li><a href="/reels-video-editing-delhi" className="hover:text-white transition-colors">Reels &amp; Video Editing</a></li>
+                      <li><a href="/instagram-page-management" className="hover:text-white transition-colors">Instagram Page Management</a></li>
+                      <li><a href="/graphic-design" className="hover:text-white transition-colors">Graphic Design</a></li>
+                      <li><a href="/ai-videos" className="hover:text-white transition-colors">AI Videos</a></li>
+                      <li><a href="/website-design" className="hover:text-white transition-colors">Website Design</a></li>
+                    </ul>
+                  </nav>
 
-                  {/* Right: Direct Contact & Social Links */}
-                  <div className="flex items-center gap-3.5 text-[11px] sm:text-xs font-medium">
-                    <a
-                      href={CONTACT.whatsappUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
-                      title="Chat on WhatsApp"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                      <span>WhatsApp</span>
-                    </a>
-                    <a
-                      href={CONTACT.instagramUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-pink-400 hover:text-pink-300 transition-colors"
-                      title="Follow on Instagram"
-                    >
-                      <Instagram className="w-3.5 h-3.5" />
-                      <span>Instagram</span>
-                    </a>
-                    <a
-                      href={CONTACT.linkedinUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors"
-                      title="Connect on LinkedIn"
-                    >
-                      <Linkedin className="w-3.5 h-3.5" />
-                      <span>LinkedIn</span>
-                    </a>
-                    <a
-                      href={`mailto:${CONTACT.email}`}
-                      className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors"
-                      title="Send email"
-                    >
-                      <Mail className="w-3.5 h-3.5" />
-                      <span>Email</span>
-                    </a>
-                  </div>
+                  <nav aria-label="Studio" className="lg:col-span-2">
+                    <h3 className="text-white font-semibold mb-4">Studio</h3>
+                    <ul className="space-y-2.5">
+                      <li><a href="#work" className="hover:text-white transition-colors">Work</a></li>
+                      <li><a href="#difference" className="hover:text-white transition-colors">The Difference</a></li>
+                      <li><a href="#about" className="hover:text-white transition-colors">About</a></li>
+                      <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
+                      <li><a href="/guides" className="hover:text-white transition-colors">Guides</a></li>
+                    </ul>
+                  </nav>
 
+                  <div className="col-span-2 sm:col-span-1 lg:col-span-3">
+                    <h3 className="text-white font-semibold mb-4">Get in touch</h3>
+                    <ul className="space-y-2.5">
+                      <li><a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">WhatsApp {CONTACT.whatsapp}</a></li>
+                      <li><a href={`mailto:${CONTACT.email}`} className="hover:text-white transition-colors break-all">{CONTACT.email}</a></li>
+                      <li>Delhi NCR · All of India</li>
+                    </ul>
+                    <button
+                      type="button"
+                      onClick={() => setShowDiscoveryModal(true)}
+                      className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors cursor-pointer focus-ring"
+                    >
+                      Book a free call
+                    </button>
+                  </div>
                 </div>
-                {/* Crawlable links to the static service pages (built by scripts/service-pages.mjs) */}
-                <nav aria-label="Services" className="max-w-7xl mx-auto mt-4 pt-4 border-t border-slate-800 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-slate-400 [&>a]:py-1.5">
-                  <a href="/reels-video-editing-delhi" className="hover:text-white">Reels &amp; Video Editing</a>
-                  <a href="/instagram-page-management" className="hover:text-white">Instagram Page Management</a>
-                  <a href="/graphic-design" className="hover:text-white">Graphic Design</a>
-                  <a href="/ai-videos" className="hover:text-white">AI Videos</a>
-                  <a href="/website-design" className="hover:text-white">Website Design</a>
-                  <a href="/guides" className="hover:text-white">Guides</a>
-                </nav>
+
+                {/* Legal bar (extra bottom padding on phones so the floating WhatsApp button never covers it) */}
+                <div className="border-t border-slate-800">
+                  <div className="max-w-7xl mx-auto px-6 pt-5 pb-24 sm:pb-5 sm:pr-24 flex flex-col sm:flex-row sm:items-center gap-3 justify-between text-xs">
+                    <span>© {new Date().getFullYear()} Cutframe Studio · Delhi, India</span>
+                    <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-1">
+                      <a href="#privacy" className="hover:text-white transition-colors py-1">Privacy</a>
+                      <a href="#terms" className="hover:text-white transition-colors py-1">Terms</a>
+                      <a href="#refund" className="hover:text-white transition-colors py-1">Refunds</a>
+                      <a href="#grievance" className="hover:text-white transition-colors py-1">Grievance</a>
+                    </nav>
+                  </div>
+                </div>
               </footer>
             </>
           );
