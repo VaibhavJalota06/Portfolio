@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 
 // Same-origin in dev (Vite proxy) and prod (Render serves client/dist); set CORS_ORIGIN only if the API is called cross-site.
 app.use(cors({ origin: process.env.CORS_ORIGIN || false }));
-// Behind Netlify/Render proxies set TRUST_PROXY (e.g. 2) so the PIN lockout sees real client IPs.
+// Per-visitor limits use clientIp() (Cloudflare header) below; TRUST_PROXY alone resolves to a Render-internal hop.
 app.set('trust proxy', process.env.TRUST_PROXY ? Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY : 'loopback');
 app.use(express.json({ limit: '100kb' }));
 
@@ -43,6 +43,10 @@ function detectMediaType(url) {
 
 // ─── ADMIN AUTH & MIDDLEWARE ──────────────────────────────────────────────────
 
+// Render sits behind Cloudflare, which sets cf-connecting-ip to the visitor's real address (and overwrites any
+// client-sent value); req.ip there is a Render-internal hop shared by everyone.
+const clientIp = (req) => req.headers['cf-connecting-ip'] || req.ip;
+
 // ponytail: in-memory per-IP lockout, resets on restart; move to a store if running several instances.
 const failedPins = new Map(); // ip -> { count, until }
 const PIN_MAX_FAILS = 8;
@@ -54,7 +58,7 @@ const storedPin = () => db.prepare("SELECT value FROM settings WHERE key = 'admi
 function checkPin(req, pin) {
   const stored = storedPin();
   if (!stored) return 'ok'; // Open access if no PIN is configured
-  const ip = req.ip;
+  const ip = clientIp(req);
   const entry = failedPins.get(ip);
   if (entry && entry.until > Date.now()) return 'locked';
   if (pin && String(pin) === stored) { failedPins.delete(ip); return 'ok'; }
@@ -249,12 +253,12 @@ const FORM_WINDOW_MS = 60 * 60 * 1000;
 const formHits = new Map(); // ip -> timestamps of recent submissions
 function formLimit(req, res, next) {
   const now = Date.now();
-  const recent = (formHits.get(req.ip) || []).filter((t) => now - t < FORM_WINDOW_MS);
+  const recent = (formHits.get(clientIp(req)) || []).filter((t) => now - t < FORM_WINDOW_MS);
   if (recent.length >= FORM_MAX) {
     return res.status(429).json({ error: 'Too many submissions from your network. Please try again in an hour, or message us on WhatsApp.' });
   }
   recent.push(now);
-  formHits.set(req.ip, recent);
+  formHits.set(clientIp(req), recent);
   if (formHits.size > 5000) formHits.clear(); // bound memory if something floods us from many IPs
   next();
 }
@@ -438,7 +442,7 @@ app.get('/api/drive/:id/video', async (req, res) => {
 });
 
 // Public, cheap: pinged by the server's own keep-awake timer (below) and, as a backup, GitHub Actions.
-app.get('/api/health', (req, res) => res.json({ ok: true, ip: req.ip, xff: req.headers['x-forwarded-for'], cf: req.headers['cf-connecting-ip'], tci: req.headers['true-client-ip'] })); // TEMP: verifying per-visitor IP behind Render
+app.get('/api/health', (req, res) => res.json({ ok: true }));
 
 // Hit every ~10 min by a free external cron (cron-job.org): keeps a free-tier host awake and syncs Drive.
 app.get('/api/cron', (req, res) => {
