@@ -16,14 +16,14 @@ Everything below is ready to copy and paste. These steps need your Google accoun
 
 ---
 
-## 1. Google Search Console (15 minutes)
+## 1. Google Search Console (10 minutes)
 
 1. Go to https://search.google.com/search-console and click **Add property**.
 2. Choose **Domain** (left box) and enter `cutframestudio.in`.
-3. Google shows a TXT record like `google-site-verification=abc123…`. Copy it.
-4. In **Cloudflare**, open cutframestudio.in, go to **DNS → Records → Add record**:
-   - Type `TXT`, Name `@`, Content: paste the record. Save.
-5. Back in Search Console, click **Verify**. If it fails, wait 10 minutes and try again.
+3. Your domain's DNS is at **GoDaddy** (nameservers `ns13/ns14.domaincontrol.com`), so Google offers automatic setup:
+   click **START VERIFICATION**, sign in to GoDaddy in the window that opens, and click **Authorize/Connect**. Google adds the record for you.
+4. *(If that fails: choose "Any DNS provider", copy the `google-site-verification=…` TXT value, then in GoDaddy → My Products → cutframestudio.in → **DNS** → **Add New Record**: Type `TXT`, Name `@`, Value: paste it, TTL default, Save.)*
+5. Back in Search Console, click **Verify**. If it fails, wait 10–30 minutes and try again.
 6. Left menu: **Sitemaps**, then enter `sitemap.xml` and click **Submit**.
 7. Top search bar: **URL inspection**. For each URL below, paste it and click **Request indexing**:
    - https://cutframestudio.in/
