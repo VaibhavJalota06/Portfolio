@@ -99,7 +99,7 @@ try {
     updateSetting.run('bio_text', 'Cutframe Studio is a full-service media production and post-production engine. We transform raw footage and ideas into magnetic, high-retaining short-form assets, cinematic YouTube stories, and commercial ad creatives.');
     updateSetting.run('hero_label', 'CUTFRAME STUDIO • VIDEO & MEDIA ENGINE');
     updateSetting.run('theme_accent', 'blue');
-    updateSetting.run('contact_email', 'hello@cutframestudio.com');
+    updateSetting.run('contact_email', 'vaibhav@cutframestudio.in');
     updateSetting.run('rate_currency', '₹');
   });
   updateSettingsTransaction();

@@ -1,9 +1,10 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { CONTACT } from '../contact';
 
 // Required by Google before the OAuth app can be published (Calendar + Drive access).
 export default function PrivacyPolicy({ contactEmail }) {
-  const email = contactEmail || 'vaibhavjalotaofficial@gmail.com';
+  const email = contactEmail || CONTACT.email;
   return (
     <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-32 pb-24 text-slate-700 leading-relaxed">
       <a href="#" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 mb-8">

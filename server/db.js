@@ -210,7 +210,7 @@ const defaults = {
   showreel_url: "",
   bio_text: "Cutframe Studio is a full-service media production and post-production engine. We transform raw footage into magnetic, high-retaining short-form assets, cinematic YouTube stories, and commercial ad creatives designed to maximize reach, retention, and return on ad spend.",
   location_info: "FULL-SERVICE VIDEO AGENCY • DAVINCI RESOLVE / PREMIERE PRO / AFTER EFFECTS",
-  contact_email: "vaibhavjalota06@gmail.com",
+  contact_email: "vaibhav@cutframestudio.in",
   contact_github: "github.com/cutframestudio",
   contact_vimeo: "vimeo.com/cutframestudio",
   gallery_title: "AGENCY VIDEO SHOWCASE",

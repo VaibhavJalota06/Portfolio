@@ -1,5 +1,6 @@
 import React from 'react';
-import { Users, LayoutGrid, Clapperboard, Palette, Bot, FileText, CalendarCheck, FolderUp, MessageSquareText, PackageCheck } from 'lucide-react';
+import { Users, LayoutGrid, Clapperboard, Palette, Bot, FileText, CalendarCheck, FolderUp, MessageSquareText, PackageCheck, Linkedin, Instagram, Mail } from 'lucide-react';
+import { CONTACT } from '../contact';
 
 
 const services = [
@@ -44,6 +45,33 @@ export default function AgencyAbout() {
               The studio is run by <strong className="text-slate-900 font-semibold">Vaibhav Jalota</strong>, its founder.
               You talk directly to the person creating your content, with no middlemen, no handoffs and quick replies on WhatsApp.
             </p>
+            <div className="pt-2 flex flex-wrap items-center gap-2.5">
+              <a
+                href={CONTACT.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium text-xs transition-colors"
+              >
+                <Linkedin className="w-3.5 h-3.5" />
+                <span>LinkedIn</span>
+              </a>
+              <a
+                href={CONTACT.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 font-medium text-xs transition-colors"
+              >
+                <Instagram className="w-3.5 h-3.5" />
+                <span>Instagram</span>
+              </a>
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition-colors"
+              >
+                <Mail className="w-3.5 h-3.5" />
+                <span>{CONTACT.email}</span>
+              </a>
+            </div>
           </div>
         </div>
 
