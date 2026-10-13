@@ -1,4 +1,4 @@
-// Deploy trigger: Statutory Indian legal policies & cache-busting index.html
+// Deploy trigger: Sleek single-row minimalist footer update
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';

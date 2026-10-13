@@ -896,77 +896,76 @@ export default function App() {
 
               </>}
 
-              {/* 8. Agency Footer */}
-              <footer className="bg-slate-900 text-white py-16 px-6 border-t border-slate-800">
-                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
-                  <div className="md:col-span-2 space-y-4 scroll-reveal">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-                        <Film className="w-5 h-5 text-white" />
+              {/* 8. Sleek Minimalist Single-Row Footer */}
+              <footer className="bg-slate-900 text-white py-8 px-6 border-t border-slate-800">
+                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-6 text-xs text-slate-400">
+                  
+                  {/* Left: Brand & Copyright */}
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-xs">
+                        <Film className="w-4 h-4 text-white" />
                       </div>
-                      <span className="text-xl font-bold tracking-tight text-white font-display">
+                      <span className="text-base font-bold tracking-tight text-white font-display">
                         Cutframe <span className="text-blue-400">Studio</span>
                       </span>
                     </div>
-                    <p className="text-sm text-slate-400 max-w-md leading-relaxed">
-                      High-retention video editing &amp; creative content studio in Delhi. We help brands and businesses scale across platforms with reels, shorts, commercial videos, and content management.
-                    </p>
-                    <div className="pt-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedService('');
-                          setShowDiscoveryModal(true);
-                        }}
-                        className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] cursor-pointer"
-                      >
-                        Book a Free Call
-                      </button>
-                    </div>
+                    <span className="text-slate-700 hidden sm:inline">|</span>
+                    <span className="text-slate-500">© {new Date().getFullYear()} Cutframe Studio</span>
                   </div>
 
-                  <div className="scroll-reveal stagger-1">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
-                      Navigation
-                    </h4>
-                    <ul className="space-y-2.5 text-sm text-slate-400">
-                      <li><a href="#work" className="hover:text-white transition-colors">Our Work</a></li>
-                      <li><a href="#difference" className="hover:text-white transition-colors">The Difference</a></li>
-                      <li><a href="#about" className="hover:text-white transition-colors">About Us</a></li>
-                      <li><a href="#services" className="hover:text-white transition-colors">Agency Services</a></li>
-                      <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
-                    </ul>
+                  {/* Center: Navigation & Statutory Policies */}
+                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs font-medium">
+                    <a href="#work" className="hover:text-white transition-colors">Work</a>
+                    <a href="#difference" className="hover:text-white transition-colors">The Difference</a>
+                    <a href="#services" className="hover:text-white transition-colors">Services</a>
+                    <a href="#about" className="hover:text-white transition-colors">About</a>
+                    <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+                    <span className="text-slate-700 hidden md:inline">•</span>
+                    <a href="#privacy" className="text-slate-400 hover:text-blue-400 transition-colors">Privacy (DPDP)</a>
+                    <a href="#terms" className="text-slate-400 hover:text-blue-400 transition-colors">Terms</a>
+                    <a href="#refund" className="text-slate-400 hover:text-blue-400 transition-colors">Refunds</a>
+                    <a href="#grievance" className="text-slate-400 hover:text-blue-400 transition-colors">Grievance</a>
                   </div>
 
-                  <div className="scroll-reveal stagger-2">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
-                      Statutory Policies
-                    </h4>
-                    <ul className="space-y-2.5 text-sm text-slate-400">
-                      <li><a href="#privacy" className="hover:text-white transition-colors">Privacy Policy (DPDP)</a></li>
-                      <li><a href="#terms" className="hover:text-white transition-colors">Terms of Service</a></li>
-                      <li><a href="#refund" className="hover:text-white transition-colors">Refund &amp; Cancellation</a></li>
-                      <li><a href="#grievance" className="hover:text-white transition-colors">Grievance Redressal</a></li>
-                    </ul>
+                  {/* Right: Social & Contact Links */}
+                  <div className="flex flex-wrap items-center justify-center gap-4 text-xs font-medium">
+                    <a
+                      href={CONTACT.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      <span>WhatsApp</span>
+                    </a>
+                    <a
+                      href={CONTACT.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-pink-400 hover:text-pink-300 transition-colors"
+                    >
+                      <Instagram className="w-3.5 h-3.5" />
+                      <span>Instagram</span>
+                    </a>
+                    <a
+                      href={CONTACT.linkedinUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 text-sky-400 hover:text-sky-300 transition-colors"
+                    >
+                      <Linkedin className="w-3.5 h-3.5" />
+                      <span>LinkedIn</span>
+                    </a>
+                    <a
+                      href={`mailto:${CONTACT.email}`}
+                      className="flex items-center gap-1.5 text-slate-300 hover:text-white transition-colors"
+                    >
+                      <Mail className="w-3.5 h-3.5" />
+                      <span>Email</span>
+                    </a>
                   </div>
 
-                  <div className="scroll-reveal stagger-3">
-                    <h4 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 font-mono">
-                      Direct Inquiries
-                    </h4>
-                    <p className="text-xs text-slate-400 mb-3">Delhi &amp; all India · {CONTACT.founder}, Founder</p>
-                    <ul className="space-y-2.5 text-sm mb-4">
-                      <li><a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-2"><MessageCircle className="w-4 h-4" />WhatsApp {CONTACT.whatsapp}</a></li>
-                      <li><a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2"><Instagram className="w-4 h-4" />{CONTACT.instagram}</a></li>
-                      <li><a href={CONTACT.linkedinUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-sky-400 hover:text-sky-300 flex items-center gap-2"><Linkedin className="w-4 h-4" />{CONTACT.linkedin}</a></li>
-                      <li><a href={`mailto:${CONTACT.email}`} className="font-semibold text-blue-400 hover:text-blue-300 flex items-center gap-2 break-all"><Mail className="w-4 h-4 shrink-0" />{CONTACT.email}</a></li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-                  <p>© {new Date().getFullYear()} Cutframe Studio. All rights reserved. · <a href="#privacy" className="hover:text-slate-300 underline-offset-2 hover:underline">Privacy (DPDP)</a> · <a href="#terms" className="hover:text-slate-300 underline-offset-2 hover:underline">Terms</a> · <a href="#refund" className="hover:text-slate-300 underline-offset-2 hover:underline">Refunds</a> · <a href="#grievance" className="hover:text-slate-300 underline-offset-2 hover:underline">Grievance</a></p>
-                  <p className="text-[11px]">Delhi &amp; all India · Reels · Shorts · Commercial Edits · Page Management</p>
                 </div>
               </footer>
             </>
