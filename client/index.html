@@ -38,6 +38,14 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-6XEF9QBCFZ');
+      // Count WhatsApp, email and phone clicks as enquiries ("generate_lead") on every page.
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest && e.target.closest('a[href]');
+        if (!a) return;
+        var h = a.getAttribute('href');
+        var m = /wa\.me|whatsapp/i.test(h) ? 'whatsapp' : /^mailto:/i.test(h) ? 'email' : /^tel:/i.test(h) ? 'phone' : '';
+        if (m) gtag('event', 'generate_lead', { method: m, page_path: location.pathname });
+      }, true);
     </script>
 
     <!-- Business info for Google / AI search (keep in sync with src/contact.js) -->

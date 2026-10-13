@@ -135,6 +135,7 @@ Focus: ${callData.topics}`,
           durationMinutes: data.minutes || 30
         })
       });
+      window.gtag?.('event', 'generate_lead', { method: 'call_booking' }); // counted as an enquiry in Google Analytics
       if (showToast) showToast(data.calendarEvent ? 'Call booked! Invite sent to your email.' : 'Call request received!');
     } catch (err) {
       setBookingError(err.message);
@@ -165,6 +166,7 @@ Focus: ${callData.topics}`,
       if (!res.ok) throw new Error();
 
       setSubmittedBrief(true);
+      window.gtag?.('event', 'generate_lead', { method: 'project_brief' });
       if (showToast) showToast('Project brief received! Our team will contact you shortly.');
     } catch {
       if (showToast) showToast('Could not send your brief. Please try again or email us.', 'error');
