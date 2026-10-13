@@ -26,6 +26,10 @@ export default function AgencyFAQ() {
       a: 'We provide on-site filming and production across Delhi NCR, and end-to-end video editing, design, and social media management for clients all over India and internationally.'
     },
     {
+      q: 'How do your website projects work?',
+      a: 'We design and build clean, fast, mobile-first websites — landing pages, portfolio sites, brand pages, or product catalogs — with SEO, WhatsApp click-to-chat, and contact forms built-in, typically delivered in 5 to 10 business days.'
+    },
+    {
       q: 'How much does it cost?',
       a: 'It depends on your required video volume, whether you need on-site shooting, and if you want full-service social media management. After a brief discovery call, we provide a transparent monthly retainer quote with zero hidden fees.'
     }
