@@ -1,4 +1,4 @@
-// Deploy trigger: Ultra-compact single-row horizontal bar footer
+// Deploy trigger: Agency-wide on-site shooting and universal brand messaging
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';

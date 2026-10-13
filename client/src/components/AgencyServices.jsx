@@ -25,7 +25,7 @@ export default function AgencyServices({ onSelectService }) {
       title: 'Reels & Video Editing',
       subtitle: 'Reels • Shorts • YouTube',
       tag: 'High Retention',
-      description: 'Send us raw clips from your phone. We turn them into short, clear reels that show your products and services, answer customer questions and keep people watching.',
+      description: 'From on-site video shoots to full post-production, we create high-retention reels and videos that showcase your brand, explain your products or services, and keep audiences watching.',
       deliverables: [
         'Strong first-3-second hooks',
         'Clean word-by-word captions',

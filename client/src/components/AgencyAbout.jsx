@@ -6,7 +6,7 @@ import { CONTACT } from '../contact';
 const steps = [
   { icon: CalendarCheck, title: 'Free discovery call', text: 'Book a call or message us on WhatsApp to discuss your brand and content goals.' },
   { icon: FileText, title: 'Custom plan & quote', text: 'We prepare a clear monthly plan and quote tailored to your needs, with no hidden costs.' },
-  { icon: FolderUp, title: 'Share your footage', text: 'Send clips through WhatsApp or a shared Google Drive folder. No new apps or software needed.' },
+  { icon: FolderUp, title: 'Shoot or share footage', text: 'We come on-site with cameras & lighting in Delhi NCR, or you share raw files via Google Drive.' },
   { icon: MessageSquareText, title: 'Review & approve', text: 'You get each reel or post to review. We make your changes until you are happy with it.' },
   { icon: PackageCheck, title: 'Post & grow', text: 'Content is delivered ready to post, or we post it for you as part of page management.' },
 ];
@@ -31,7 +31,7 @@ export default function AgencyAbout() {
           <div className="space-y-6 text-base sm:text-lg text-slate-600 leading-relaxed lg:pt-4">
             <p>
               Cutframe Studio is a video editing and creative content studio based in Delhi. We work with brands,
-              businesses, creators, clinics and doctors across India. We handle the reels, shorts, commercial edits and content management,
+              businesses, founders and creators across India. We handle on-location filming, high-retention reels, commercial edits and end-to-end content management,
               so you can focus on running your business.
             </p>
 

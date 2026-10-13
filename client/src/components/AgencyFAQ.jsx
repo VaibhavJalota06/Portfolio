@@ -7,27 +7,27 @@ export default function AgencyFAQ() {
   const faqs = [
     {
       q: 'Who do you work with?',
-      a: 'Brands and businesses of all kinds: food and product brands, clinics and doctors, coaches, creators and local businesses that want a strong online presence and video content across platforms.'
+      a: 'Brands and businesses of all sizes: product and e-commerce brands, founders, creators, local businesses, and service companies that want high-retention video content and strong social media growth.'
     },
     {
-      q: 'How do I send you my videos?',
-      a: 'Record on your phone and send the clips on WhatsApp, or upload them to a shared Google Drive folder that we set up for you. No special camera or software needed. We guide you on what to record.'
+      q: 'Do I have to record the videos myself?',
+      a: 'Not necessarily. For clients in Delhi NCR, our team can come directly to your office, store, or workspace with professional cameras, lighting, and audio equipment to record everything for you. If you already have footage or are located across India, you can also easily share your raw files via Google Drive or WhatsApp.'
     },
     {
       q: 'Can you make reels if I don’t have time to record?',
-      a: 'Yes. We can create reels using AI visuals, animated characters, stock B-roll and graphic designs, so your page stays active even in busy weeks.'
+      a: 'Yes. We create engaging videos using motion graphics, AI visuals, licensed B-roll, and custom animations, keeping your brand active and consistent without you ever having to step in front of a camera.'
     },
     {
       q: 'What happens if I want changes?',
-      a: 'You review every reel and post before it goes live. Tell us what to change and we update it until you are happy.'
+      a: 'You review every reel and post before it goes live. Tell us what to change and we update it until you are completely satisfied.'
     },
     {
-      q: 'Do you only work in Delhi?',
-      a: 'We are based in Delhi, but everything works online, so we work with brands and businesses all over India.'
+      q: 'Do you only work in Delhi NCR?',
+      a: 'We provide on-site filming and production across Delhi NCR, and end-to-end video editing, design, and social media management for clients all over India and internationally.'
     },
     {
       q: 'How much does it cost?',
-      a: 'It depends on how many reels and posts you need each month and whether you want full page management. After the free call, we send you a clear monthly quote in ₹, with no hidden charges.'
+      a: 'It depends on your required video volume, whether you need on-site shooting, and if you want full-service social media management. After a brief discovery call, we provide a transparent monthly retainer quote with zero hidden fees.'
     }
   ];
 

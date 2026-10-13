@@ -812,7 +812,7 @@ export default function App() {
                       Reels, posts &amp; designs <span className="text-blue-600">we&apos;ve made</span>
                     </h2>
                     <p className="mt-4 text-base sm:text-lg text-slate-600">
-                      Real work for brands, businesses, creators and clinics. Filter by category and tap any piece to watch or view it in full.
+                      Real work for brands, businesses, and creators. Filter by category and tap any piece to watch or view it in full.
                     </p>
                   </div>
 

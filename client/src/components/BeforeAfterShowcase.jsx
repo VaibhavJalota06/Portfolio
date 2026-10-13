@@ -82,7 +82,7 @@ export default function BeforeAfterShowcase({ onOpenDiscovery }) {
             How we turn raw footage into <span className="text-blue-600">engaging videos</span>
           </h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            Record on your phone with no special equipment. We handle the cuts, subtitles, pacing, and audio balancing that make videos look polished and professional.
+            Whether filmed during an on-site shoot or from raw footage you provide, we handle the cuts, subtitles, pacing, color grading, and audio balancing that make videos look polished and professional.
           </p>
         </div>
 
@@ -171,7 +171,7 @@ export default function BeforeAfterShowcase({ onOpenDiscovery }) {
             onClick={onOpenDiscovery}
             className="inline-flex items-center gap-2.5 px-7 py-3 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-semibold text-sm shadow-md transition-all duration-200 active:scale-[0.98] cursor-pointer"
           >
-            <span>Have clips on your phone? Let&apos;s turn them into videos</span>
+            <span>Ready to turn raw footage into high-retention videos? Let&apos;s talk</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
