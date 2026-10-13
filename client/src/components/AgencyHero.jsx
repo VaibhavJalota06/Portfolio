@@ -1,6 +1,56 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowRight, Play, MessageCircle } from 'lucide-react';
 import { CONTACT, getWhatsAppUrl } from '../contact';
+
+const TAGLINE_PHRASES = [
+  'scale across every platform.',
+  'dominate short-form video.',
+  'turn viewers into clients.',
+  'grow on Instagram & YouTube.'
+];
+
+function TypewriterText({ phrases }) {
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [text, setText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentPhrase = phrases[phraseIndex];
+    let timer;
+
+    if (!isDeleting && text === currentPhrase) {
+      // Pause at the end of the word for 2.4s so the navigator cursor blinks
+      timer = setTimeout(() => setIsDeleting(true), 2400);
+    } else if (isDeleting && text === '') {
+      // Move to the next phrase after deleting
+      setIsDeleting(false);
+      setPhraseIndex((prev) => (prev + 1) % phrases.length);
+      timer = setTimeout(() => {}, 300);
+    } else {
+      // Typing or deleting next character
+      const speed = isDeleting ? 38 : 80;
+      timer = setTimeout(() => {
+        const nextText = isDeleting
+          ? currentPhrase.substring(0, text.length - 1)
+          : currentPhrase.substring(0, text.length + 1);
+        setText(nextText);
+      }, speed);
+    }
+
+    return () => clearTimeout(timer);
+  }, [text, isDeleting, phraseIndex, phrases]);
+
+  return (
+    <span className="inline-block text-blue-600">
+      <span>{text}</span>
+      {/* Blinking navigator line cursor */}
+      <span
+        aria-hidden="true"
+        className="inline-block w-[3px] sm:w-[4px] h-[0.85em] ml-1 bg-blue-600 align-middle animate-cursor-blink rounded-xs shadow-xs"
+      />
+    </span>
+  );
+}
 
 export default function AgencyHero({ onOpenDiscovery }) {
   return (
@@ -14,17 +64,18 @@ export default function AgencyHero({ onOpenDiscovery }) {
         <div className="flex justify-center mb-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold tracking-wide shadow-sm">
             <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-            <span>Cutframe Studio · Video editing &amp; Instagram content</span>
+            <span>Cutframe Studio · High-Retention Video &amp; Content Studio</span>
           </div>
         </div>
 
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-[1.08]">
-            We help brands <span className="text-blue-600">grow on Instagram</span>
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-900 leading-[1.12] min-h-[2.3em] sm:min-h-[2.2em]">
+            We help brands <br className="hidden sm:inline" />
+            <TypewriterText phrases={TAGLINE_PHRASES} />
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Reels, posts, graphic design and complete Instagram page management for brands, businesses and creators.
+            Reels, Shorts, commercial videos, graphics and complete content management that build trust and drive real growth.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -37,7 +88,7 @@ export default function AgencyHero({ onOpenDiscovery }) {
               <ArrowRight className="w-4 h-4" />
             </button>
             <a
-              href={getWhatsAppUrl("Hi Vaibhav, I checked out Cutframe Studio and I'd like to discuss video editing & Instagram content for my brand.")}
+              href={getWhatsAppUrl("Hi Vaibhav, I checked out Cutframe Studio and I'd like to discuss video editing & content for my brand.")}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-base shadow-lg shadow-emerald-500/20 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 focus-ring"
@@ -59,3 +110,4 @@ export default function AgencyHero({ onOpenDiscovery }) {
     </section>
   );
 }
+

@@ -42,7 +42,7 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
                 Cutframe <span className="text-blue-600 font-semibold">Studio</span>
               </span>
               <span className="text-[10px] font-mono font-medium tracking-wider text-slate-500 uppercase -mt-0.5">
-                Instagram Content Studio
+                Video &amp; Creative Studio
               </span>
             </div>
           </a>

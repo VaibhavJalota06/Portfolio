@@ -31,14 +31,14 @@ export default function AgencyAbout() {
               About Cutframe Studio
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
-              We help brands <span className="text-blue-600">grow on Instagram</span>
+              We help brands <span className="text-blue-600">scale across every platform</span>
             </h2>
-            <p className="mt-4 text-base text-slate-500 font-medium">Video editing &amp; Instagram content studio · Delhi &amp; all India</p>
+            <p className="mt-4 text-base text-slate-500 font-medium">High-retention video editing &amp; creative content studio · Delhi &amp; all India</p>
           </div>
           <div className="space-y-6 text-base sm:text-lg text-slate-600 leading-relaxed lg:pt-4">
             <p>
-              Cutframe Studio is a video editing and Instagram content studio based in Delhi. We work with brands,
-              businesses, creators, clinics and doctors across India. We handle the reels, posts and page management,
+              Cutframe Studio is a video editing and creative content studio based in Delhi. We work with brands,
+              businesses, creators, clinics and doctors across India. We handle the reels, shorts, commercial edits and content management,
               so you can focus on running your business.
             </p>
 

@@ -97,12 +97,12 @@ export default function App() {
       if (!el) { el = document.createElement('meta'); el.setAttribute(attr, prop); document.head.appendChild(el); }
       el.setAttribute('content', content);
     };
-    document.title = `${name} | Reels, Posts & Instagram Growth`;
-    setMeta('og:title', `${name} | We help brands grow on Instagram`);
+    document.title = `${name} | High-Retention Video & Content Studio`;
+    setMeta('og:title', `${name} | We help brands scale across platforms`);
     setMeta('og:description', desc);
     setMeta('og:type', 'website');
     setMeta('twitter:card', 'summary_large_image', 'name');
-    setMeta('twitter:title', `${name} | We help brands grow on Instagram`, 'name');
+    setMeta('twitter:title', `${name} | We help brands scale across platforms`, 'name');
     setMeta('twitter:description', desc, 'name');
   }, [settings]);
 
@@ -862,7 +862,7 @@ export default function App() {
                       </span>
                     </div>
                     <p className="text-sm text-slate-400 max-w-md leading-relaxed">
-                      Video editing &amp; Instagram content studio in Delhi. We help brands and businesses grow on Instagram with reels, posts and page management.
+                      High-retention video editing &amp; creative content studio in Delhi. We help brands and businesses scale across platforms with reels, shorts, commercial videos, and content management.
                     </p>
                     <div className="pt-2">
                       <button
@@ -906,7 +906,7 @@ export default function App() {
 
                 <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
                   <p>© {new Date().getFullYear()} Cutframe Studio. All rights reserved. · <a href="#privacy" className="hover:text-slate-300 underline-offset-2 hover:underline">Privacy Policy</a></p>
-                  <p className="text-[11px]">Delhi &amp; all India · Reels · Posts · Page management</p>
+                  <p className="text-[11px]">Delhi &amp; all India · Reels · Shorts · Commercial Edits · Page Management</p>
                 </div>
               </footer>
             </>
