@@ -13,12 +13,14 @@ import { CONTACT, getWhatsAppUrl } from './contact';
 import BeforeAfterShowcase from './components/BeforeAfterShowcase';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
+import LiveDemos from './components/LiveDemos';
 const GooglePanel = lazy(() => import('./components/GooglePanel')); // admin/legal only: kept out of the main bundle
 const LegalPolicies = lazy(() => import('./components/LegalPolicies')); // admin/legal only: kept out of the main bundle
 import { getMediaInfo, isEmbedType, isVideoItem } from './utils/media';
 
 // Private admin link: not linked anywhere on the public site. Protected by the admin PIN as well.
 const ADMIN_HASH = '#cutframe-admin';
+const LIVE_DEMOS_TAB = 'Live demos';
 
 export default function App() {
   const [showDiscoveryModal, setShowDiscoveryModal] = useState(false);
@@ -773,12 +775,21 @@ export default function App() {
                             </button>
                           );
                         })}
+                        <button
+                          onClick={() => setActiveTagFilter(activeTagFilter === LIVE_DEMOS_TAB ? '' : LIVE_DEMOS_TAB)}
+                          className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-normal transition-all duration-150 cursor-pointer border active:scale-[0.98] ${
+                            activeTagFilter === LIVE_DEMOS_TAB
+                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                              : 'bg-white border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50'
+                          }`}>
+                          {LIVE_DEMOS_TAB}
+                        </button>
                       </div>
                     );
                   })()}
 
                   {/* Filtered Bento Grid */}
-                  {(() => {
+                  {activeTagFilter === LIVE_DEMOS_TAB ? <LiveDemos /> : (() => {
                     const tagFiltered = activeTagFilter
                       ? filteredItems.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTagFilter))
                       : filteredItems;
