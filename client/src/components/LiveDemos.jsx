@@ -15,7 +15,7 @@ const DEMO_APPS = {
     name: 'Expense OS',
     tagline: 'Personal finance dashboard',
     description: 'A personal finance dashboard for tracking spending, budgets and accounts in one place.',
-    url: null, // likely https://home-server.tail709e96.ts.net:8443 once confirmed
+    url: 'https://home-server.tail709e96.ts.net:8443',
     screenshots: [],
   },
 };
