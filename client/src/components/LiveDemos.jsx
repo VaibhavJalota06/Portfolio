@@ -3,7 +3,7 @@ import { ExternalLink, Clock, WifiOff, Loader2, Monitor } from 'lucide-react';
 
 // Live app URLs. Set url to null to show "Coming soon".
 // Both apps run on the owner's home server, so each is probed before its button is enabled.
-export const DEMO_APPS = {
+const DEMO_APPS = {
   haven: {
     name: 'Haven',
     tagline: 'Private couples app',
