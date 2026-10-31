@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Film, Calendar, Menu, X, ChevronRight } from 'lucide-react';
+import { Film, Calendar, Menu, X, ChevronRight, ChevronDown } from 'lucide-react';
 
 export default function AgencyNavbar({ onOpenDiscovery }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,11 +14,16 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const serviceLinks = [
+    { label: 'Our services', href: '#services' },
+    { label: 'Apps', href: '/apps/' },
+  ];
+
   const navLinks = [
     { label: 'Work', href: '#work' },
     { label: 'The Difference', href: '#difference' },
     { label: 'About', href: '#about' },
-    { label: 'Services', href: '#services' },
+    { label: 'Services', children: serviceLinks },
     { label: 'FAQ', href: '#faq' },
   ];
 
@@ -50,15 +56,51 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="px-3 xl:px-3.5 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-all duration-150"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.children ? (
+                <div
+                  key={link.label}
+                  className="relative"
+                  onMouseEnter={() => setServicesOpen(true)}
+                  onMouseLeave={() => setServicesOpen(false)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setServicesOpen(!servicesOpen)}
+                    aria-expanded={servicesOpen}
+                    aria-haspopup="true"
+                    className="inline-flex items-center gap-1 cursor-pointer px-3 xl:px-3.5 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-all duration-150"
+                  >
+                    {link.label}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {servicesOpen && (
+                    <div className="absolute left-0 top-full pt-2 z-50">
+                      <div className="w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
+                        {link.children.map((child) => (
+                          <a
+                            key={child.label}
+                            href={child.href}
+                            onClick={() => setServicesOpen(false)}
+                            className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600"
+                          >
+                            {child.label}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="px-3 xl:px-3.5 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-all duration-150"
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </nav>
 
           {/* Action CTAs */}
@@ -101,7 +143,7 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex flex-col space-y-1">
-            {navLinks.map((link) => (
+            {navLinks.flatMap((link) => link.children || [link]).map((link) => (
               <a
                 key={link.label}
                 href={link.href}

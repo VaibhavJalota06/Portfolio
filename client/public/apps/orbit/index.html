@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Drop in a video and get a finished edit, on your own computer or in the cloud.">
+<link rel="icon" type="image/png" href="favicon-32.png"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#05070f">
+<title>Orbit Studio</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a fixed 3D stage behind scrolling copy. The camera travels through the edit as you read. */
+:root{--bg:#06070e;--fg:#eef4ff;--mut:#a7b4c8;--line:rgba(255,255,255,.16);--panel:rgba(14,18,32,.72);--acc:#6ea8ff;--acc-fg:#06101f;--cut:#ff7a59;--disp:"Unbounded",system-ui,sans-serif;--body:"Manrope",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;color-scheme:dark}
+:root.day{--bg:#f4f7fb;--fg:#14202f;--mut:#4d5d70;--line:rgba(20,32,47,.15);--panel:rgba(255,255,255,.78);--acc:#2563c9;--acc-fg:#fff;--cut:#c9401f;color-scheme:light}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font:17px/1.6 var(--body);overflow-x:hidden;transition:background .4s}
+h1,h2,p{margin:0}
+#stage{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:0;transform:translateZ(0)}
+.bgfall{position:fixed;inset:0;z-index:0;background:radial-gradient(70% 60% at 65% 35%,color-mix(in srgb,var(--acc) 30%,transparent),transparent 70%)}
+.scrim{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(5,7,15,.72),rgba(5,7,15,.34) 48%,rgba(5,7,15,.04) 80%)}
+.nav-go{flex:none;min-height:40px;display:inline-flex;align-items:center;padding:0 16px;border-radius:20px;background:var(--acc);color:var(--acc-fg);font:700 14px var(--body);text-decoration:none}
+.top{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:5;display:flex;align-items:center;gap:8px;padding:12px max(16px,env(safe-area-inset-right,0px)) 12px max(16px,env(safe-area-inset-left,0px));overflow-x:auto;scrollbar-width:none}
+.logo{font:600 14px var(--disp);margin-right:auto;flex:none}
+.pick{flex:none;min-height:40px;padding:0 14px;border-radius:20px;border:1px solid var(--line);background:var(--panel);color:var(--fg);font:500 13px var(--body);cursor:pointer;}
+.pick[aria-pressed="true"]{background:var(--acc);color:var(--acc-fg);border-color:var(--acc)}
+.pick:focus-visible,.go:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+main{position:relative;z-index:2}
+.pane{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-block:90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:1240px;margin-inline:auto}
+.hero h1{font:800 clamp(38px,8.2vw,104px)/1 var(--disp);letter-spacing:-.03em;max-width:11ch}
+.hero h1 em{font-style:normal;color:var(--acc)}
+.lead{font-size:clamp(17px,2vw,21px);max-width:30em;margin-top:20px;color:var(--mut)}
+:root:not(.day) .hero h1,:root:not(.day) .hero .lead{text-shadow:0 2px 28px rgba(0,0,0,.85),0 0 6px rgba(0,0,0,.5)}
+:root:not(.day) .hero .lead{color:var(--fg)}
+html{scroll-padding-top:0}
+.dl{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}.dl .go{margin-top:0}
+.ghostbtn{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.go{display:inline-flex;align-items:center;min-height:50px;padding:0 24px;border-radius:12px;background:var(--acc);color:var(--acc-fg);font-weight:700;text-decoration:none;margin-top:26px;width:fit-content}
+.stage-card{max-width:27em;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;;min-width:0}
+.stage-card.r{margin-left:auto}
+.n{font:500 12px var(--mono);color:var(--acc);letter-spacing:.08em}
+.stage-card h2{font:600 clamp(24px,3.6vw,38px)/1.1 var(--disp);margin-top:8px}
+.stage-card p{color:var(--mut);margin-top:10px}
+.stage-card s{color:var(--cut)}
+.last{align-items:flex-start}
+.last h2{font:800 clamp(30px,6vw,72px)/1.05 var(--disp);max-width:13ch}
+.tag{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5;font:12px var(--mono);color:var(--mut)}
+.stage{position:relative;min-height:112vh;display:flex;align-items:center;padding-block:80px;padding-left:max(24px,7vw);padding-right:max(24px,9vw);overflow:hidden}
+.stage.r{justify-content:flex-end}
+.ghost{display:block;width:clamp(96px,11vw,150px);height:auto;margin-bottom:10px;overflow:visible;pointer-events:none}
+.ghost text{font:800 400px var(--disp);letter-spacing:-.04em;text-anchor:start;dominant-baseline:central;fill:none;stroke:url(#fg);stroke-width:2;vector-effect:non-scaling-stroke}
+.sc{position:relative;max-width:min(640px,100%);min-width:0}
+.sc h2{font:800 clamp(46px,9vw,124px)/.95 var(--disp);letter-spacing:-.04em;background:linear-gradient(100deg,var(--fg) 30%,var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sc p{font-size:clamp(18px,2.1vw,24px);line-height:1.45;margin-top:18px;max-width:27em;text-shadow:0 1px 20px var(--bg)}
+.stage:not(.in) .sc *{animation-play-state:paused!important}
+.stage .sc{transition:transform 1.3s cubic-bezier(.22,.61,.2,1),opacity 1.3s ease;will-change:transform,opacity}
+.stage:not(.in) .sc{transform:translateY(24px);opacity:.4}
+.demo-wave{display:flex;align-items:center;gap:3px;height:74px;margin-top:28px}
+.demo-wave i{flex:1;min-width:2px;border-radius:2px;background:var(--acc);animation:wv 2.6s ease-in-out infinite alternate}
+@keyframes wv{from{transform:scaleY(.35);opacity:.5}to{transform:scaleY(1.1);opacity:1}}
+.demo-words{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:28px;font:600 clamp(18px,2.4vw,26px) var(--body)}
+.demo-words span{display:grid;animation:wd 7s ease-in-out infinite}
+.demo-words span:nth-child(2){animation-delay:0.8s}.demo-words span:nth-child(3){animation-delay:1.6s}.demo-words span:nth-child(4){animation-delay:2.4s}.demo-words span:nth-child(5){animation-delay:3.2s}.demo-words span:nth-child(6){animation-delay:4s}
+.demo-words b{font:500 11px var(--mono);color:var(--acc)}
+@keyframes wd{0%,100%{opacity:.45}10%,70%{opacity:1}}
+.demo-cut{font:600 clamp(20px,2.8vw,31px)/1.5 var(--body);margin-top:26px}
+.demo-cut em{font-style:normal;color:var(--cut);background:linear-gradient(var(--cut),var(--cut)) 0 55%/0 3px no-repeat;animation:st 6s ease-in-out infinite}
+.demo-cut em:nth-of-type(2){animation-delay:.5s}.demo-cut em:nth-of-type(3){animation-delay:1s}
+@keyframes st{0%,12%{background-size:0 3px;opacity:1}40%,75%{background-size:100% 3px;opacity:.6}100%{background-size:100% 3px;opacity:1}}
+.demo-tl{display:flex;height:44px;margin-top:30px;gap:3px;max-width:520px}
+.demo-tl i{flex:3;border-radius:5px;background:linear-gradient(90deg,var(--acc),color-mix(in srgb,var(--acc) 55%,var(--fg)))}
+.demo-tl u{flex:1;border-radius:5px;background:repeating-linear-gradient(135deg,var(--cut) 0 3px,transparent 3px 7px);animation:tlu 6s ease-in-out infinite alternate}
+.demo-tl i{animation:tli 6s ease-in-out infinite alternate;will-change:transform}
+.demo-tl i:nth-of-type(1){animation:none}
+.demo-tl i:nth-of-type(2){--s:-35.5%}.demo-tl i:nth-of-type(3){--s:-71%}.demo-tl i:nth-of-type(4){--s:-106.5%}
+@keyframes tlu{0%,25%{transform:scaleX(1);opacity:1}85%,100%{transform:scaleX(.01);opacity:0}}
+@keyframes tli{0%,25%{transform:translateX(0)}85%,100%{transform:translateX(var(--s))}}
+.demo-ok{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:28px;font:500 13px var(--mono)}
+.demo-ok span{display:flex;align-items:center;gap:8px}
+.demo-ok span::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--acc);animation:ok 4s ease-in-out infinite}
+.demo-ok span:nth-child(2)::before{animation-delay:.3s}.demo-ok span:nth-child(3)::before{animation-delay:.6s}.demo-ok span:nth-child(4)::before{animation-delay:.9s}
+@keyframes ok{0%,100%{opacity:.45}50%{opacity:1}}
+.pipe{position:relative;z-index:1;min-height:100vh;scroll-margin-top:0;display:flex;align-items:center;padding-block:90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.pipe-in{width:100%;max-width:1180px;margin-inline:auto;min-width:0}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.14em;color:var(--acc)}
+.pipe h2{font:800 clamp(30px,5.4vw,68px)/1.02 var(--disp);letter-spacing:-.03em;max-width:17ch;margin-top:12px}
+.pipe p{font-size:clamp(17px,1.9vw,21px);max-width:34em;margin-top:14px}
+#diagram{margin-top:34px;width:100%}
+#diagram svg{display:block;width:100%;height:auto;overflow:visible}
+.nd rect{fill:#080d20;stroke:var(--line);stroke-width:1.2}
+.nd.main rect{stroke:var(--acc)}
+.nd text{fill:var(--fg);font:600 15px var(--body);text-anchor:middle;dominant-baseline:central}
+.nd.sub text{font-size:13px;fill:var(--mut)}
+.wire{fill:none;stroke:color-mix(in srgb,var(--fg) 34%,transparent);stroke-width:1.5}
+.lab{fill:var(--fg);font:600 15px var(--body);text-anchor:middle}
+.tl{fill:var(--mut);font:500 13px var(--mono);text-anchor:end}.tl.m{text-anchor:middle}.tl.s{text-anchor:start}
+.big{fill:var(--fg);font:800 26px var(--disp);text-anchor:middle}
+.clip{fill:color-mix(in srgb,var(--acc) 72%,transparent)}.clip.b{fill:color-mix(in srgb,var(--acc) 44%,transparent)}.clip.c{fill:rgba(255,255,255,.62)}.clip.c.b{fill:rgba(255,255,255,.32)}.clip.s{fill:rgba(255,155,127,.68)}.clip.s.b{fill:rgba(255,155,127,.28)}
+.ph{stroke:#fff;stroke-width:2}.phh{fill:#fff}
+.fstrip{fill:rgba(5,8,20,.72);stroke:var(--line)}
+.sprk{stroke:rgba(255,255,255,.6);stroke-width:13;stroke-dasharray:15 19;animation:sp 2.4s linear infinite}
+@keyframes sp{to{stroke-dashoffset:-34}}
+.frm{fill:rgba(40,70,190,.42);stroke:rgba(255,255,255,.3)}
+.fn{fill:none;stroke:var(--acc);stroke-width:1.5;font:800 58px var(--disp);text-anchor:middle}
+.fl{fill:var(--fg);font:700 19px var(--body);text-anchor:middle}
+.scan{fill:rgba(180,205,255,.2);stroke:#cfe0ff;stroke-width:2}
+.stn{fill:var(--bg);stroke:#fff;stroke-width:4}
+.pulse{fill:var(--acc);stroke:var(--acc);stroke-opacity:.3;stroke-width:6}
+.pulse.c{fill:#b79cff;stroke:#8f7bff}
+.nd.main{animation:nb 5s ease-in-out infinite}
+@keyframes nb{0%,100%{opacity:.82}12%{opacity:1}}
+#flow{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:visible}
+#flow path{fill:none;stroke-linecap:round}
+#fb{stroke:var(--line);stroke-width:1.5;stroke-dasharray:3 8}
+#fl{stroke:url(#fg);stroke-width:2.5}
+#fg2{stroke:url(#fg);stroke-width:9;opacity:.16}
+#tip{fill:var(--fg);stroke:var(--acc);stroke-opacity:.4;stroke-width:9;opacity:0}
+#fn circle{fill:var(--bg);stroke:var(--line);stroke-width:2;transition:.8s}
+#fn circle.on{fill:var(--acc);stroke:color-mix(in srgb,var(--acc) 40%,transparent);stroke-width:8}
+.stage{z-index:1}
+@media(max-width:767px){.sc{padding-left:18px}}
+@media(prefers-reduced-motion:reduce){.nd.main{animation:none}}
+.numbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;align-items:center;gap:6px;max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none;padding:6px;border-radius:24px;background:var(--panel);border:1px solid var(--line);}
+.numbar span{font:500 11px var(--mono);color:var(--mut);padding:0 6px;flex:none}
+.opt{flex:none;min-height:38px;padding:0 13px;border-radius:19px;border:1px solid transparent;background:none;color:var(--fg);font:600 13px var(--body);cursor:pointer}
+.opt[aria-pressed="true"]{background:var(--acc);color:var(--acc-fg)}
+.opt:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.pipebar{display:flex;gap:6px;flex-wrap:wrap;margin-top:24px}
+.pipebar .opt{border-color:var(--line);background:var(--panel)}
+.pipebar .opt[aria-pressed="true"]{background:var(--acc);color:var(--acc-fg);border-color:var(--acc)}
+.pv{margin-top:44px;min-width:0}
+.pv h3{display:flex;align-items:baseline;flex-wrap:wrap;gap:12px;margin:0 0 16px;font:700 clamp(22px,3vw,32px) var(--disp)}
+.pv h3 span{font:500 12px var(--mono);letter-spacing:.1em;color:var(--acc)}
+.pv h3 em{font:600 12px var(--body);padding:3px 10px;border-radius:12px;background:var(--acc);color:var(--acc-fg)}
+.pvb{overflow-x:auto;scrollbar-width:thin;background:rgba(5,8,20,.5);border:1px solid var(--line);border-radius:16px;padding:18px}
+#diagram svg.fix{min-width:880px}
+#diagram svg.ring{max-width:560px;margin-inline:auto}
+.tag{display:none}
+.intro{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:#05070f;pointer-events:none;animation:inOut .9s cubic-bezier(.6,0,.3,1) 1.75s both}
+.intro-c{display:grid;justify-items:center;gap:20px}
+.intro svg{width:132px;height:132px;overflow:visible;animation:ringGo 1s cubic-bezier(.7,0,.25,1) 1.45s both}
+.intro circle{fill:none;stroke:url(#ig);stroke-width:3;stroke-linecap:round;stroke-dasharray:352;stroke-dashoffset:352;transform:rotate(-90deg);transform-origin:50% 50%;animation:ringDraw 1.15s cubic-bezier(.65,0,.35,1) .15s both}
+.intro path{fill:#eef4ff;transform-origin:50% 50%;animation:playIn .6s cubic-bezier(.2,.9,.3,1.3) .75s both}
+.intro b{display:flex;gap:.34em;font:800 15px var(--disp);letter-spacing:.02em;color:#eef4ff;animation:nameOut .35s ease 1.42s both}
+.intro b i{font-style:normal;animation:letter .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes ringDraw{to{stroke-dashoffset:0}}
+@keyframes playIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes letter{from{transform:translateY(12px);opacity:0}to{transform:none;opacity:1}}
+@keyframes nameOut{to{opacity:0}}
+@keyframes ringGo{to{transform:scale(16);opacity:0}}
+@keyframes inOut{to{opacity:0;visibility:hidden}}
+#stage{animation:bgIn 1.7s ease 1.6s both}
+@keyframes bgIn{from{opacity:0;transform:scale(1.14)}to{opacity:1;transform:none}}
+.w{display:inline-block}
+.w>span{display:inline-block;animation:focusIn 1.5s cubic-bezier(.2,.75,.2,1) both}
+@keyframes focusIn{0%{opacity:0;filter:blur(22px);letter-spacing:.2em;transform:scale(1.08)}45%{opacity:1}100%{opacity:1;filter:blur(0);letter-spacing:-.03em;transform:none}}
+.hero .lead{animation:fadeUp 1s ease 2.65s both}.hero .go{animation:fadeUp 1s ease 2.85s both}.top,.rail{animation:fadeIn 1.2s ease 2.5s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.intro{display:none}#stage,.w>span,.hero .lead,.hero .go,.top,.rail{animation:none}}
+.rail{position:fixed;right:max(14px,env(safe-area-inset-right,0px));top:50%;transform:translateY(-50%);z-index:4;display:grid;gap:18px;justify-items:end}
+.rail span{display:flex;align-items:center;gap:10px;font:500 11px var(--mono);color:var(--mut);transition:color .8s}
+.rail span b{font-weight:500;opacity:0;transition:opacity .8s}
+.rail span::after{content:"";width:8px;height:8px;border-radius:50%;border:1px solid var(--mut);transition:.8s}
+.rail span.on{color:var(--fg)}.rail span.on b{opacity:1}.rail span.on::after{background:var(--acc);border-color:var(--acc)}
+@media(max-width:767px){.rail{display:none}.stage{min-height:100vh;padding-inline:max(18px,env(safe-area-inset-left,0px)) max(18px,env(safe-area-inset-right,0px))}}
+.dl .go.ghostbtn{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.last.anim h2 .w{display:inline-block;opacity:0;transform:translateY(.7em) rotate(3deg);transition:opacity .7s ease,transform .8s cubic-bezier(.2,.8,.2,1);transition-delay:calc(var(--i)*110ms)}
+.last.anim.seen h2 .w{opacity:1;transform:none}
+.last.anim h2 .w.end{background:linear-gradient(100deg,var(--acc),var(--cut),var(--acc));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+.last.anim.seen h2 .w.end{animation:endshine 5s linear .9s infinite}
+@keyframes endshine{to{background-position:-220% 0}}
+.last.anim .lead,.last.anim .dl>*{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+.last.anim .lead{transition-delay:.55s}
+.last.anim .dl>:nth-child(1){transition-delay:.75s}
+.last.anim .dl>:nth-child(2){transition-delay:.9s}
+.last.anim.seen .lead,.last.anim.seen .dl>*{opacity:1;transform:none}
+.last.anim.seen .dl>:nth-child(1){animation:askpulse 2.6s ease-in-out 1.6s infinite}
+@keyframes askpulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--acc) 45%,transparent)}50%{box-shadow:0 0 0 10px transparent}}
+@media(prefers-reduced-motion:reduce){.last.anim h2 .w,.last.anim .lead,.last.anim .dl>*{opacity:1;transform:none;transition:none}.last.anim.seen h2 .w.end,.last.anim.seen .dl>:nth-child(1){animation:none}}
+@media(prefers-reduced-motion:reduce){.demo-wave i,.demo-words span,.demo-cut em,.demo-tl u,.demo-ok span::before{animation:none}.stage:not(.in) .sc{transform:none;opacity:1}}
+
+</style>
+</head><body>
+<div class="intro" aria-hidden="true"><div class="intro-c"><svg viewBox="0 0 120 120"><defs><linearGradient id="ig" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ea8ff"/><stop offset="1" stop-color="#b79cff"/></linearGradient></defs><circle cx="60" cy="60" r="56"/><path d="M48 39 L82 60 L48 81 Z"/></svg><b><i style="animation-delay:0.50s">O</i><i style="animation-delay:0.57s">R</i><i style="animation-delay:0.64s">B</i><i style="animation-delay:0.71s">I</i><i style="animation-delay:0.78s">T</i></b></div></div><div class="bgfall"></div><canvas id="stage" aria-hidden="true"></canvas><div class="scrim"></div>
+<header class="top"><span class="logo">ORBIT</span></header>
+<main id="mn"><svg id="flow" aria-hidden="true"><defs><linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ea8ff"/><stop offset=".55" stop-color="#8f7bff"/><stop offset="1" stop-color="#b79cff"/></linearGradient></defs><path id="fb"/><path id="fl"/><path id="fg2"/><g id="fn"></g><circle id="tip" r="6"/></svg>
+<section class="pane hero"><h1 id="hl">The edit is <em>already done.</em></h1><p class="lead">Drop in a video. Orbit listens, cuts, captions and exports, right on your own computer.</p><a class="go" href="#pipe">See how it works</a></section>
+<section class="pipe" id="pipe"><div class="pipe-in"><span class="eyebrow">THE PIPELINE</span><h2>One video in. One finished edit out.</h2><p>Each step hands its work to the next, automatically. Choose what powers it: your computer, your own AI key, or Orbit credits.</p><div id="diagram" role="img" aria-label="Pipeline diagram: video goes through Ingest, Transcribe, Plan, Render and Check, powered by local models, your key or Orbit credits, and comes out as a finished MP4"></div></div></section>
+<section class="stage" id="s1" data-i="0"><div class="sc"><span class="ghost" aria-hidden="true">01</span><h2>Ingest</h2><p>Your video arrives. Orbit reads every frame and sound, and your original stays untouched.</p><div class="demo-wave" aria-hidden="true"><i style="animation-delay:-0ms;height:18%"></i><i style="animation-delay:-73ms;height:55%"></i><i style="animation-delay:-146ms;height:30%"></i><i style="animation-delay:-219ms;height:67%"></i><i style="animation-delay:-292ms;height:42%"></i><i style="animation-delay:-365ms;height:79%"></i><i style="animation-delay:-438ms;height:54%"></i><i style="animation-delay:-511ms;height:29%"></i><i style="animation-delay:-584ms;height:66%"></i><i style="animation-delay:-657ms;height:41%"></i><i style="animation-delay:-730ms;height:78%"></i><i style="animation-delay:-803ms;height:53%"></i><i style="animation-delay:-876ms;height:28%"></i><i style="animation-delay:-49ms;height:65%"></i><i style="animation-delay:-122ms;height:40%"></i><i style="animation-delay:-195ms;height:77%"></i><i style="animation-delay:-268ms;height:52%"></i><i style="animation-delay:-341ms;height:27%"></i><i style="animation-delay:-414ms;height:64%"></i><i style="animation-delay:-487ms;height:39%"></i><i style="animation-delay:-560ms;height:76%"></i><i style="animation-delay:-633ms;height:51%"></i><i style="animation-delay:-706ms;height:26%"></i><i style="animation-delay:-779ms;height:63%"></i><i style="animation-delay:-852ms;height:38%"></i><i style="animation-delay:-25ms;height:75%"></i><i style="animation-delay:-98ms;height:50%"></i><i style="animation-delay:-171ms;height:25%"></i><i style="animation-delay:-244ms;height:62%"></i><i style="animation-delay:-317ms;height:37%"></i><i style="animation-delay:-390ms;height:74%"></i><i style="animation-delay:-463ms;height:49%"></i><i style="animation-delay:-536ms;height:24%"></i><i style="animation-delay:-609ms;height:61%"></i><i style="animation-delay:-682ms;height:36%"></i><i style="animation-delay:-755ms;height:73%"></i><i style="animation-delay:-828ms;height:48%"></i><i style="animation-delay:-1ms;height:23%"></i><i style="animation-delay:-74ms;height:60%"></i><i style="animation-delay:-147ms;height:35%"></i><i style="animation-delay:-220ms;height:72%"></i><i style="animation-delay:-293ms;height:47%"></i><i style="animation-delay:-366ms;height:22%"></i><i style="animation-delay:-439ms;height:59%"></i></div></div></section>
+<section class="stage r" id="s2" data-i="1"><div class="sc"><span class="ghost" aria-hidden="true">02</span><h2>Transcribe</h2><p>Every spoken word gets an exact time, in English, Hindi or Hinglish.</p><div class="demo-words" aria-hidden="true"><span><b>00:04</b>Hello</span><span><b>00:05</b>everyone</span><span><b>00:06</b>today</span><span><b>00:07</b>three</span><span><b>00:08</b>simple</span><span><b>00:09</b>tips</span></div></div></section>
+<section class="stage" id="s3" data-i="2"><div class="sc"><span class="ghost" aria-hidden="true">03</span><h2>Plan</h2><p>AI finds the pauses and repeats, and marks them to go.</p><div class="demo-cut" aria-hidden="true">Today I want to <em>umm</em> share three <em>you know</em> simple tips <em>so basically</em> for you.</div></div></section>
+<section class="stage r" id="s4" data-i="3"><div class="sc"><span class="ghost" aria-hidden="true">04</span><h2>Render</h2><p>Cuts close up, sound is cleaned, and captions land on the right word.</p><div class="demo-tl" aria-hidden="true"><i></i><u></u><i></i><u></u><i></i><u></u><i></i></div></div></section>
+<section class="stage" id="s5" data-i="4"><div class="sc"><span class="ghost" aria-hidden="true">05</span><h2>Check</h2><p>Picture, sound and timing are confirmed before you get your MP4.</p><div class="demo-ok" aria-hidden="true"><span>Picture</span><span>Sound</span><span>Timing</span><span>Finished MP4</span></div></div></section>
+<section class="pane last" id="get"><h2>Step into the future of editing.</h2><p class="lead">Orbit is private and available by invitation. Tell us about your company, and we'll get in touch.</p><div class="dl"><a class="go" data-apply href="#">Contact us</a><a class="go ghostbtn" data-app href="#">Already approved? Log in</a></div></section>
+</main>
+<nav class="rail" aria-hidden="true"><span><b>Ingest</b></span><span><b>Transcribe</b></span><span><b>Plan</b></span><span><b>Render</b></span><span><b>Check</b></span></nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const cv=document.getElementById('stage'),root=document.documentElement,still=matchMedia('(prefers-reduced-motion:reduce)').matches;
+let gl;try{gl=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true})}catch(e){cv.hidden=true;return}
+gl.setPixelRatio(Math.min(devicePixelRatio,1.25));
+const cam=new THREE.PerspectiveCamera(58,1,.1,400);let scene,tick,raf,cur;
+function size(){const w=innerWidth,h=innerHeight;gl.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+addEventListener('resize',()=>{size();});size();
+const prog=()=>{const m=document.documentElement.scrollHeight-innerHeight;return m>0?Math.min(1,scrollY/m):0};
+
+const GH=`precision highp float;uniform float t,p;uniform vec2 m,r;varying vec2 v;
+float H(vec2 a){return fract(sin(dot(a,vec2(127.1,311.7)))*43758.5453);}
+float N(vec2 a){vec2 i=floor(a),f=fract(a);f=f*f*(3.-2.*f);return mix(mix(H(i),H(i+vec2(1,0)),f.x),mix(H(i+vec2(0,1)),H(i+vec2(1,1)),f.x),f.y);}
+float F(vec2 a){float s=0.,w=.5;for(int i=0;i<5;i++){s+=w*N(a);a=a*2.03+vec2(1.7,9.2);w*=.5;}return s;}
+vec3 I(float x){x=clamp(x,0.,1.);return mix(mix(vec3(.02,.03,.08),vec3(.13,.31,.86),smoothstep(0.,.55,x)),vec3(.62,.42,1.),smoothstep(.55,.85,x))+vec3(.9,.4,.3)*smoothstep(.85,1.,x);}
+`;
+const FR={"liquid": "float S(vec2 a){return N(a)*.62+N(a*2.03+vec2(1.7,9.2))*.28+N(a*4.1+vec2(8.3,2.8))*.1;}void main(){float a=r.x/r.y;vec2 q=(v-.5)*vec2(a,1.),c=(m-.5)*vec2(a,1.);float d=dot(q-c,q-c),g=exp(-d*3.2);vec2 to=q-c;q+=to*.16*g+vec2(-to.y,to.x)*.2*g;float T=t*.032+p*.32;vec2 w=vec2(S(q*.95+vec2(T,-T*.6)),S(q*.95+vec2(-T*.8,T)+4.));vec2 u=vec2(S(q*1.05+w*1.7+vec2(T*.5,0.)),S(q*1.05+w*1.6+vec2(0.,-T*.6)+7.));float f=S(q*.9+u*2.);f=smoothstep(.2,.86,f);vec3 c0=vec3(.016,.022,.07),c1=vec3(.06,.14,.56),c2=vec3(.2,.36,.98),c3=vec3(.58,.36,.96);vec3 col=mix(c0,c1,smoothstep(0.,.42,f));col=mix(col,c2,smoothstep(.34,.72,f));col=mix(col,c3,smoothstep(.66,1.,f)*.8);col+=(H(v*r+fract(t))-.5)*.012;gl_FragColor=vec4(col*.86,1.);}"};
+const mouse=new THREE.Vector2(.68,.58),sm=new THREE.Vector2(.68,.58);let moved=0;
+function pt(e){const q=e.touches?e.touches[0]:e;if(!q)return;mouse.set(q.clientX/innerWidth,1-q.clientY/innerHeight);moved=performance.now()}
+addEventListener('pointermove',pt,{passive:true});addEventListener('touchmove',pt,{passive:true});
+let lastF=0;function follow(t){if(performance.now()-moved>3500&&!still){mouse.set(.62+Math.sin(t*.18)*.22,.55+Math.cos(t*.13)*.24)}const dt=Math.min(.05,Math.max(0,t-lastF));lastF=t;sm.lerp(mouse,1-Math.exp(-dt*(cur=='liquid'?1.5:3)))}
+function quad(k){scene=new THREE.Scene();const u={t:{value:0},p:{value:0},m:{value:sm},r:{value:new THREE.Vector2(innerWidth,innerHeight)}};const q=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({uniforms:u,depthTest:false,depthWrite:false,vertexShader:'varying vec2 v;void main(){v=uv;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:GH+FR[k]}));q.frustumCulled=false;scene.add(q);return (t,p)=>{follow(t);u.t.value=t;u.p.value=p;u.r.value.set(innerWidth,innerHeight)}}
+const C={};Object.keys(FR).forEach(k=>C[k]=()=>quad(k));
+function run(k){if(!C[k])k='liquid';cur=k;gl.setPixelRatio(k=='liquid'?.6:Math.min(devicePixelRatio,1.25));size();cancelAnimationFrame(raf);if(scene)scene.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map)o.material.map.dispose();o.material.dispose()}});
+ cam.rotation.set(0,0,0);tick=C[k]();
+ document.querySelectorAll('.pick').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c==k));
+
+
+ const clk=new THREE.Clock();let fr=0;function loop(){if(!still)raf=requestAnimationFrame(loop);if(!still&&(fr++&1))return;const t=still?2:clk.getElapsedTime();tick(t,prog());gl.render(scene,cam)}loop();}
+if(still)addEventListener('scroll',()=>{if(tick){tick(2,prog());gl.render(scene,cam)}},{passive:true});
+const rs=[...document.querySelectorAll('.rail span')];const io=new IntersectionObserver(es=>es.forEach(e=>{e.target.classList.toggle('in',e.isIntersecting);if(e.isIntersecting)rs.forEach((r,i)=>r.classList.toggle('on',i==+e.target.dataset.i))}),{threshold:.45});document.querySelectorAll('.stage').forEach(x=>io.observe(x));
+
+// Animated pipeline diagram
+const SN=['Ingest','Transcribe','Plan','Render','Check'],EN=['Your computer','Your AI key','Orbit credits'];let pstyle='circuit';
+const nd=(x,y,t,c='main',w=136,h=52)=>`<g class="nd ${c}"><rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="12"/><text x="${x}" y="${y}">${t}</text></g>`;
+const mv=(d,c,n,dur,r=5)=>still?'':Array.from({length:n},(_,i)=>`<circle class="pulse ${c}" r="${r}"><animateMotion dur="${dur}s" begin="-${(i*dur/n).toFixed(2)}s" repeatCount="indefinite" path="${d}"/></circle>`).join('');
+const PS={
+circuit(){const v=innerWidth<768;let W,H,main,sub,inp,out;if(v){W=340;H=720;main=SN.map((t,i)=>[122,110+i*112]);sub=EN.map((t,i)=>[278,228+i*112]);inp=[122,30];out=[122,690]}else{W=1180;H=360;main=SN.map((t,i)=>[210+i*190,120]);sub=EN.map((t,i)=>[400+i*190,285]);inp=[50,120];out=[1120,120]}
+ const tr='M'+[inp,...main,out].map(p=>p.join(' ')).join(' L'),cr=main[2],ws=sub.map(p=>v?`M${p[0]-64} ${p[1]} C${p[0]-110} ${p[1]},${cr[0]+120} ${cr[1]},${cr[0]+85} ${cr[1]}`:`M${p[0]} ${p[1]-26} C${p[0]} ${p[1]-90},${cr[0]} ${cr[1]+110},${cr[0]} ${cr[1]+26}`);
+ return `<svg viewBox="0 0 ${W} ${H}"><path class="wire" d="${tr}"/>${ws.map(d=>`<path class="wire" d="${d}"/>`).join('')}${mv(tr,'',4,7)}${ws.map(d=>mv(d,'c',2,3.4,4)).join('')}${nd(...inp,'Video','sub',84)}${main.map((p,i)=>nd(p[0],p[1],SN[i],'main',v?150:136)).join('')}${sub.map((p,i)=>nd(p[0],p[1],EN[i],'sub',v?124:140)).join('')}${nd(...out,'MP4','sub',84)}</svg>`},
+metro(){const W=1180,Y=120,st=SN.map((t,i)=>[210+i*190,Y]),tr=`M40 ${Y} H1140`,col=['#7fe0a8','#8fb7ff','#ff9b7f'],ls=EN.map((t,i)=>{const y=225+i*42;return `M40 ${y} H360 C470 ${y},500 ${Y},590 ${Y} H1140`});
+ return `<svg class="fix" viewBox="0 0 ${W} 340">${ls.map((d,i)=>`<path d="${d}" fill="none" stroke="${col[i]}" stroke-width="4" stroke-opacity=".75"/>`).join('')}<path d="${tr}" fill="none" stroke="var(--acc)" stroke-width="6"/>${mv(tr,'',3,8,7)}${ls.map((d,i)=>still?'':`<circle r="5" fill="${col[i]}"><animateMotion dur="${6+i}s" repeatCount="indefinite" path="${d}"/></circle>`).join('')}${EN.map((t,i)=>`<text class="tl s" x="48" y="${215+i*42}">${t}</text>`).join('')}${st.map((p,i)=>`<circle class="stn" cx="${p[0]}" cy="${p[1]}" r="13"/><text class="lab" x="${p[0]}" y="${p[1]-30}">${SN[i]}</text>`).join('')}<text class="tl s" x="40" y="${Y-30}">Video</text><text class="tl e" x="1140" y="${Y-30}">MP4</text></svg>`}};
+function diagram(){document.getElementById('diagram').innerHTML=PS.circuit()}
+function chips(id,list,cb,start){const w=document.getElementById(id);list.forEach(([k,n])=>{const b=document.createElement('button');b.className='opt';b.textContent=n;b.dataset.k=k;b.onclick=()=>{[...w.querySelectorAll('.opt')].forEach(x=>x.setAttribute('aria-pressed',x==b));cb(k)};if(k==start)b.setAttribute('aria-pressed','true');else b.setAttribute('aria-pressed','false');w.append(b)})}
+root.dataset.num='gradient';
+document.querySelectorAll('span.ghost').forEach(g=>{const n=g.textContent;g.outerHTML=`<svg class="ghost" viewBox="0 0 640 400" aria-hidden="true"><text x="8" y="200">${n}</text></svg>`});
+// Line that draws down the page as you scroll
+const mn=document.getElementById('mn'),fb=document.getElementById('fb'),fl=document.getElementById('fl'),f2=document.getElementById('fg2'),fnG=document.getElementById('fn'),tip=document.getElementById('tip');let L=0,pts=[],shown=0;
+function route(){const r=mn.getBoundingClientRect(),narrow=innerWidth<768,gap=narrow?20:64;pts=[...document.querySelectorAll('.stage .sc')].map(c=>{const b=c.getBoundingClientRect(),h=c.querySelector('h2').getBoundingClientRect();return{x:Math.max(9,b.left-gap),top:b.top-r.top-56,bot:b.bottom-r.top+56,y:h.top-r.top+h.height/2}});
+ const dg=document.getElementById('diagram').getBoundingClientRect(),st={x:Math.min(innerWidth*.5,dg.left+dg.width/2),bot:dg.bottom-r.top+14};
+ // Curves only happen in the empty space between sections. Beside the content the line runs straight.
+ let d=`M${st.x} ${st.bot}`,prev=st;pts.forEach(p=>{const my=(prev.bot+p.top)/2;d+=` C${prev.x} ${my},${p.x} ${my},${p.x} ${p.top} L${p.x} ${p.bot}`;prev=p});
+ [fb,fl,f2].forEach(e=>e.setAttribute('d',d));L=fl.getTotalLength();[fl,f2].forEach(e=>{e.style.strokeDasharray=L});fnG.innerHTML=pts.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="7"/>`).join('');pts._s=st.bot;pts._e=pts[pts.length-1].bot;buildCache();pts.forEach(p=>p.l=nodeLen(p.y));lastLen=-1}
+let cache=[],lastLen=-1;function buildCache(){cache=[];for(let l=0;l<=L;l+=10){const q=fl.getPointAtLength(l);cache.push([l,q.y,q.x])}}
+function lookup(y){let lo=0,hi=cache.length-1;while(hi-lo>1){const m=(lo+hi)>>1;cache[m][1]<y?lo=m:hi=m}return cache[lo]}
+// The line advances by distance along its path, so it keeps one steady speed through curves and straights.
+let curLen=-1,lit=-1,fT=0;function nodeLen(y){return lookup(y)[0]}
+function flow(n){const dt=Math.min(.05,fT?(n-fT)/1000:.016);fT=n;const r=mn.getBoundingClientRect(),y=Math.max(pts._s,Math.min(pts._e,innerHeight*.62-r.top)),want=L*(y-pts._s)/(pts._e-pts._s);
+ if(curLen<0)curLen=want;curLen+=(want-curLen)*(1-Math.exp(-dt*10));if(Math.abs(want-curLen)<.3)curLen=want;
+ if(Math.abs(curLen-lastLen)>.3){lastLen=curLen;const off=L-curLen;fl.style.strokeDashoffset=off;f2.style.strokeDashoffset=off;const q=fl.getPointAtLength(curLen);tip.setAttribute('cx',q.x);tip.setAttribute('cy',q.y);tip.style.opacity=curLen>2&&curLen<L-2?1:0;
+  let c=0;pts.forEach(p=>{if(curLen>=p.l)c++});if(c!=lit){lit=c;[...fnG.children].forEach((e,i)=>e.classList.toggle('on',i<c))}}
+ requestAnimationFrame(flow)}
+{const g=document.getElementById('get'),h=g.querySelector('h2'),ws=h.textContent.trim().split(' ');h.setAttribute('aria-label',h.textContent.trim());h.innerHTML=ws.map((w,i)=>`<span class="w${i===ws.length-1?' end':''}" aria-hidden="true" style="--i:${i}">${w}</span>`).join(' ');g.classList.add('anim');new IntersectionObserver(es=>es.forEach(e=>g.classList.toggle('seen',e.isIntersecting)),{threshold:.35}).observe(g)}
+const ps=new IntersectionObserver(es=>es.forEach(e=>{const v=e.target.querySelector('svg');if(v&&v.pauseAnimations)e.isIntersecting?v.unpauseAnimations():v.pauseAnimations()}));ps.observe(document.getElementById('pipe'));
+diagram();route();flow();addEventListener('resize',()=>{diagram();route()});addEventListener('load',route);if(document.fonts)document.fonts.ready.then(route);setTimeout(route,1500);
+
+// Smooth wheel scrolling. Touch and keyboard keep the native feel.
+if(!still){let target=scrollY,cur=scrollY,busy=false;const max=()=>document.documentElement.scrollHeight-innerHeight;
+ let lt=0;function glide(n){const dt=Math.min(.05,lt?(n-lt)/1000:.016);lt=n;let mv=(target-cur)*(1-Math.exp(-dt*4.2));const cp=1500*dt;mv=Math.max(-cp,Math.min(cp,mv));cur+=mv;if(Math.abs(target-cur)<.5){cur=target;busy=false;lt=0;scrollTo(0,cur);return}scrollTo(0,cur);requestAnimationFrame(glide)}
+ addEventListener('wheel',e=>{if(e.ctrlKey)return;const bx=e.target.closest&&e.target.closest('.pvb');if(bx&&Math.abs(e.deltaX)>Math.abs(e.deltaY))return;e.preventDefault();if(!busy){cur=target=scrollY}const unit=e.deltaMode==1?32:e.deltaMode==2?innerHeight:1;const d=Math.max(-170,Math.min(170,e.deltaY*unit));target=Math.max(0,Math.min(max(),target+d));if(!busy){busy=true;requestAnimationFrame(glide)}},{passive:false});
+ addEventListener('scroll',()=>{if(!busy)cur=target=scrollY},{passive:true});
+ document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(!t)return;e.preventDefault();target=Math.min(max(),t.getBoundingClientRect().top+scrollY);cur=scrollY;if(!busy){busy=true;requestAnimationFrame(glide)}}))}
+
+// Headline rises in word by word after the intro.
+(function(){const h=document.getElementById('hl');let n=0;const wrap=e=>{[...e.childNodes].forEach(c=>{if(c.nodeType==3){const f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(t=>{if(!t)return;if(/^\s+$/.test(t)){f.append(t);return}const w=document.createElement('span');w.className='w';const i=document.createElement('span');i.textContent=t;i.style.animationDelay=(1.95+n++*.16)+'s';w.append(i);f.append(w)});c.replaceWith(f)}else wrap(c)})};wrap(h)})();
+// Set this to the live web app address at launch.
+const APP_URL='https://home-server.tail709e96.ts.net/';document.querySelectorAll('[data-app]').forEach(a=>a.href=APP_URL);document.querySelectorAll('[data-apply]').forEach(a=>a.href=APP_URL+'apply.html');
+const h=location.hash.slice(1);run(C[h]?h:'liquid');
+})();
+</script>
+
+</body></html>
