@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Post-Production — Vaibhav Jalota | Cutframe Studio</title>
+  <meta name="description" content="Post-production portfolio of Vaibhav Jalota, founder of Cutframe Studio: video editing, AI video, motion graphics, branding and design.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Caveat:wght@500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Preload scroll-scrubbed portrait frames for instantaneous response -->
+  <link rel="preload" as="image" href="images/portrait/frame1.webp" type="image/webp">
+  <link rel="preload" as="image" href="images/portrait/frame2.webp" type="image/webp">
+  <link rel="preload" as="image" href="images/portrait/frame3.webp" type="image/webp">
+  <link rel="preload" as="image" href="images/portrait/frame4.webp" type="image/webp">
+
+  <link rel="stylesheet" href="style.css">
+  <!-- Lenis Smooth Scroll -->
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+</head>
+<body class="intro-locked">
+  <!-- Back to the main Cutframe Studio site -->
+  <a href="/" class="site-back">← Cutframe Studio</a>
+  <style>
+    .site-back{position:fixed;top:14px;left:14px;z-index:9000;font:700 11px/1 "Space Mono",monospace;letter-spacing:.08em;text-transform:uppercase;
+      color:#fff;background:#0b0b0b;padding:9px 13px;border-radius:99px;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.18);transition:background .2s}
+    .site-back:hover,.site-back:focus-visible{background:#e10600;outline:none}
+    body.intro-locked .site-back{opacity:0;pointer-events:none}
+  </style>
+
+  <!-- Film Grain Overlay -->
+  <div class="film-grain" aria-hidden="true"></div>
+
+  <!-- Scroll Progress Bar -->
+  <div id="scroll-progress" class="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Custom Video Cursor (Desktop) -->
+  <div id="video-cursor" class="vcursor" aria-hidden="true">
+    <span>▶ PLAY</span>
+  </div>
+
+  <!-- Intro Timeline Loader Overlay -->
+  <div id="intro-overlay" class="intro-overlay" role="dialog" aria-label="Intro Timeline">
+    <div class="intro-curtain intro-curtain-top"></div>
+    <div class="intro-curtain intro-curtain-bottom"></div>
+    <div class="intro-content">
+      <div class="intro-topbar">
+        <div class="intro-rec">
+          <span class="rec-dot"></span>
+          <span class="intro-rec-label">REC</span>
+          <span class="intro-sep">|</span>
+          <span class="intro-name">VAIBHAV JALOTA — EDITOR / DESIGNER</span>
+        </div>
+        <div class="intro-timecode" id="intro-timecode">00:00:00:00</div>
+      </div>
+
+      <div class="intro-center">
+        <div class="intro-word mega" id="intro-word">EDIT</div>
+        <div class="intro-skip-hint">CLICK / SCROLL / ANY KEY TO SKIP [24FPS]</div>
+      </div>
+
+      <div class="intro-timeline-wrap">
+        <div class="intro-timeline-ruler">
+          <span>00:00:00:00</span>
+          <span>00:00:00:18</span>
+          <span>00:00:01:12</span>
+          <span>00:00:02:06</span>
+          <span>00:00:02:20</span>
+        </div>
+        <div class="intro-timeline">
+          <div class="intro-playhead" id="intro-playhead">
+            <div class="intro-playhead-cap"></div>
+            <div class="intro-playhead-stem"></div>
+          </div>
+          <!-- Video Track 2 -->
+          <div class="intro-track v2">
+            <div class="intro-track-hdr">V2</div>
+            <div class="intro-track-body">
+              <div class="clip c-teal" style="left:0%; width:28%;"><span>B-ROLL_01</span></div>
+              <div class="clip c-amber" style="left:28%; width:34%;"><span>TITLES_V2</span></div>
+              <div class="clip c-teal" style="left:62%; width:38%;"><span>VFX_COMP</span></div>
+            </div>
+          </div>
+          <!-- Video Track 1 -->
+          <div class="intro-track v1">
+            <div class="intro-track-hdr">V1</div>
+            <div class="intro-track-body">
+              <div class="clip c-purple" style="left:0%; width:20%;"><span>A-ROLL</span></div>
+              <div class="clip c-red" style="left:20%; width:20%;"><span>CUTFRAME_01</span></div>
+              <div class="clip c-teal" style="left:40%; width:20%;"><span>GRADE_LUT</span></div>
+              <div class="clip c-grey" style="left:60%; width:20%;"><span>SFX_HIT</span></div>
+              <div class="clip c-red" style="left:80%; width:20%;"><span>HERO_MASTER</span></div>
+            </div>
+          </div>
+          <!-- Audio Track 1 -->
+          <div class="intro-track a1">
+            <div class="intro-track-hdr">A1</div>
+            <div class="intro-track-body">
+              <div class="clip c-audio" style="left:0%; width:100%;">
+                <svg class="waveform" viewBox="0 0 1000 36" preserveAspectRatio="none">
+                  <path d="M0,18 Q15,4 30,18 T60,18 T90,6 T120,18 T150,28 T180,18 T210,2 T240,18 T270,32 T300,18 T330,8 T360,18 T390,26 T420,18 T450,2 T480,18 T510,34 T540,18 T570,6 T600,18 T630,30 T660,18 T690,4 T720,18 T750,32 T780,18 T810,6 T840,18 T870,28 T900,18 T930,4 T960,18 T1000,18" fill="none" stroke="#22c55e" stroke-width="2"/>
+                </svg>
+                <span>MASTER_AUDIO_48K</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-flash" id="intro-flash"></div>
+    </div>
+  </div>
+
+  <!-- Video Lightbox Modal -->
+  <div id="video-modal" class="vmodal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Video Player">
+    <div class="vmodal-backdrop" id="vmodal-backdrop"></div>
+    <div class="vmodal-dialog">
+      <div class="vmodal-bar">
+        <div class="vmodal-meta">
+          <span class="vmodal-rec-dot"></span>
+          <span class="vmodal-rec-text">PLAYING</span>
+          <span class="vmodal-sep">|</span>
+          <b id="vmodal-title">CUT_FRAME</b>
+          <span id="vmodal-type" class="vmodal-type">4K • 24FPS</span>
+        </div>
+        <button id="vmodal-close" class="vmodal-close" type="button" aria-label="Close video player">✕ ESC</button>
+      </div>
+      <div class="vmodal-media">
+        <video id="vmodal-video" controls playsinline></video>
+      </div>
+      <div class="vmodal-foot">
+        <span>CUTFRAME STUDIO // HIGH-RETENTION EDIT</span>
+        <span>[ESC / CLICK OUTSIDE TO CLOSE]</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Content -->
+  <main id="app"></main>
+
+  <script src="content.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

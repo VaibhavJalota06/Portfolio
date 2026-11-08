@@ -21,6 +21,7 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
 
   const navLinks = [
     { label: 'Work', href: '#work' },
+    { label: 'Post-Production', href: '/post-production/' },
     { label: 'The Difference', href: '#difference' },
     { label: 'About', href: '#about' },
     { label: 'Services', children: serviceLinks },
