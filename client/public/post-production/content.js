@@ -66,17 +66,15 @@ window.PORTFOLIO = {
             { hex: "#e0561f", label: "Hangries orange" },
             { hex: "#8c1d18", label: "deep red" },
             { hex: "#5b1a2b", label: "Makkar maroon" },
-            { hex: "#2a9d8f", label: "Anuraag's teal" },
             { hex: "#f7d74a", label: "sunny yellow" }
           ],
           notesTitle: "What the marks say:",
           notes: [
             "Hangries — a smile you can taste",
             "Makkar — a classic emblem for events",
-            "Chef Anuraag's — playful bakery badge",
             "Each mark built to work on signage & social"
           ],
-          gallery: ["images/work/cd04.jpg"]
+          gallery: []
         }
       ]
     },
