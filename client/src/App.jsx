@@ -12,7 +12,7 @@ import AgencyAbout from './components/AgencyAbout';
 import { CONTACT, getWhatsAppUrl } from './contact';
 import AgencyProcess from './components/AgencyProcess';
 import AgencyCTA from './components/AgencyCTA';
-import { startSmoothScroll, stopSmoothScroll, getLenis, ScrollTrigger, SplitChars, RevealHeading, Reveal, Scramble, useGsap, gsap } from './motion';
+import { ScrollTrigger, SplitChars, RevealHeading, Reveal, Scramble, useGsap, gsap } from './motion';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
 import LiveDemos from './components/LiveDemos';
@@ -89,13 +89,7 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Smooth scrolling on the public homepage only (admin keeps native scrolling for drag & drop)
   const isHome = !isAdmin && !legalTab;
-  useEffect(() => {
-    if (!isHome) return undefined;
-    startSmoothScroll();
-    return () => stopSmoothScroll();
-  }, [isHome]);
 
   // Hide the floating WhatsApp button while the footer (which has its own WhatsApp link) is on screen,
   // so it never sits on top of the footer content.
@@ -107,13 +101,6 @@ export default function App() {
     io.observe(el);
     return () => io.disconnect();
   }, [isAdmin, legalTab]);
-
-  // Freeze the page behind open popups
-  useEffect(() => {
-    const lenis = getLenis();
-    if (!lenis) return;
-    if (showDiscoveryModal || activeLightboxItem) lenis.stop(); else lenis.start();
-  }, [showDiscoveryModal, activeLightboxItem]);
 
   // Work tiles arriving from the API change the page height: re-measure scroll animations
   useEffect(() => {

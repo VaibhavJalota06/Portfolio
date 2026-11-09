@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { gsap, getLenis, reduceMotion } from '../motion';
+import { gsap, reduceMotion } from '../motion';
 
 const ROW_1 = ['Video editing', 'AI video', 'Motion graphics', 'Branding & design', 'Reels & Shorts'];
 const ROW_2 = ['Colour grading', 'Sound design', 'Websites', 'Thumbnails', 'Ad creatives'];
 
-// Two strips of big type moving in opposite directions; they speed up while you scroll.
+// Two strips of big type moving slowly in opposite directions.
 function Row({ words, dir, alt }) {
   const ref = useRef(null);
   useEffect(() => {
@@ -14,9 +14,7 @@ function Row({ words, dir, alt }) {
     const loop = () => {
       const w = row.scrollWidth / 2;
       if (!w) return;
-      const lenis = getLenis();
-      const v = lenis ? Math.min(Math.abs(lenis.velocity), 40) : 0;
-      x -= 0.6 * dir * (1 + v * 0.15);
+      x -= 0.6 * dir;
       if (x <= -w) x += w;
       if (x > 0) x -= w;
       gsap.set(row, { x });

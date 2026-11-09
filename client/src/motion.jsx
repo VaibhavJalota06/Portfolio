@@ -1,9 +1,8 @@
-// Shared motion helpers for the public homepage: GSAP + ScrollTrigger, Lenis smooth scrolling,
-// and small components that pre-split text so React owns every span (no DOM mutation of React text).
+// Shared motion helpers for the public homepage: GSAP + ScrollTrigger scroll animations (page scrolling
+// itself stays native), and small components that pre-split text so React owns every span.
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
 
 gsap.registerPlugin(ScrollTrigger);
 export { gsap, ScrollTrigger };
@@ -12,36 +11,12 @@ const mq = (q) => typeof window !== 'undefined' && window.matchMedia(q).matches;
 export const reduceMotion = mq('(prefers-reduced-motion: reduce)');
 export const finePointer = mq('(hover: hover) and (pointer: fine)');
 
-/* ---------- smooth scrolling ---------- */
-let lenis = null;
-let tick = null;
-
-export function startSmoothScroll() {
-  if (reduceMotion || lenis) return lenis;
-  // lerp: how quickly the page catches up to the wheel (higher = snappier). 0.2 keeps it smooth without lag.
-  lenis = new Lenis({ lerp: 0.2, wheelMultiplier: 1.1 });
-  lenis.on('scroll', ScrollTrigger.update);
-  tick = (t) => lenis && lenis.raf(t * 1000);
-  gsap.ticker.add(tick);
-  gsap.ticker.lagSmoothing(0);
-  return lenis;
-}
-
-export function stopSmoothScroll() {
-  if (!lenis) return;
-  gsap.ticker.remove(tick);
-  lenis.destroy();
-  lenis = null;
-}
-
-export const getLenis = () => lenis;
-
-// Smooth-scroll to an in-page anchor like "#work". Returns false when the target isn't on the page.
+// Scroll to an in-page anchor like "#work" (html scroll-padding-top keeps it clear of the menu bar).
+// Returns false when the target isn't on the page.
 export function scrollToHash(hash) {
   const el = hash && hash.length > 1 ? document.querySelector(hash) : null;
   if (!el) return false;
-  if (lenis) lenis.scrollTo(el, { offset: -70, duration: 0.9 });
-  else el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+  el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
   return true;
 }
 

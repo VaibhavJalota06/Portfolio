@@ -4,9 +4,8 @@ import { getWhatsAppUrl } from '../contact';
 import { gsap, useGsap, SplitChars, scrollToHash } from '../motion';
 
 const LINES = [
-  { drift: -6, parts: [{ text: 'We cut' }] },
-  { drift: 8, parts: [{ text: 'frames', className: 'o' }, { text: ' that' }] },
-  { drift: -4, parts: [{ text: 'make brands ' }, { text: 'move.', className: 'r' }] },
+  { drift: 3, parts: [{ text: 'We cut ' }, { text: 'frames', className: 'o' }] },
+  { drift: -2, parts: [{ text: 'that make brands ' }, { text: 'move.', className: 'r' }] },
 ];
 const REEL_WORDS = ['Cut.', 'Grade.', 'Animate.', 'Generate.', 'Design.', 'Deliver.'];
 
