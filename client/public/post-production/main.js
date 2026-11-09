@@ -989,7 +989,8 @@
 
     const data = window.PORTFOLIO || {};
 
-    if (data.name && data.year) {
+    // Only fill in a title when the HTML doesn't already set one
+    if (data.name && data.year && !document.title.trim()) {
       document.title = `${data.name} — Portfolio ${data.year}`;
     }
 
