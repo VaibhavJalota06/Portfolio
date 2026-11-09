@@ -36,12 +36,12 @@ function DemoCard({ app }) {
   const shot = app.screenshots[0];
 
   return (
-    <article className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+    <article className="flex flex-col rounded-2xl border border-[#23232c] bg-[#131319] overflow-hidden">
       <div className="aspect-[4/3] bg-slate-900 relative">
         {shot ? (
           <img src={shot} alt={`${app.name} screenshot`} loading="lazy" className="w-full h-full object-cover" />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-blue-700 to-sky-500 text-white">
+          <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gradient-to-br from-[#e10600] to-[#7c3aed] text-white">
             <Monitor className="w-10 h-10 opacity-80" />
             <span className="text-sm font-semibold">Screenshots coming soon</span>
           </div>
@@ -55,16 +55,16 @@ function DemoCard({ app }) {
         )}
       </div>
       <div className="flex flex-col flex-1 p-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-blue-600">{app.tagline}</p>
-        <h3 className="mt-1 text-xl font-bold text-slate-900">{app.name}</h3>
-        <p className="mt-2 text-sm text-slate-600 flex-1">{app.description}</p>
+        <p className="cf-mono">{app.tagline}</p>
+        <h3 className="mt-1 text-xl font-bold text-white">{app.name}</h3>
+        <p className="mt-2 text-sm text-[#a9a9b6] flex-1">{app.description}</p>
         <div className="mt-5">
           {status === 'online' ? (
             <a
               href={app.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold shadow-sm transition-colors focus-ring"
+              className="cf-btn cf-btn-red cf-btn-sm"
             >
               Try it live <ExternalLink className="w-4 h-4" />
             </a>
@@ -72,7 +72,7 @@ function DemoCard({ app }) {
             <button
               type="button"
               disabled
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 text-slate-500 text-sm font-semibold border border-slate-200 cursor-not-allowed"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1b1b22] text-[#8b8b98] text-sm font-semibold border border-[#23232c] cursor-not-allowed"
             >
               {status === 'checking' && <><Loader2 className="w-4 h-4 animate-spin" /> Checking demo…</>}
               {status === 'offline' && <><WifiOff className="w-4 h-4" /> Demo offline right now</>}

@@ -1,187 +1,156 @@
 import React from 'react';
-import { LayoutGrid, Clapperboard, Palette, Bot, Globe, Check, Zap, MessageCircle, Calendar, ArrowRight } from 'lucide-react';
+import { ArrowRight, MessageCircle } from 'lucide-react';
 import { getWhatsAppUrl } from '../contact';
+import { gsap, useGsap, RevealHeading, Reveal, Scramble, finePointer } from '../motion';
 
-export default function AgencyServices({ onSelectService }) {
-  const services = [
-    {
-      id: 'page-management',
-      page: '/instagram-page-management',
-      icon: LayoutGrid,
-      title: 'Social Media & Page Management',
-      subtitle: 'Planning • Posting • Profiles',
-      tag: 'Most Popular',
-      description: 'We manage your brand’s social pages across platforms: a monthly content strategy, scheduled posting, and profiles that look consistent and trustworthy to new customers.',
-      deliverables: [
-        'Monthly content strategy',
-        'Monthly content & posting calendar',
-        'Captions and hashtags written for you',
-        'Regular scheduled posting',
-        'Profile, bio and highlights cleanup'
-      ]
-    },
-    {
-      id: 'reels',
-      page: '/reels-video-editing-delhi',
-      icon: Clapperboard,
-      title: 'Reels & Video Editing',
-      subtitle: 'Reels • Shorts • YouTube',
-      tag: 'High Retention',
-      description: 'From on-site video shoots to full post-production, we create high-retention reels and videos that showcase your brand, explain your products or services, and keep audiences watching.',
-      deliverables: [
-        'Strong first-3-second hooks',
-        'Clean word-by-word captions',
-        'Music, sound effects and B-roll',
-        'Cuts, zooms and pacing for retention',
-        'Exported in 9:16 for Reels & Shorts'
-      ]
-    },
-    {
-      id: 'design',
-      page: '/graphic-design',
-      icon: Palette,
-      title: 'Graphic Design',
-      subtitle: 'Posts • Posters • Carousels',
-      tag: 'On-Brand',
-      description: 'Posts, posters and carousels that explain your services clearly, built in Photoshop and CorelDraw to match your brand’s colors and style.',
-      deliverables: [
-        'Social media posts and carousels',
-        'Festival and offer posters',
-        'Thumbnails and reel covers',
-        'Print designs (flyers, cards, packaging)',
-        'A consistent look across your accounts'
-      ]
-    },
-    {
-      id: 'ai',
-      page: '/ai-videos',
-      icon: Bot,
-      title: 'AI Videos & Creatives',
-      subtitle: 'AI Avatars • AI Visuals • B-roll',
-      tag: 'New',
-      description: 'AI-generated characters, scenes and visuals to explain your products and ideas, perfect when you don’t have footage or want something eye-catching.',
-      deliverables: [
-        'AI avatar and explainer videos',
-        'AI-generated scenes and B-roll',
-        'Animated characters for awareness reels',
-        'AI images for posts and ads',
-        'Combined with real editing for a polished finish'
-      ]
-    },
-    {
-      id: 'website',
-      page: '/website-design',
-      icon: Globe,
-      title: 'Website Design & Development',
-      subtitle: 'Landing Pages • Brand Sites • Portfolios',
-      tag: 'Full-Service',
-      description: 'Custom-built, mobile-first websites that look premium and load fast — landing pages, brand sites, portfolios and e-commerce storefronts designed to convert visitors into customers.',
-      deliverables: [
-        'Custom responsive design (mobile-first)',
-        'Fast-loading, SEO-optimized pages',
-        'Contact forms, booking and WhatsApp integration',
-        'Domain setup and hosting guidance',
-        'Ongoing maintenance and content updates'
-      ]
-    }
-  ];
+// `service` must match an option in DiscoveryModal's "Primary Service" list.
+const SERVICES = [
+  {
+    id: 'video', code: 'V1', color: 'var(--red)', tag: 'Most popular', featured: true,
+    title: 'Video editing & post-production', service: 'Reels & Video Editing',
+    description: 'Reels, Shorts, YouTube, ads and brand films. Hooks in the first three seconds, clean captions, pacing that keeps people watching, plus colour and sound done properly.',
+    chips: ['Reels & Shorts', 'YouTube', 'Ad edits', 'Colour grading', 'Sound design', 'Subtitles'],
+    links: [{ label: 'More about video editing', href: '/reels-video-editing-delhi' }],
+  },
+  {
+    id: 'ai', code: 'V2', color: 'var(--violet)', tag: 'New',
+    title: 'AI video & creatives', service: 'AI Videos & Creatives',
+    description: 'AI avatars, generated scenes and B-roll for when you don’t have footage, finished with real editing so it looks polished, not robotic.',
+    chips: ['AI avatars', 'AI B-roll', 'Explainers', 'AI images'],
+    links: [{ label: 'More about AI videos', href: '/ai-videos' }],
+  },
+  {
+    id: 'motion', code: 'V3', color: 'var(--amber)',
+    title: 'Motion graphics', service: 'Reels & Video Editing',
+    description: 'Animated titles, logo reveals, kinetic text and explainer animation that make your videos feel premium.',
+    chips: ['Logo reveals', 'Kinetic type', 'Lower thirds', 'Explainers'],
+    links: [],
+  },
+  {
+    id: 'design', code: 'V4', color: 'var(--teal)',
+    title: 'Branding & design', service: 'Graphic Design',
+    description: 'Logos, social posts, carousels, posters, thumbnails and print, with one consistent look across everything.',
+    chips: ['Logos', 'Posts & carousels', 'Thumbnails', 'Print'],
+    links: [{ label: 'More about design', href: '/graphic-design' }],
+  },
+  {
+    id: 'social', code: 'V5', color: 'var(--green)',
+    title: 'Social media & websites', service: 'Social Media & Page Management',
+    description: 'Page management, posting calendars, and fast mobile-first websites that turn visitors into clients.',
+    chips: ['Page management', 'Posting calendar', 'Websites', 'Landing pages'],
+    links: [
+      { label: 'Page management', href: '/instagram-page-management' },
+      { label: 'Website design', href: '/website-design' },
+    ],
+  },
+];
+
+const CAPTIONS = ['Stop', 'scrolling.', 'This', 'hook', 'took', '3 sec.'];
+
+function PhoneMock() {
+  const ref = useGsap((root) => {
+    const cap = root.querySelector('.cap span');
+    gsap.to(root.querySelector('.pbar'), { width: '100%', duration: CAPTIONS.length * 1.1, ease: 'none', repeat: -1 });
+    let i = 0;
+    const t = setInterval(() => {
+      i = (i + 1) % CAPTIONS.length;
+      cap.textContent = CAPTIONS[i];
+      gsap.fromTo(cap, { scale: 1.25, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.45, ease: 'back.out(2)' });
+    }, 1100);
+    gsap.to(root, { y: -24, rotate: -3, ease: 'none', scrollTrigger: { trigger: root, start: 'top bottom', end: 'bottom top', scrub: true } });
+    return () => clearInterval(t);
+  });
+  return (
+    <div ref={ref} className="cf-mini" aria-hidden="true">
+      <div className="mb" />
+      <div className="cap"><span>{CAPTIONS[0]}</span></div>
+      <div className="meta">9:16 · REEL</div>
+      <div className="pbar" />
+    </div>
+  );
+}
+
+function ServiceCard({ s, index, onSelectService }) {
+  const ref = useGsap((card) => {
+    const tl = gsap.timeline({ scrollTrigger: { trigger: card, start: 'top 85%' } });
+    tl.fromTo(card, { clipPath: 'inset(100% 0% 0% 0% round 18px)', y: 50 }, { clipPath: 'inset(0% 0% 0% 0% round 18px)', y: 0, duration: 1.1, ease: 'expo.out', delay: (index % 2) * 0.1, clearProps: 'clipPath' })
+      .from(card.querySelector('.bar'), { scaleX: 0, duration: 0.9, ease: 'expo.inOut' }, '-=0.8')
+      .from(card.querySelectorAll('h3, p'), { y: 24, autoAlpha: 0, stagger: 0.08, duration: 0.7, ease: 'power3.out' }, '-=0.7')
+      .from(card.querySelectorAll('.cf-chips li'), { scale: 0.7, autoAlpha: 0, stagger: 0.04, duration: 0.45, ease: 'back.out(1.8)' }, '-=0.5');
+
+    if (!finePointer) return undefined;
+    // Gentle 3D tilt toward the mouse
+    const move = (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      gsap.to(card, { rotateY: x * 4, rotateX: -y * 4, transformPerspective: 1200, duration: 0.6, ease: 'power2.out' });
+    };
+    const leave = () => gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.8, ease: 'power3.out' });
+    card.addEventListener('mousemove', move);
+    card.addEventListener('mouseleave', leave);
+    return () => { card.removeEventListener('mousemove', move); card.removeEventListener('mouseleave', leave); };
+  });
+
+  const body = (
+    <div className="flex flex-col flex-1">
+      <div className="flex items-center justify-between">
+        <span className="cf-mono">{s.code}</span>
+        {s.tag && <span className="cf-tag" style={{ background: s.color }}>{s.tag.toUpperCase()}</span>}
+      </div>
+      <h3>{s.title}</h3>
+      <p>{s.description}</p>
+      <ul className="cf-chips">{s.chips.map((c) => <li key={c}>{c}</li>)}</ul>
+      {s.links.length > 0 && (
+        <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+          {s.links.map((l) => (
+            <a key={l.href} href={l.href} className="cf-link">{l.label} <ArrowRight className="w-3.5 h-3.5" /></a>
+          ))}
+        </div>
+      )}
+      <div className="mt-auto pt-6 flex flex-wrap items-center gap-2.5">
+        <button type="button" onClick={() => onSelectService(s.service)} className="cf-btn cf-btn-ghost cf-btn-sm">
+          Book a free call
+        </button>
+        <a
+          href={getWhatsAppUrl(`Hi Vaibhav, I'm interested in your ${s.title} service for my brand.`)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1.5 px-2 py-2 text-[13px] font-semibold text-[#4ade80] hover:text-[#86efac]"
+        >
+          <MessageCircle className="w-4 h-4" /> WhatsApp
+        </a>
+      </div>
+    </div>
+  );
 
   return (
-    <section id="services" className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-16 scroll-reveal">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
-            <Zap className="w-3.5 h-3.5 text-blue-600" />
-            Our Services
+    <article ref={ref} className={`cf-card ${s.featured ? 'md:col-span-2' : ''}`}>
+      <div className="bar" style={{ background: s.color }} />
+      {s.featured ? (
+        <div className="grid gap-8 md:grid-cols-[1.3fr_1fr] md:items-center flex-1">
+          {body}
+          <div className="hidden sm:block"><PhoneMock /></div>
+        </div>
+      ) : body}
+    </article>
+  );
+}
+
+export default function AgencyServices({ onSelectService }) {
+  return (
+    <section id="services" className="cf-sec">
+      <div className="cf-wrap">
+        <div className="cf-shead">
+          <div>
+            <Scramble text="01 / SERVICES" className="cf-idx" />
+            <RevealHeading lines={['What we', 'make']} className="cf-wide cf-h2" />
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
-            Everything your brand needs <br />
-            <span className="text-blue-600">across social media</span>
-          </h2>
-          <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            Pick one service or combine them into a monthly plan tailored to your brand. Flexible terms with no long-term lock-in.
-          </p>
+          <Reveal as="p">Pick one, or combine them into a monthly plan. Flexible terms, no long lock-ins.</Reveal>
         </div>
-
-        {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {services.map((service, index) => {
-            const Icon = service.icon;
-            return (
-              <div
-                key={service.id}
-                className={`group relative bg-white border border-slate-200 hover:border-blue-400/80 rounded-2xl p-6 sm:p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between scroll-reveal stagger-${(index % 4) + 1}`}
-              >
-                <div>
-                  {/* Top Bar */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-200">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-semibold font-mono">
-                        {service.tag}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Title & Description */}
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                    {service.title}
-                  </h3>
-                  <div className="text-xs font-mono font-medium text-slate-500 mt-1 uppercase tracking-wide">
-                    {service.subtitle}
-                  </div>
-                  <p className="mt-4 text-sm text-slate-600 leading-relaxed">
-                    {service.description}
-                  </p>
-                  <a href={service.page} className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:underline">
-                    More about {service.title} <ArrowRight className="w-4 h-4" />
-                  </a>
-
-                  {/* Deliverables Checklist */}
-                  <div className="mt-6 pt-6 border-t border-slate-100">
-                    <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">
-                      What's Included:
-                    </h4>
-                    <ul className="space-y-2.5">
-                      {service.deliverables.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-700">
-                          <Check className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-
-                {/* Card CTA */}
-                <div className="mt-8 pt-4 border-t border-slate-100 flex flex-col gap-2">
-                  <button
-                    type="button"
-                    onClick={() => onSelectService(service.title)}
-                    className="w-full py-3 rounded-xl bg-slate-50 hover:bg-blue-600 text-slate-700 hover:text-white font-semibold text-sm border border-slate-200 hover:border-transparent transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
-                  >
-                    <Calendar className="w-4 h-4" />
-                    <span>Book a Free Call</span>
-                  </button>
-                  <a
-                    href={getWhatsAppUrl(`Hi Vaibhav, I'm interested in your ${service.title} service for my brand.`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full py-2 rounded-xl text-center text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    <span>Chat on WhatsApp</span>
-                  </a>
-                </div>
-              </div>
-            );
-          })}
+        <div className="grid gap-3.5 md:grid-cols-2">
+          {SERVICES.map((s, i) => <ServiceCard key={s.id} s={s} index={i} onSelectService={onSelectService} />)}
         </div>
-
       </div>
     </section>
   );

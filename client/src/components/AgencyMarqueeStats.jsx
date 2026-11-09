@@ -1,32 +1,41 @@
-import React from 'react';
-import { Sparkles } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import { gsap, getLenis, reduceMotion } from '../motion';
+
+const ROW_1 = ['Video editing', 'AI video', 'Motion graphics', 'Branding & design', 'Reels & Shorts'];
+const ROW_2 = ['Colour grading', 'Sound design', 'Websites', 'Thumbnails', 'Ad creatives'];
+
+// Two strips of big type moving in opposite directions; they speed up while you scroll.
+function Row({ words, dir, alt }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const row = ref.current;
+    if (!row || reduceMotion) return undefined;
+    let x = 0;
+    const loop = () => {
+      const w = row.scrollWidth / 2;
+      if (!w) return;
+      const lenis = getLenis();
+      const v = lenis ? Math.min(Math.abs(lenis.velocity), 40) : 0;
+      x -= 0.6 * dir * (1 + v * 0.15);
+      if (x <= -w) x += w;
+      if (x > 0) x -= w;
+      gsap.set(row, { x });
+    };
+    gsap.ticker.add(loop);
+    return () => gsap.ticker.remove(loop);
+  }, [dir]);
+  return (
+    <div ref={ref} className={`cf-marq-row ${alt ? 'alt' : ''}`}>
+      {[...words, ...words].map((w, i) => <span key={i} aria-hidden={i >= words.length}>{w}</span>)}
+    </div>
+  );
+}
 
 export default function AgencyMarqueeStats() {
-  const marqueeItems = [
-    '4K ON-LOCATION FILMING',
-    'HIGH-RETENTION PACING',
-    'DYNAMIC ANIMATED SUBTITLES',
-    'COLOR GRADING & CINEMATIC AUDIO',
-    'INSTAGRAM REELS & YOUTUBE SHORTS',
-    'SOCIAL MEDIA MANAGEMENT',
-    'AD CREATIVES & COMMERCIAL EDITS',
-    'SOUND DESIGN & SFX',
-    'WEBSITE DESIGN & DEVELOPMENT'
-  ];
-
   return (
-    <div className="w-full bg-slate-950 text-white overflow-hidden border-y border-slate-800 py-3.5 relative">
-      <div className="animate-marquee flex items-center gap-8 whitespace-nowrap text-xs font-mono font-semibold tracking-wider text-slate-300">
-        {[...marqueeItems, ...marqueeItems].map((item, idx) => (
-          <div key={idx} className="flex items-center gap-8">
-            <span className="flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-              <span className="hover:text-blue-400 transition-colors cursor-default">{item}</span>
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-600/60" />
-          </div>
-        ))}
-      </div>
+    <div className="cf-marq" role="presentation">
+      <Row words={ROW_1} dir={1} />
+      <Row words={ROW_2} dir={-1} alt />
     </div>
   );
 }

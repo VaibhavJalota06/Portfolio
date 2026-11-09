@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#2563EB" />
+    <meta name="theme-color" content="#08080b" />
     <meta name="description" content="Reels &amp; video editing, Instagram page management, graphic design, AI videos and websites for brands. On-site shoots in Delhi NCR, clients across India." />
     
     <!-- OpenGraph Social Meta -->
@@ -28,7 +28,7 @@
     <!-- Fonts load in parallel with the CSS (a CSS @import would chain them and delay first paint). -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
     <title>Cutframe Studio | Reels Editing &amp; Instagram Management, Delhi</title>
 
     <!-- Google tag (gtag.js) -->
@@ -72,28 +72,23 @@
     </script>
   </head>
   <body>
-    <!-- Boot loader: visible instantly on load/refresh, hidden by main.jsx once the app has rendered.
-         The inline timer below removes it after 6s no matter what, so it can never block the page. -->
+    <!-- Boot loader: visible instantly on load/refresh. On the homepage it doubles as the intro
+         (AgencyHero slides the black slices away); elsewhere main.jsx fades it out.
+         The inline timer removes it after 8s no matter what, so it can never block the page. -->
     <style>
-      #boot-loader { position: fixed; inset: 0; z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: #fff; transition: opacity .45s ease, visibility .45s ease; font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif; }
+      html, body { background: #08080b; }
+      #boot-loader { position: fixed; inset: 0; z-index: 99999; overflow: hidden; transition: opacity .45s ease, visibility .45s ease; }
       #boot-loader.done { opacity: 0; visibility: hidden; }
-      #boot-loader .mark { width: 64px; height: 64px; border-radius: 18px; background: linear-gradient(135deg, #1d4ed8, #2563eb 55%, #0ea5e9); display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 30px rgba(37,99,235,.35); animation: boot-pop 1.2s ease-in-out infinite; }
-      #boot-loader .name { font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -.02em; }
-      #boot-loader .name span { color: #2563eb; }
-      #boot-loader .bar { width: 160px; height: 4px; border-radius: 99px; background: #e2e8f0; overflow: hidden; }
-      #boot-loader .bar::after { content: ''; display: block; width: 40%; height: 100%; border-radius: 99px; background: #2563eb; animation: boot-slide 1s ease-in-out infinite; }
-      @keyframes boot-pop { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
-      @keyframes boot-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
-      @media (prefers-reduced-motion: reduce) { #boot-loader .mark, #boot-loader .bar::after { animation: none; } }
+      #boot-loader .sl { position: absolute; left: 0; right: 0; height: 20.4%; background: #050507; }
+      #boot-loader .word { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+      #boot-loader .word > div { overflow: hidden; padding: .04em 0; }
+      #boot-loader .word span { display: block; font-family: 'Archivo', 'Arial Black', system-ui, sans-serif; font-stretch: 125%; font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; line-height: 1; color: #fff; font-size: clamp(40px, 11vw, 160px); }
     </style>
     <div id="boot-loader" role="status" aria-label="Loading Cutframe Studio">
-      <div class="mark">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18M3 7.5h4M3 12h18M3 16.5h4M17 3v18M17 7.5h4M17 16.5h4"/></svg>
-      </div>
-      <div class="name">Cutframe <span>Studio</span></div>
-      <div class="bar"></div>
+      <div class="sl" style="top:0"></div><div class="sl" style="top:20%"></div><div class="sl" style="top:40%"></div><div class="sl" style="top:60%"></div><div class="sl" style="top:80%"></div>
+      <div class="word"><div><span>Cutframe</span></div></div>
     </div>
-    <script>setTimeout(function () { var l = document.getElementById('boot-loader'); if (l) l.remove(); }, 6000);</script>
+    <script>setTimeout(function () { var l = document.getElementById('boot-loader'); if (l) l.remove(); }, 8000);</script>
     <!-- Static text for crawlers that don't run JavaScript; React replaces it on render. -->
     <div id="root">
       <main>

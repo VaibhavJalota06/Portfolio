@@ -1,173 +1,104 @@
-import React, { useState, useEffect } from 'react';
-import { Film, Calendar, Menu, X, ChevronRight, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ArrowUpRight } from 'lucide-react';
+import { scrollToHash } from '../motion';
+
+const NAV_LINKS = [
+  { label: 'Work', href: '#work' },
+  { label: 'Services', href: '#services' },
+  { label: 'Post-Production', href: '/post-production/' },
+  { label: 'Process', href: '#process' },
+  { label: 'About', href: '#about' },
+  { label: 'Apps', href: '/apps/' },
+  { label: 'FAQ', href: '#faq' },
+];
 
 export default function AgencyNavbar({ onOpenDiscovery }) {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const lastY = useRef(0);
 
+  // Hide while scrolling down, show again when scrolling up (with a dead-zone so it never flickers).
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = y - lastY.current;
+      if (y < 300) { setHidden(false); lastY.current = y; return; }
+      if (dy > 12) { setHidden(true); lastY.current = y; }
+      else if (dy < -12) { setHidden(false); lastY.current = y; }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const serviceLinks = [
-    { label: 'Our services', href: '#services' },
-    { label: 'Apps', href: '/apps/' },
-  ];
+  // In-page anchors smooth-scroll; if the section isn't on this page (e.g. a policy page)
+  // the browser follows the hash normally and the app switches back to the homepage.
+  const onLink = (e, href) => {
+    setMobileMenuOpen(false);
+    if (href.startsWith('#') && scrollToHash(href)) e.preventDefault();
+  };
 
-  const navLinks = [
-    { label: 'Work', href: '#work' },
-    { label: 'Post-Production', href: '/post-production/' },
-    { label: 'The Difference', href: '#difference' },
-    { label: 'About', href: '#about' },
-    { label: 'Services', children: serviceLinks },
-    { label: 'FAQ', href: '#faq' },
-  ];
+  const goHome = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    if (window.location.hash) window.location.hash = '';
+    window.scrollTo({ top: 0 });
+  };
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 bg-white/95 backdrop-blur-md border-b border-slate-200 ${
-        isScrolled ? 'shadow-sm py-3' : 'py-3.5 sm:py-4'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          
-          {/* Agency Logo */}
-          <a
-            href="#"
-            className="flex items-center gap-2.5 group transition-transform active:scale-[0.98]"
+    <header className={`cf-header ${hidden && !mobileMenuOpen ? 'is-hidden' : ''}`}>
+      <div className="cf-wrap flex items-center justify-between h-16 gap-4">
+        <a href="#" onClick={goHome} className="flex items-center gap-2.5 shrink-0" aria-label="Cutframe Studio home">
+          <span className="cf-logo-mark">C</span>
+          <span className="cf-logo-text">CUTFRAME <span>STUDIO</span></span>
+        </a>
+
+        <nav className="hidden lg:flex items-center" aria-label="Main">
+          {NAV_LINKS.map((l) => (
+            <a key={l.label} href={l.href} onClick={(e) => onLink(e, l.href)} className="cf-navlink">
+              {l.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={onOpenDiscovery} className="cf-btn cf-btn-red cf-btn-sm">
+            <span className="hidden sm:inline">Book a free call</span>
+            <span className="sm:hidden">Book call</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden w-10 h-10 grid place-items-center rounded-lg border border-[#23232c] text-white cursor-pointer"
+            aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
           >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-500 flex items-center justify-center text-white shadow-md shadow-blue-500/25 group-hover:shadow-blue-500/40 transition-shadow">
-              <Film className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold tracking-tight text-slate-900 group-hover:text-blue-600 transition-colors flex items-center gap-1.5 font-display">
-                Cutframe <span className="text-blue-600 font-semibold">Studio</span>
-              </span>
-              <span className="text-[10px] font-mono font-medium tracking-wider text-slate-500 uppercase -mt-0.5">
-                Video &amp; Creative Studio
-              </span>
-            </div>
-          </a>
-
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-            {navLinks.map((link) =>
-              link.children ? (
-                <div
-                  key={link.label}
-                  className="relative"
-                  onMouseEnter={() => setServicesOpen(true)}
-                  onMouseLeave={() => setServicesOpen(false)}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setServicesOpen(!servicesOpen)}
-                    aria-expanded={servicesOpen}
-                    aria-haspopup="true"
-                    className="inline-flex items-center gap-1 cursor-pointer px-3 xl:px-3.5 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-all duration-150"
-                  >
-                    {link.label}
-                    <ChevronDown className={`w-3.5 h-3.5 transition-transform ${servicesOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {servicesOpen && (
-                    <div className="absolute left-0 top-full pt-2 z-50">
-                      <div className="w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
-                        {link.children.map((child) => (
-                          <a
-                            key={child.label}
-                            href={child.href}
-                            onClick={() => setServicesOpen(false)}
-                            className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600"
-                          >
-                            {child.label}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="px-3 xl:px-3.5 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap text-slate-600 hover:text-blue-600 hover:bg-blue-50/60 transition-all duration-150"
-                >
-                  {link.label}
-                </a>
-              )
-            )}
-          </nav>
-
-          {/* Action CTAs */}
-          <div className="hidden sm:flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onOpenDiscovery}
-              className="inline-flex items-center gap-2 px-4.5 py-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold shadow-md shadow-blue-600/20 hover:shadow-blue-600/30 transition-all duration-200 active:scale-[0.98] cursor-pointer"
-            >
-              <Calendar className="w-4 h-4" />
-              <span>Book a Free Call</span>
-            </button>
-
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex items-center gap-2 lg:hidden">
-            <button
-              type="button"
-              onClick={onOpenDiscovery}
-              className="sm:hidden px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-semibold shadow-sm active:scale-[0.98]"
-            >
-              Book Call
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 cursor-pointer"
-              aria-label="Toggle menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
-          <div className="flex flex-col space-y-1">
-            {navLinks.flatMap((link) => link.children || [link]).map((link) => (
+        <div className="lg:hidden border-t border-[#23232c] bg-[#08080b] animate-fade-in">
+          <nav className="cf-wrap py-2 flex flex-col" aria-label="Mobile">
+            {NAV_LINKS.map((l) => (
               <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="px-4 py-2.5 rounded-lg text-sm font-medium text-slate-700 hover:bg-blue-50 hover:text-blue-600 flex items-center justify-between"
+                key={l.label}
+                href={l.href}
+                onClick={(e) => onLink(e, l.href)}
+                className="flex items-center justify-between py-3.5 border-b border-[#1b1b22] text-[15px] font-medium text-[#e4e4ea] hover:text-white"
               >
-                <span>{link.label}</span>
-                <ChevronRight className="w-4 h-4 text-slate-400" />
+                {l.label}
+                <ArrowUpRight className="w-4 h-4 text-[#6b6b78]" />
               </a>
             ))}
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between px-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  onOpenDiscovery();
-                }}
-                className="w-full py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold shadow-md active:scale-[0.98] text-center"
-              >
-                Book a Discovery Call
-              </button>
-            </div>
-          </div>
+            <button
+              type="button"
+              onClick={() => { setMobileMenuOpen(false); onOpenDiscovery(); }}
+              className="cf-btn cf-btn-red mt-4 mb-3 w-full"
+            >
+              Book a free call
+            </button>
+          </nav>
         </div>
       )}
     </header>

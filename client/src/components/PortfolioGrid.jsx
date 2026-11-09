@@ -178,13 +178,13 @@ export default function PortfolioGrid({
         })}
       </div>
       {visibleCount < items.length && (
-        <div className="text-center mt-6">
+        <div className="text-center mt-8">
           <button
             type="button"
             onClick={() => setVisibleCount(n => n + 12)}
-            className="px-6 py-3 rounded-xl bg-white border border-slate-200 hover:border-blue-500 text-slate-800 hover:text-blue-700 font-semibold text-sm shadow-sm transition-all active:scale-[0.98] cursor-pointer focus-ring"
+            className="cf-btn cf-btn-ghost"
           >
-            Show more work <span className="text-slate-500 font-normal">({items.length - visibleCount} more)</span>
+            Show more work <span className="text-[#8b8b98] font-normal">({items.length - visibleCount} more)</span>
           </button>
         </div>
       )}

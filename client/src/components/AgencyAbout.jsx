@@ -1,115 +1,59 @@
 import React from 'react';
-import { Users, FileText, CalendarCheck, FolderUp, MessageSquareText, PackageCheck, Linkedin, Instagram, Mail } from 'lucide-react';
+import { Linkedin, Instagram, Mail, ArrowRight } from 'lucide-react';
 import { CONTACT } from '../contact';
+import { gsap, useGsap, RevealHeading, Reveal, Scramble } from '../motion';
 
-
-const steps = [
-  { icon: CalendarCheck, title: 'Free discovery call', text: 'Book a call or message us on WhatsApp to discuss your brand and content goals.' },
-  { icon: FileText, title: 'Custom plan & quote', text: 'We prepare a clear monthly plan and quote tailored to your needs, with no hidden costs.' },
-  { icon: FolderUp, title: 'Shoot or share footage', text: 'We come on-site with cameras & lighting in Delhi NCR, or you share raw files via Google Drive.' },
-  { icon: MessageSquareText, title: 'Review & approve', text: 'You get each reel or post to review. We make your changes until you are happy with it.' },
-  { icon: PackageCheck, title: 'Post & grow', text: 'Content is delivered ready to post, or we post it for you as part of page management.' },
+const FACTS = [
+  { big: '1:1', small: 'You talk directly to the editor' },
+  { big: 'Delhi NCR', small: 'On-site shoots with camera & lights' },
+  { big: 'All India', small: 'Remote editing & design' },
 ];
 
 export default function AgencyAbout() {
+  const ref = useGsap((root) => {
+    const photo = root.querySelector('.cf-photo');
+    // Photo is revealed by vertical strips (like a transition), then drifts slightly on scroll
+    gsap.to(root.querySelectorAll('.cf-strips i'), { scaleY: 0, transformOrigin: (i) => (i % 2 ? 'top' : 'bottom'), duration: 1.1, stagger: 0.07, ease: 'expo.inOut', scrollTrigger: { trigger: photo, start: 'top 75%' } });
+    gsap.fromTo(root.querySelector('.cf-photo img'), { scale: 1.3 }, { scale: 1, duration: 1.8, ease: 'expo.out', scrollTrigger: { trigger: photo, start: 'top 75%' } });
+    gsap.to(root.querySelector('.cf-photo img'), { yPercent: -6, ease: 'none', scrollTrigger: { trigger: photo, start: 'top bottom', end: 'bottom top', scrub: true } });
+    gsap.from(root.querySelectorAll('.cf-stat'), { y: 30, autoAlpha: 0, stagger: 0.1, duration: 0.8, ease: 'power3.out', scrollTrigger: { trigger: root.querySelector('.cf-stats'), start: 'top 90%' } });
+  });
+
   return (
-    <section id="about" className="py-24 bg-slate-50/70">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-        {/* Who we are */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start scroll-reveal">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
-              <Users className="w-3.5 h-3.5 text-blue-600" />
-              About Cutframe Studio
-            </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
-              We help brands <span className="text-blue-600">scale across every platform</span>
-            </h2>
-            <p className="mt-4 text-base text-slate-500 font-medium">High-retention video editing &amp; creative content studio · Delhi &amp; all India</p>
-          </div>
-          <div className="space-y-6 text-base sm:text-lg text-slate-600 leading-relaxed lg:pt-4">
-            <p>
-              Cutframe Studio is a video editing and creative content studio based in Delhi. We work with brands,
-              businesses, founders and creators across India. We handle on-location filming, high-retention reels, commercial edits and end-to-end content management,
-              so you can focus on running your business.
-            </p>
-
-            {/* Founder Profile Card */}
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row items-center sm:items-start gap-5 scroll-reveal stagger-1">
-              <div className="relative shrink-0">
-                <img
-                  src="/founder.jpg"
-                  alt="Vaibhav Jalota, Founder of Cutframe Studio"
-                  className="w-24 h-28 sm:w-28 sm:h-32 object-cover object-top rounded-xl border border-slate-200 shadow-md"
-                  loading="lazy"
-                />
-                <span className="absolute -bottom-2 -right-1 px-2 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold font-mono tracking-wider shadow-sm">
-                  FOUNDER
-                </span>
-              </div>
-              <div className="space-y-2 text-center sm:text-left flex-1">
-                <div>
-                  <h3 className="text-lg font-bold text-slate-900">Vaibhav Jalota</h3>
-                  <p className="text-xs text-blue-600 font-semibold font-mono">Founder &amp; Creative Lead</p>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  You talk directly to the person creating and overseeing your content — no middlemen, no handoffs, and quick replies on WhatsApp.
-                </p>
-                <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-start gap-2">
-                  <a
-                    href={CONTACT.linkedinUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium text-xs transition-colors"
-                  >
-                    <Linkedin className="w-3.5 h-3.5" />
-                    <span>LinkedIn</span>
-                  </a>
-                  <a
-                    href={CONTACT.instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 font-medium text-xs transition-colors"
-                  >
-                    <Instagram className="w-3.5 h-3.5" />
-                    <span>Instagram</span>
-                  </a>
-                  <a
-                    href={`mailto:${CONTACT.email}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs transition-colors"
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    <span>Email</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
+    <section id="about" ref={ref} className="cf-sec">
+      <div className="cf-wrap grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16 items-center">
+        <div className="cf-photo mx-auto lg:mx-0">
+          <img src="/founder.jpg" alt="Vaibhav Jalota, founder of Cutframe Studio" loading="lazy" />
+          <div className="cf-strips" aria-hidden="true"><i /><i /><i /><i /><i /><i /></div>
+          <span className="absolute top-3.5 left-3.5 z-[3] flex items-center gap-2 cf-mono text-white bg-black/70 px-2.5 py-1.5 rounded-md" style={{ color: '#fff' }}>
+            <span className="cf-dot" /> Founder · {CONTACT.founder}
+          </span>
         </div>
 
-        {/* How working with us works */}
-        <div className="mt-20">
-          <div className="text-center max-w-2xl mx-auto mb-10 scroll-reveal">
-            <h3 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">How working with us works</h3>
-            <p className="mt-3 text-slate-600">
-              Book a quick call to talk through your goals, and we'll create a tailored plan for your brand.
-            </p>
-          </div>
-          <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
-            {steps.map(({ icon: Icon, title, text }, i) => (
-              <li key={title} className={`bg-white border border-slate-200 rounded-2xl p-6 shadow-sm scroll-reveal stagger-${(i % 5) + 1}`}>
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="w-9 h-9 rounded-full bg-blue-600 text-white text-sm font-bold flex items-center justify-center">{i + 1}</span>
-                  <Icon className="w-5 h-5 text-blue-600" />
-                </div>
-                <h4 className="text-base font-bold text-slate-900">{title}</h4>
-                <p className="mt-2 text-sm text-slate-600 leading-relaxed">{text}</p>
-              </li>
+        <div>
+          <Scramble text="04 / ABOUT" className="cf-idx" />
+          <RevealHeading lines={['No middlemen.', 'Just the editor.']} className="cf-wide text-[clamp(30px,4.6vw,56px)]" />
+          <Reveal as="p" className="mt-5 text-[16px] sm:text-[17px] leading-relaxed text-[#b8b8c4]">
+            Cutframe Studio is a post-production and design studio in Delhi, working with brands, founders and creators across India.
+            You talk directly to {CONTACT.founder.split(' ')[0]}, the person cutting, grading and designing your content, with quick replies on WhatsApp.
+          </Reveal>
+
+          <div className="cf-stats mt-7 grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {FACTS.map((f) => (
+              <div key={f.big} className="cf-stat">
+                <b>{f.big}</b>
+                <span>{f.small}</span>
+              </div>
             ))}
-          </ol>
-        </div>
+          </div>
 
+          <Reveal className="mt-7 flex flex-wrap gap-2.5">
+            <a href={CONTACT.linkedinUrl} target="_blank" rel="noopener noreferrer" className="cf-btn cf-btn-ghost cf-btn-sm"><Linkedin className="w-4 h-4" /> LinkedIn</a>
+            <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="cf-btn cf-btn-ghost cf-btn-sm"><Instagram className="w-4 h-4" /> Instagram</a>
+            <a href={`mailto:${CONTACT.email}`} className="cf-btn cf-btn-ghost cf-btn-sm"><Mail className="w-4 h-4" /> Email</a>
+            <a href="/post-production/" className="cf-btn cf-btn-ghost cf-btn-sm">Post-Production portfolio <ArrowRight className="w-4 h-4" /></a>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

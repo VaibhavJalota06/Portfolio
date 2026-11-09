@@ -10,7 +10,9 @@ import AgencyMarqueeStats from './components/AgencyMarqueeStats';
 import AgencyServices from './components/AgencyServices';
 import AgencyAbout from './components/AgencyAbout';
 import { CONTACT, getWhatsAppUrl } from './contact';
-import BeforeAfterShowcase from './components/BeforeAfterShowcase';
+import AgencyProcess from './components/AgencyProcess';
+import AgencyCTA from './components/AgencyCTA';
+import { startSmoothScroll, stopSmoothScroll, getLenis, ScrollTrigger, SplitChars, RevealHeading, Reveal, Scramble, useGsap, gsap } from './motion';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
 import LiveDemos from './components/LiveDemos';
@@ -86,6 +88,38 @@ export default function App() {
 
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
+
+  // Smooth scrolling on the public homepage only (admin keeps native scrolling for drag & drop)
+  const isHome = !isAdmin && !legalTab;
+  useEffect(() => {
+    if (!isHome) return undefined;
+    startSmoothScroll();
+    return () => stopSmoothScroll();
+  }, [isHome]);
+
+  // Hide the floating WhatsApp button while the footer (which has its own WhatsApp link) is on screen,
+  // so it never sits on top of the footer content.
+  const [footerInView, setFooterInView] = useState(false);
+  useEffect(() => {
+    const el = document.getElementById('site-footer');
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(([e]) => setFooterInView(e.isIntersecting), { rootMargin: '0px 0px -80px 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [isAdmin, legalTab]);
+
+  // Freeze the page behind open popups
+  useEffect(() => {
+    const lenis = getLenis();
+    if (!lenis) return;
+    if (showDiscoveryModal || activeLightboxItem) lenis.stop(); else lenis.start();
+  }, [showDiscoveryModal, activeLightboxItem]);
+
+  // Work tiles arriving from the API change the page height: re-measure scroll animations
+  useEffect(() => {
+    if (isHome) { const t = setTimeout(() => ScrollTrigger.refresh(), 300); return () => clearTimeout(t); }
+    return undefined;
+  }, [items, activeTagFilter, isHome]);
 
   // Smooth Scroll-Reveal Observer (elements animate in smoothly and stay visible)
   useEffect(() => {
@@ -434,7 +468,7 @@ export default function App() {
   };
 
   return (
-    <div className={`relative min-h-screen ${isAdmin ? 'bg-slate-50' : 'bg-white text-slate-900'}`}>
+    <div className={`relative min-h-screen ${isAdmin ? 'bg-slate-50' : legalTab ? 'bg-white text-slate-900' : 'cf'}`}>
 
       {/* Cinematic Custom Delete Confirmation Modal */}
       {itemToDelete && (
@@ -731,69 +765,61 @@ export default function App() {
               {/* 2. Kinetic Infinite Marquee & Live Stats Strip */}
               <AgencyMarqueeStats />
 
-              {/* 3. Agency Video Showcase Matrix */}
-              <section id="work" className="py-20 bg-white">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                  {/* Section Title */}
-                  <div className="text-center max-w-3xl mx-auto mb-10 scroll-reveal">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold uppercase tracking-wide mb-4">
-                      <Film className="w-3.5 h-3.5 text-blue-600" />
-                      Our Work
+              {/* 3. What we make */}
+              <AgencyServices onSelectService={(serviceTitle) => {
+                setSelectedService(serviceTitle);
+                setShowDiscoveryModal(true);
+              }} />
+
+              {/* 4. Selected work */}
+              <section id="work" className="cf-sec" style={{ paddingTop: 0 }}>
+                <div className="cf-wrap">
+                  <div className="cf-shead">
+                    <div>
+                      <Scramble text="02 / SELECTED WORK" className="cf-idx" />
+                      <RevealHeading lines={['The', 'reel']} className="cf-wide cf-h2" />
                     </div>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900">
-                      Reels, posts &amp; designs <span className="text-blue-600">we&apos;ve made</span>
-                    </h2>
-                    <p className="mt-4 text-base sm:text-lg text-slate-600">
-                      Real work for brands, businesses, and creators. Filter by category and tap any piece to watch or view it in full.
-                    </p>
+                    <Reveal as="p">Real work for brands, businesses and creators. Tap any piece to watch or view it in full.</Reveal>
                   </div>
 
-                  {/* Agency Category filter row */}
+                  {/* Category filters: core categories first, then any other categories the work actually uses */}
                   {(() => {
-                    // Core agency categories first, then any other categories the work actually uses
-                    // (e.g. Drive sub-folders like "Photoshop Projects"). Empty categories are hidden.
                     const core = ['AI Videos', 'Short-Form / Reels', 'YouTube Long-Form', 'Ad Creatives', 'Thumbnails & Packaging'];
                     const used = new Set(items.flatMap(i => Array.isArray(i.tags) ? i.tags : []));
                     const agencyCategories = ['All Work', ...core.filter(c => used.has(c)), ...[...used].filter(t => !core.includes(t)).sort()];
 
                     return (
-                      <div className="flex flex-wrap gap-2.5 mb-8 scroll-reveal stagger-1">
+                      <div className="flex flex-wrap gap-2 mb-7">
                         {agencyCategories.map(cat => {
                           const isAll = cat === 'All Work';
                           const isSelected = isAll ? !activeTagFilter : activeTagFilter === cat;
-
                           return (
-                            <button 
-                              key={cat} 
+                            <button
+                              key={cat}
+                              type="button"
                               onClick={() => setActiveTagFilter(isAll ? '' : (activeTagFilter === cat ? '' : cat))}
-                              className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-normal transition-all duration-150 cursor-pointer border active:scale-[0.98] ${
-                                isSelected 
-                                  ? 'bg-blue-600 text-white border-blue-600 shadow-sm' 
-                                  : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
-                              }`}>
+                              className={`cf-filter ${isSelected ? 'on' : ''}`}
+                            >
                               {cat}
                             </button>
                           );
                         })}
                         <button
+                          type="button"
                           onClick={() => setActiveTagFilter(activeTagFilter === LIVE_DEMOS_TAB ? '' : LIVE_DEMOS_TAB)}
-                          className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-normal transition-all duration-150 cursor-pointer border active:scale-[0.98] ${
-                            activeTagFilter === LIVE_DEMOS_TAB
-                              ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
-                              : 'bg-white border-blue-200 text-blue-700 hover:border-blue-300 hover:bg-blue-50'
-                          }`}>
+                          className={`cf-filter ${activeTagFilter === LIVE_DEMOS_TAB ? 'on' : ''}`}
+                        >
                           {LIVE_DEMOS_TAB}
                         </button>
                       </div>
                     );
                   })()}
 
-                  {/* Filtered Bento Grid */}
                   {activeTagFilter === LIVE_DEMOS_TAB ? <LiveDemos /> : (() => {
                     const tagFiltered = activeTagFilter
                       ? filteredItems.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTagFilter))
                       : filteredItems;
-                    
+
                     return tagFiltered.length > 0 ? (
                       <PortfolioGrid
                         key={activeGalleryTab + activeTagFilter}
@@ -802,14 +828,11 @@ export default function App() {
                         onClickTile={setActiveLightboxItem}
                       />
                     ) : (
-                      <div className="flex flex-col items-center justify-center py-20 text-slate-500 border border-dashed border-slate-200 rounded-2xl bg-slate-50 text-center">
-                        <p className="text-sm text-slate-900 font-semibold mb-1">New {activeTagFilter || 'work'} coming soon</p>
-                        <p className="text-xs text-slate-500 max-w-sm">We&apos;re adding fresh projects to this category. Explore the rest of our work in the meantime.</p>
-                        <button
-                          onClick={() => setActiveTagFilter('')}
-                          className="mt-4 px-4 py-2 bg-white border border-slate-200 hover:border-blue-500 text-blue-600 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer"
-                        >
-                          View All Work
+                      <div className="flex flex-col items-center justify-center py-20 px-6 border border-dashed border-[#2e2e38] rounded-2xl text-center">
+                        <p className="text-sm text-white font-semibold mb-1">New {activeTagFilter || 'work'} coming soon</p>
+                        <p className="text-xs text-[#8b8b98] max-w-sm">We&apos;re adding fresh projects to this category. Explore the rest of our work in the meantime.</p>
+                        <button type="button" onClick={() => setActiveTagFilter('')} className="cf-btn cf-btn-ghost cf-btn-sm mt-5">
+                          View all work
                         </button>
                       </div>
                     );
@@ -817,116 +840,22 @@ export default function App() {
                 </div>
               </section>
 
-              {/* About the studio and how working together works */}
+              {/* 5. Process */}
+              <AgencyProcess />
+
+              {/* 6. About the founder */}
               <AgencyAbout />
-
-              {/* Before vs After editing transformation showcase */}
-              <BeforeAfterShowcase onOpenDiscovery={() => {
-                setSelectedService('');
-                setShowDiscoveryModal(true);
-              }} />
-
-              {/* 4. Agency Capabilities & Services */}
-              <AgencyServices onSelectService={(serviceTitle) => {
-                setSelectedService(serviceTitle);
-                setShowDiscoveryModal(true);
-              }} />
 
               {/* 7. Frequently Asked Questions */}
               <AgencyFAQ />
 
+              {/* 8. Call to action */}
+              <AgencyCTA onOpenDiscovery={() => { setSelectedService(''); setShowDiscoveryModal(true); }} />
+
               </>}
 
-              {/* 8. Footer: brand + services / studio / contact columns, legal bar */}
-              <footer className="bg-slate-900 text-slate-400 text-sm border-t border-slate-800">
-                <div className="max-w-7xl mx-auto px-6 pt-14 pb-10 grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10">
-                  {/* Brand */}
-                  <div className="col-span-2 lg:col-span-4">
-                    <a href="#" className="inline-flex items-center gap-2.5">
-                      <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-700 to-sky-500 flex items-center justify-center shadow-sm">
-                        <Film className="w-4 h-4 text-white" />
-                      </span>
-                      <span className="text-lg font-bold tracking-tight text-white font-display">
-                        Cutframe <span className="text-blue-400">Studio</span>
-                      </span>
-                    </a>
-                    <p className="mt-4 max-w-xs leading-relaxed">
-                      Reels, Instagram page management, design and websites for brands. On-site shoots in Delhi NCR, remote across India.
-                    </p>
-                    <div className="mt-5 flex gap-2">
-                      {[
-                        { href: CONTACT.whatsappUrl, label: 'WhatsApp', Icon: MessageCircle },
-                        { href: CONTACT.instagramUrl, label: 'Instagram', Icon: Instagram },
-                        { href: CONTACT.linkedinUrl, label: 'LinkedIn', Icon: Linkedin },
-                        { href: `mailto:${CONTACT.email}`, label: 'Email', Icon: Mail },
-                      ].map(({ href, label, Icon }) => (
-                        <a
-                          key={label}
-                          href={href}
-                          {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                          aria-label={label}
-                          title={label}
-                          className="w-10 h-10 rounded-full bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white flex items-center justify-center transition-colors focus-ring"
-                        >
-                          <Icon className="w-4 h-4" />
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Services (crawlable links to the static pages built by scripts/service-pages.mjs) */}
-                  <nav aria-label="Services" className="lg:col-span-3">
-                    <h3 className="text-white font-semibold mb-4">Services</h3>
-                    <ul className="space-y-2.5">
-                      <li><a href="/reels-video-editing-delhi" className="hover:text-white transition-colors">Reels &amp; Video Editing</a></li>
-                      <li><a href="/instagram-page-management" className="hover:text-white transition-colors">Instagram Page Management</a></li>
-                      <li><a href="/graphic-design" className="hover:text-white transition-colors">Graphic Design</a></li>
-                      <li><a href="/ai-videos" className="hover:text-white transition-colors">AI Videos</a></li>
-                      <li><a href="/website-design" className="hover:text-white transition-colors">Website Design</a></li>
-                    </ul>
-                  </nav>
-
-                  <nav aria-label="Studio" className="lg:col-span-2">
-                    <h3 className="text-white font-semibold mb-4">Studio</h3>
-                    <ul className="space-y-2.5">
-                      <li><a href="#work" className="hover:text-white transition-colors">Work</a></li>
-                      <li><a href="#difference" className="hover:text-white transition-colors">The Difference</a></li>
-                      <li><a href="#about" className="hover:text-white transition-colors">About</a></li>
-                      <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
-                      <li><a href="/guides" className="hover:text-white transition-colors">Guides</a></li>
-                    </ul>
-                  </nav>
-
-                  <div className="col-span-2 sm:col-span-1 lg:col-span-3">
-                    <h3 className="text-white font-semibold mb-4">Get in touch</h3>
-                    <ul className="space-y-2.5">
-                      <li><a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">WhatsApp {CONTACT.whatsapp}</a></li>
-                      <li><a href={`mailto:${CONTACT.email}`} className="hover:text-white transition-colors break-all">{CONTACT.email}</a></li>
-                      <li>Delhi NCR · All of India</li>
-                    </ul>
-                    <button
-                      type="button"
-                      onClick={() => setShowDiscoveryModal(true)}
-                      className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors cursor-pointer focus-ring"
-                    >
-                      Book a free call
-                    </button>
-                  </div>
-                </div>
-
-                {/* Legal bar (extra bottom padding on phones so the floating WhatsApp button never covers it) */}
-                <div className="border-t border-slate-800">
-                  <div className="max-w-7xl mx-auto px-6 pt-5 pb-24 sm:pb-5 sm:pr-24 flex flex-col sm:flex-row sm:items-center gap-3 justify-between text-xs">
-                    <span>© {new Date().getFullYear()} Cutframe Studio · Delhi, India</span>
-                    <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-1">
-                      <a href="#privacy" className="hover:text-white transition-colors py-1">Privacy</a>
-                      <a href="#terms" className="hover:text-white transition-colors py-1">Terms</a>
-                      <a href="#refund" className="hover:text-white transition-colors py-1">Refunds</a>
-                      <a href="#grievance" className="hover:text-white transition-colors py-1">Grievance</a>
-                    </nav>
-                  </div>
-                </div>
-              </footer>
+              {/* Footer: brand + services / studio / contact columns, giant wordmark, legal bar */}
+              <SiteFooter onOpenDiscovery={() => setShowDiscoveryModal(true)} />
             </>
           );
         })()
@@ -1115,7 +1044,8 @@ export default function App() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on WhatsApp"
-          className="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white shadow-xl shadow-emerald-600/30 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 focus-ring"
+          className={`fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-[#128c4a] hover:bg-[#0f7a40] text-white shadow-xl shadow-black/40 flex items-center justify-center transition-all duration-300 focus-ring ${footerInView ? 'opacity-0 translate-y-4 pointer-events-none' : ''}`}
+          tabIndex={footerInView ? -1 : undefined}
         >
           <MessageCircle className="w-6 h-6" />
         </a>
@@ -1129,5 +1059,95 @@ export default function App() {
         showToast={showToast}
       />
     </div>
+  );
+}
+
+// Site footer (public pages). The giant CUTFRAME wordmark rises letter by letter as it scrolls in.
+function SiteFooter({ onOpenDiscovery }) {
+  const bigRef = useGsap((el) => {
+    gsap.from(el.querySelectorAll('.cf-c'), { yPercent: 100, rotate: 10, stagger: 0.05, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom 90%', scrub: true } });
+  });
+  const linkCls = 'block py-1.5 text-[14px] text-[#c9c9d2]';
+  return (
+    <footer id="site-footer" className="cf cf-foot border-t border-[#23232c] mt-10 overflow-hidden">
+      <div className="cf-wrap pt-14">
+        <div className="grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10">
+          <div className="col-span-2 lg:col-span-4">
+            <a href="#" className="inline-flex items-center gap-2.5">
+              <span className="cf-logo-mark">C</span>
+              <span className="cf-logo-text">CUTFRAME <span>STUDIO</span></span>
+            </a>
+            <p className="mt-4 max-w-xs text-[14px] leading-relaxed text-[#8b8b98]">
+              Video post-production, AI video, motion graphics and design. On-site shoots in Delhi NCR, remote across India.
+            </p>
+            <div className="mt-5 flex gap-2">
+              {[
+                { href: CONTACT.whatsappUrl, label: 'WhatsApp', Icon: MessageCircle },
+                { href: CONTACT.instagramUrl, label: 'Instagram', Icon: Instagram },
+                { href: CONTACT.linkedinUrl, label: 'LinkedIn', Icon: Linkedin },
+                { href: `mailto:${CONTACT.email}`, label: 'Email', Icon: Mail },
+              ].map(({ href, label, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  {...(href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  aria-label={label}
+                  title={label}
+                  className="w-10 h-10 rounded-full border border-[#23232c] hover:border-[#55555f] text-[#c9c9d2] flex items-center justify-center focus-ring"
+                >
+                  <Icon className="w-4 h-4" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Services (crawlable links to the static pages built by scripts/service-pages.mjs) */}
+          <nav aria-label="Services" className="lg:col-span-3">
+            <h3 className="cf-mono mb-3">Services</h3>
+            <a href="/reels-video-editing-delhi" className={linkCls}>Reels &amp; video editing</a>
+            <a href="/ai-videos" className={linkCls}>AI videos</a>
+            <a href="/graphic-design" className={linkCls}>Graphic design</a>
+            <a href="/instagram-page-management" className={linkCls}>Instagram page management</a>
+            <a href="/website-design" className={linkCls}>Website design</a>
+          </nav>
+
+          <nav aria-label="Studio" className="lg:col-span-2">
+            <h3 className="cf-mono mb-3">Studio</h3>
+            <a href="#work" className={linkCls}>Work</a>
+            <a href="/post-production/" className={linkCls}>Post-Production</a>
+            <a href="/apps/" className={linkCls}>Apps</a>
+            <a href="/guides" className={linkCls}>Guides</a>
+            <a href="#faq" className={linkCls}>FAQ</a>
+          </nav>
+
+          <div className="col-span-2 sm:col-span-1 lg:col-span-3">
+            <h3 className="cf-mono mb-3">Get in touch</h3>
+            <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={linkCls}>WhatsApp {CONTACT.whatsapp}</a>
+            <a href={`mailto:${CONTACT.email}`} className={`${linkCls} break-all`}>{CONTACT.email}</a>
+            <span className="block py-1.5 text-[14px] text-[#8b8b98]">Delhi NCR · All of India</span>
+            <button type="button" onClick={onOpenDiscovery} className="cf-btn cf-btn-red cf-btn-sm mt-4">
+              Book a free call
+            </button>
+          </div>
+        </div>
+
+        <div ref={bigRef} className="cf-wide cf-big" aria-hidden="true">
+          <SplitChars text="Cutframe" />
+        </div>
+      </div>
+
+      {/* Legal bar (extra bottom padding on phones so the floating WhatsApp button never covers it) */}
+      <div className="border-t border-[#23232c]">
+        <div className="cf-wrap pt-5 pb-24 sm:pb-5 sm:pr-24 flex flex-col sm:flex-row sm:items-center gap-3 justify-between text-xs text-[#8b8b98]">
+          <span>© {new Date().getFullYear()} Cutframe Studio · Delhi, India</span>
+          <nav aria-label="Legal" className="flex flex-wrap gap-x-4 gap-y-1">
+            <a href="#privacy" className="py-1">Privacy</a>
+            <a href="#terms" className="py-1">Terms</a>
+            <a href="#refund" className="py-1">Refunds</a>
+            <a href="#grievance" className="py-1">Grievance</a>
+          </nav>
+        </div>
+      </div>
+    </footer>
   );
 }
