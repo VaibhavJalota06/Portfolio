@@ -6,7 +6,9 @@
 <title>Apps | Cutframe Studio</title>
 <meta name="description" content="Software built by Cutframe Studio, including Orbit, an AI video editor available by invitation.">
 <meta name="theme-color" content="#08080b">
-<link rel="icon" href="/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://cutframestudio.in/apps/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +25,7 @@
   header { position:sticky; top:0; z-index:10; background:rgba(8,8,11,.96); border-bottom:1px solid var(--line); }
   .bar { display:flex; align-items:center; justify-content:space-between; gap:16px; height:64px; }
   .logo { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-  .mark { width:34px; height:34px; border-radius:8px; background:var(--red); display:grid; place-items:center; font:900 15px/1 var(--wide); font-stretch:125%; color:#fff; }
+  .mark { width:34px; height:34px; display:block; flex-shrink:0; }
   .name { font:800 16px/1 var(--wide); font-stretch:115%; letter-spacing:-.01em; }
   .name span { color:var(--mut); font-weight:500; }
   @media (max-width:420px) { .name span { display:none; } }
@@ -59,7 +61,7 @@
 </head>
 <body>
 <header><div class="wrap bar">
-  <a class="logo" href="/" aria-label="Cutframe Studio home"><span class="mark">C</span><span class="name">CUTFRAME <span>STUDIO</span></span></a>
+  <a class="logo" href="/" aria-label="Cutframe Studio home"><svg class="mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#e10600"/><g stroke="#fff" stroke-width="5.5" stroke-linecap="square"><path d="M14 24V14H24"/><path d="M40 14H50V24"/><path d="M50 40V50H40"/><path d="M24 50H14V40"/></g><path d="M24.5 39.5 39.5 24.5" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg><span class="name">CUTFRAME <span>STUDIO</span></span></a>
   <nav class="links" aria-label="Main">
     <a href="/#work">Work</a>
     <a href="/#services">Services</a>

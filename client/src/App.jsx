@@ -12,6 +12,7 @@ import AgencyAbout from './components/AgencyAbout';
 import { CONTACT, getWhatsAppUrl } from './contact';
 import AgencyProcess from './components/AgencyProcess';
 import AgencyCTA from './components/AgencyCTA';
+import LogoMark from './components/LogoMark';
 import { ScrollTrigger, SplitChars, RevealHeading, Reveal, Scramble, useGsap, gsap } from './motion';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
@@ -1067,7 +1068,7 @@ function SiteFooter({ onOpenDiscovery }) {
         <div className="grid grid-cols-2 lg:grid-cols-12 gap-x-6 gap-y-10">
           <div className="col-span-2 lg:col-span-4">
             <a href="#" className="inline-flex items-center gap-2.5">
-              <span className="cf-logo-mark">C</span>
+              <LogoMark />
               <span className="cf-logo-text">CUTFRAME <span>STUDIO</span></span>
             </a>
             <p className="mt-4 max-w-xs text-[14px] leading-relaxed text-[#8b8b98]">

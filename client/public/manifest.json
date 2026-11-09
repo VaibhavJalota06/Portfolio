@@ -4,13 +4,23 @@
   "description": "High-retention video editing, AI video, YouTube and ad creative production.",
   "icons": [
     {
-      "src": "favicon.svg",
+      "src": "/favicon.svg",
       "type": "image/svg+xml",
       "sizes": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
   "start_url": ".",
-  "background_color": "#FFFFFF",
-  "theme_color": "#2563EB",
+  "background_color": "#08080b",
+  "theme_color": "#08080b",
   "display": "standalone"
 }

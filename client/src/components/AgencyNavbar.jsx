@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { scrollToHash } from '../motion';
+import LogoMark from './LogoMark';
 
 const NAV_LINKS = [
   { label: 'Work', href: '#work' },
@@ -50,7 +51,7 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
     <header className={`cf-header ${hidden && !mobileMenuOpen ? 'is-hidden' : ''}`}>
       <div className="cf-wrap flex items-center justify-between h-16 gap-4">
         <a href="#" onClick={goHome} className="flex items-center gap-2.5 shrink-0" aria-label="Cutframe Studio home">
-          <span className="cf-logo-mark">C</span>
+          <LogoMark />
           <span className="cf-logo-text">CUTFRAME <span>STUDIO</span></span>
         </a>
 

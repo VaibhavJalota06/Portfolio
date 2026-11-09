@@ -100,6 +100,8 @@ const doc = ({ title, description, url, type = 'website', graph, crumb, main }) 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="theme-color" content="#08080b" />
     <title>${esc(title)}</title>
     <meta name="description" content="${esc(description)}" />
@@ -126,7 +128,7 @@ const doc = ({ title, description, url, type = 'website', graph, crumb, main }) 
     <header class="cf-header" style="position:sticky">
       <div class="cf-wrap flex items-center justify-between h-16 gap-4">
         <a href="/" class="flex items-center gap-2.5 shrink-0" aria-label="Cutframe Studio home">
-          <span class="cf-logo-mark">C</span>
+          <svg class="cf-logo-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#e10600"/><g stroke="#fff" stroke-width="5.5" stroke-linecap="square"><path d="M14 24V14H24"/><path d="M40 14H50V24"/><path d="M50 40V50H40"/><path d="M24 50H14V40"/></g><path d="M24.5 39.5 39.5 24.5" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg>
           <span class="cf-logo-text">CUTFRAME <span>STUDIO</span></span>
         </a>
         <nav class="hidden lg:flex items-center" aria-label="Main">
@@ -153,7 +155,7 @@ ${main}
 
     <footer class="cf-foot mt-10 border-t border-[#23232c] text-sm">
       <div class="cf-wrap py-10 flex flex-col gap-5">
-        <a href="/" class="flex items-center gap-2.5"><span class="cf-logo-mark">C</span><span class="cf-logo-text">CUTFRAME <span>STUDIO</span></span></a>
+        <a href="/" class="flex items-center gap-2.5"><svg class="cf-logo-mark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#e10600"/><g stroke="#fff" stroke-width="5.5" stroke-linecap="square"><path d="M14 24V14H24"/><path d="M40 14H50V24"/><path d="M50 40V50H40"/><path d="M24 50H14V40"/></g><path d="M24.5 39.5 39.5 24.5" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg><span class="cf-logo-text">CUTFRAME <span>STUDIO</span></span></a>
         <nav aria-label="Services" class="flex flex-wrap gap-x-5 gap-y-1 text-[#c9c9d2]">
           ${services.map((o) => `<a href="/${o.slug}" class="py-1">${esc(o.nav)}</a>`).join('\n          ')}
           <a href="/guides" class="py-1">Guides</a>

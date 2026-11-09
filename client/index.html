@@ -3,6 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#08080b" />
@@ -82,11 +84,12 @@
       #boot-loader .sl { position: absolute; left: 0; right: 0; height: 20.4%; background: #050507; }
       #boot-loader .word { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
       #boot-loader .word > div { overflow: hidden; padding: .04em 0; }
-      #boot-loader .word span { display: block; font-family: 'Archivo', 'Arial Black', system-ui, sans-serif; font-stretch: 125%; font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; line-height: 1; color: #fff; font-size: clamp(40px, 11vw, 160px); }
+      #boot-loader .word .bmark { display: inline-block; width: .82em; height: .82em; margin-right: .22em; vertical-align: -.06em; }
+      #boot-loader .word span { display: block; white-space: nowrap; font-family: 'Archivo', 'Arial Black', system-ui, sans-serif; font-stretch: 125%; font-weight: 900; text-transform: uppercase; letter-spacing: -.02em; line-height: 1; color: #fff; font-size: clamp(32px, 9vw, 140px); }
     </style>
     <div id="boot-loader" role="status" aria-label="Loading Cutframe Studio">
       <div class="sl" style="top:0"></div><div class="sl" style="top:20%"></div><div class="sl" style="top:40%"></div><div class="sl" style="top:60%"></div><div class="sl" style="top:80%"></div>
-      <div class="word"><div><span>Cutframe</span></div></div>
+      <div class="word"><div><span><svg class="bmark" viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#e10600"/><g stroke="#fff" stroke-width="5.5" stroke-linecap="square"><path d="M14 24V14H24"/><path d="M40 14H50V24"/><path d="M50 40V50H40"/><path d="M24 50H14V40"/></g><path d="M24.5 39.5 39.5 24.5" stroke="#fff" stroke-width="6" stroke-linecap="round"/></svg>Cutframe</span></div></div>
     </div>
     <script>setTimeout(function () { var l = document.getElementById('boot-loader'); if (l) l.remove(); }, 8000);</script>
     <!-- Static text for crawlers that don't run JavaScript; React replaces it on render. -->
