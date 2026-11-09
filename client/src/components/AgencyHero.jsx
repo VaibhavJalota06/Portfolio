@@ -29,7 +29,7 @@ export default function AgencyHero({ onOpenDiscovery }) {
         .add('hero', '-=0.55')
         .add(() => loader.remove());
     } else {
-      if (loader) loader.remove();
+      // No intro (e.g. arrived via /#work): main.jsx fades the loader out, covering the jump to the section.
       tl.add('hero', 0.1);
     }
     lines.forEach((ln, i) => {
@@ -110,8 +110,8 @@ export default function AgencyHero({ onOpenDiscovery }) {
             <div className="cf-blob cf-b1" /><div className="cf-blob cf-b2" /><div className="cf-blob cf-b3" />
             <div className="cf-kin cf-wide" aria-hidden="true">{REEL_WORDS[0]}</div>
             <div className="cf-safe" />
-            <span className="cf-mono absolute left-4 top-4 z-[2] text-[10px] sm:text-[11px]">CUTFRAME_STUDIO</span>
-            <span className="cf-mono absolute right-4 top-4 z-[2] text-[10px] sm:text-[11px]">4K · 24FPS</span>
+            <span className="cf-mono cf-screen-label l">CUTFRAME_STUDIO</span>
+            <span className="cf-mono cf-screen-label r">4K · 24FPS</span>
             <a href="#work" onClick={(e) => { if (scrollToHash('#work')) e.preventDefault(); }} className="cf-play" aria-label="See our work" />
           </div>
           <div className="cf-tl" aria-hidden="true">

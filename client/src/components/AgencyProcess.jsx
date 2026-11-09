@@ -22,7 +22,7 @@ export default function AgencyProcess() {
       <div className="cf-wrap">
         <div className="cf-shead">
           <div>
-            <Scramble text="03 / PROCESS" className="cf-idx" />
+            <Scramble text="PROCESS" className="cf-idx" />
             <RevealHeading lines={['Raw to', 'render']} className="cf-wide cf-h2" />
           </div>
           <Reveal as="p">Simple and quick, and you always talk to the person editing your work.</Reveal>
@@ -30,9 +30,8 @@ export default function AgencyProcess() {
         <div className="relative">
           <div className="cf-rail" aria-hidden="true" />
           <ol className="cf-steps">
-            {STEPS.map((s, i) => (
+            {STEPS.map((s) => (
               <li key={s.title} className="cf-step">
-                <Scramble text={`0${i + 1}`} className="n" />
                 <h3>{s.title}</h3>
                 <p>{s.text}</p>
               </li>

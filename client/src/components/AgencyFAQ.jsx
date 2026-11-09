@@ -44,7 +44,7 @@ export default function AgencyFAQ() {
       <div className="cf-wrap">
         <div className="cf-shead">
           <div>
-            <Scramble text="05 / FAQ" className="cf-idx" />
+            <Scramble text="FAQ" className="cf-idx" />
             <RevealHeading lines={['Questions']} className="cf-wide cf-h2" />
           </div>
           <Reveal as="p">Still unsure? Message us on WhatsApp and we’ll answer personally.</Reveal>

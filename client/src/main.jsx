@@ -9,11 +9,11 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-// The boot loader from index.html: on the homepage AgencyHero turns it into the intro animation.
-// Everywhere else (admin, policy pages, reduced motion) fade it out once the app has painted.
+// The boot loader from index.html: on the plain homepage AgencyHero turns it into the intro animation.
+// Everywhere else (admin, policy pages, links straight to a section like /#work, reduced motion)
+// fade it out once the app has painted.
 const loader = document.getElementById('boot-loader')
-const NOT_HOME = ['#cutframe-admin', '#privacy', '#terms', '#refund', '#grievance']
-const heroIntro = !NOT_HOME.includes(window.location.hash) && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+const heroIntro = !window.location.hash && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
 if (loader && heroIntro) loader.dataset.intro = '1'
 if (loader && !heroIntro) {
   const wait = Math.max(0, 700 - performance.now())

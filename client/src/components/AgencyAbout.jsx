@@ -31,7 +31,7 @@ export default function AgencyAbout() {
         </div>
 
         <div>
-          <Scramble text="04 / ABOUT" className="cf-idx" />
+          <Scramble text="ABOUT" className="cf-idx" />
           <RevealHeading lines={['No middlemen.', 'Just the editor.']} className="cf-wide text-[clamp(30px,4.6vw,56px)]" />
           <Reveal as="p" className="mt-5 text-[16px] sm:text-[17px] leading-relaxed text-[#b8b8c4]">
             Cutframe Studio is a post-production and design studio in Delhi, working with brands, founders and creators across India.

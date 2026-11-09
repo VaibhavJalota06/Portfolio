@@ -23,6 +23,8 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
       const y = window.scrollY;
       const dy = y - lastY.current;
       if (y < 300) { setHidden(false); lastY.current = y; return; }
+      // A single huge move is a jump to a section (e.g. arriving via /#faq), not the visitor scrolling: keep the bar.
+      if (Math.abs(dy) > 400) { lastY.current = y; return; }
       if (dy > 12) { setHidden(true); lastY.current = y; }
       else if (dy < -12) { setHidden(false); lastY.current = y; }
     };

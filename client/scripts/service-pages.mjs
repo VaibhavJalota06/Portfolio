@@ -83,6 +83,9 @@ const services = [
   },
 ];
 
+// Menu links (same as the homepage menu bar). Homepage sections use /#id so they work from any page.
+const NAV = [['Work', '/#work'], ['Services', '/#services'], ['Post-Production', '/post-production/'], ['Process', '/#process'], ['About', '/#about'], ['Apps', '/apps/'], ['Guides', '/guides'], ['FAQ', '/#faq']];
+
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 // JSON inside <script> must not contain "</".
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
@@ -97,7 +100,7 @@ const doc = ({ title, description, url, type = 'website', graph, crumb, main }) 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="theme-color" content="#2563EB" />
+    <meta name="theme-color" content="#08080b" />
     <title>${esc(title)}</title>
     <meta name="description" content="${esc(description)}" />
     <link rel="canonical" href="${url}" />
@@ -118,28 +121,48 @@ const doc = ({ title, description, url, type = 'website', graph, crumb, main }) 
       ],
     })}
   </head>
-  <body class="bg-white text-slate-900 font-sans antialiased">
-    <header class="border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-10">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <a href="/" class="font-display font-bold text-lg">Cutframe <span class="text-blue-600">Studio</span></a>
-        <a href="${WA}" class="inline-flex items-center rounded-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2">Book a Free Call</a>
+  <body class="cf font-sans antialiased">
+    <!-- Same dark menu bar as the homepage (plain HTML: a <details> dropdown works as the phone menu) -->
+    <header class="cf-header" style="position:sticky">
+      <div class="cf-wrap flex items-center justify-between h-16 gap-4">
+        <a href="/" class="flex items-center gap-2.5 shrink-0" aria-label="Cutframe Studio home">
+          <span class="cf-logo-mark">C</span>
+          <span class="cf-logo-text">CUTFRAME <span>STUDIO</span></span>
+        </a>
+        <nav class="hidden lg:flex items-center" aria-label="Main">
+          ${NAV.map(([label, href]) => `<a href="${href}" class="cf-navlink">${label}</a>`).join('\n          ')}
+        </nav>
+        <div class="flex items-center gap-2">
+          <a href="${WA}" class="cf-btn cf-btn-red cf-btn-sm"><span class="hidden sm:inline">Book a free call</span><span class="sm:hidden">Book call</span></a>
+          <details class="cf-menu lg:hidden">
+            <summary class="w-10 h-10 grid place-items-center rounded-lg border border-[#23232c] text-white cursor-pointer" aria-label="Menu">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </summary>
+            <nav class="cf-menu-panel" aria-label="Mobile">
+              ${NAV.map(([label, href]) => `<a href="${href}">${label}</a>`).join('\n              ')}
+            </nav>
+          </details>
+        </div>
       </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 sm:px-6">
-      <nav aria-label="Breadcrumb" class="pt-6 text-sm text-slate-500"><a href="/" class="hover:text-blue-600">Home</a>${crumb.map(([name, item], i) => i === crumb.length - 1 ? ` / <span>${esc(name)}</span>` : ` / <a href="${item.replace(SITE, '')}" class="hover:text-blue-600">${esc(name)}</a>`).join('')}</nav>
+    <main class="cf-wrap">
+      <nav aria-label="Breadcrumb" class="pt-6 text-sm text-[#8b8b98]"><a href="/" class="hover:text-white">Home</a>${crumb.map(([name, item], i) => i === crumb.length - 1 ? ` / <span>${esc(name)}</span>` : ` / <a href="${item.replace(SITE, '')}" class="hover:text-white">${esc(name)}</a>`).join('')}</nav>
 ${main}
     </main>
 
-    <footer class="mt-10 bg-slate-900 text-slate-300 text-sm">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-4">
-        <nav aria-label="Services" class="flex flex-wrap gap-x-4 gap-y-2">
-          ${services.map((o) => `<a href="/${o.slug}" class="hover:text-white py-1">${esc(o.nav)}</a>`).join('\n          ')}
-          <a href="/guides" class="hover:text-white py-1">Guides</a>
+    <footer class="cf-foot mt-10 border-t border-[#23232c] text-sm">
+      <div class="cf-wrap py-10 flex flex-col gap-5">
+        <a href="/" class="flex items-center gap-2.5"><span class="cf-logo-mark">C</span><span class="cf-logo-text">CUTFRAME <span>STUDIO</span></span></a>
+        <nav aria-label="Services" class="flex flex-wrap gap-x-5 gap-y-1 text-[#c9c9d2]">
+          ${services.map((o) => `<a href="/${o.slug}" class="py-1">${esc(o.nav)}</a>`).join('\n          ')}
+          <a href="/guides" class="py-1">Guides</a>
+          <a href="/post-production/" class="py-1">Post-Production</a>
+          <a href="/apps/" class="py-1">Apps</a>
         </nav>
-        <div class="flex flex-col sm:flex-row gap-3 justify-between text-slate-400">
+        <div class="flex flex-col sm:flex-row gap-3 justify-between text-[#8b8b98]">
           <span>© Cutframe Studio · Delhi, India</span>
-          <span><a href="mailto:vaibhav@cutframestudio.in" class="hover:text-white">vaibhav@cutframestudio.in</a> · <a href="${WA}" class="hover:text-white">+91 92175 84204</a> · <a href="https://instagram.com/studiocutframe" class="hover:text-white">@studiocutframe</a></span>
+          <span><a href="mailto:vaibhav@cutframestudio.in">vaibhav@cutframestudio.in</a> · <a href="${WA}">+91 92175 84204</a> · <a href="https://instagram.com/studiocutframe">@studiocutframe</a></span>
         </div>
       </div>
     </footer>
@@ -148,10 +171,10 @@ ${main}
 `;
 
 const faqSection = (faqs) => `
-      <section class="py-10 border-t border-slate-200">
-        <h2 class="font-display text-2xl sm:text-3xl font-bold">Frequently asked questions</h2>
-        <div class="mt-6 divide-y divide-slate-200">
-          ${faqs.map(([q, a]) => `<details class="py-4"><summary class="font-semibold cursor-pointer">${esc(q)}</summary><p class="mt-2 text-slate-600 leading-relaxed">${esc(a)}</p></details>`).join('\n          ')}
+      <section class="py-10 border-t border-[#23232c]">
+        <h2 class="cf-display text-2xl sm:text-3xl font-bold">Frequently asked questions</h2>
+        <div class="mt-6 divide-y divide-[#23232c]">
+          ${faqs.map(([q, a]) => `<details class="py-4"><summary class="font-semibold cursor-pointer">${esc(q)}</summary><p class="mt-2 text-[#a9a9b6] leading-relaxed">${esc(a)}</p></details>`).join('\n          ')}
         </div>
       </section>`;
 
@@ -169,43 +192,43 @@ const servicePage = (s) => {
     crumb: [[s.nav, url]],
     main: `
       <section class="py-10 sm:py-16">
-        <h1 class="font-display text-3xl sm:text-5xl font-bold tracking-tight">${esc(s.h1)}</h1>
-        <p class="mt-5 text-lg text-slate-700 leading-relaxed max-w-3xl">${esc(s.answer)}</p>
-        <p class="mt-4 text-slate-600 leading-relaxed max-w-3xl">${esc(s.body)}</p>
+        <h1 class="cf-wide text-3xl sm:text-5xl">${esc(s.h1)}</h1>
+        <p class="mt-5 text-lg text-[#d4d4dc] leading-relaxed max-w-3xl">${esc(s.answer)}</p>
+        <p class="mt-4 text-[#a9a9b6] leading-relaxed max-w-3xl">${esc(s.body)}</p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href="${WA}?text=${encodeURIComponent(`Hi, I'm interested in ${s.nav}.`)}" class="inline-flex items-center rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3">WhatsApp us</a>
-          <a href="/#work" class="inline-flex items-center rounded-full border border-slate-300 hover:border-blue-600 font-semibold px-6 py-3">See our work</a>
+          <a href="${WA}?text=${encodeURIComponent(`Hi, I'm interested in ${s.nav}.`)}" class="inline-flex items-center rounded-full bg-[#e10600] hover:bg-[#c00500] text-white font-semibold px-6 py-3">WhatsApp us</a>
+          <a href="/#work" class="inline-flex items-center rounded-full border border-[#3a3a46] hover:border-[#8b8b98] font-semibold px-6 py-3">See our work</a>
         </div>
       </section>
 
-      <section class="py-10 border-t border-slate-200">
-        <h2 class="font-display text-2xl sm:text-3xl font-bold">What’s included</h2>
+      <section class="py-10 border-t border-[#23232c]">
+        <h2 class="cf-display text-2xl sm:text-3xl font-bold">What’s included</h2>
         <ul class="mt-6 grid sm:grid-cols-2 gap-3">
-          ${s.deliverables.map((d) => `<li class="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3">${esc(d)}</li>`).join('\n          ')}
+          ${s.deliverables.map((d) => `<li class="rounded-xl bg-[#131319] border border-[#23232c] px-4 py-3">${esc(d)}</li>`).join('\n          ')}
         </ul>
       </section>
 
-      <section class="py-10 border-t border-slate-200">
-        <h2 class="font-display text-2xl sm:text-3xl font-bold">How it works</h2>
+      <section class="py-10 border-t border-[#23232c]">
+        <h2 class="cf-display text-2xl sm:text-3xl font-bold">How it works</h2>
         <ol class="mt-6 grid sm:grid-cols-3 gap-4">
-          <li class="rounded-xl border border-slate-200 p-5"><strong class="block text-blue-600">1. Free call</strong><span class="text-slate-600">We learn about your brand and goals.</span></li>
-          <li class="rounded-xl border border-slate-200 p-5"><strong class="block text-blue-600">2. Plan &amp; create</strong><span class="text-slate-600">We plan, shoot or design, and edit.</span></li>
-          <li class="rounded-xl border border-slate-200 p-5"><strong class="block text-blue-600">3. Review &amp; publish</strong><span class="text-slate-600">You approve everything before it goes live.</span></li>
+          <li class="rounded-xl border border-[#23232c] p-5"><strong class="block text-[#ff6b63]">Free call</strong><span class="text-[#a9a9b6]">We learn about your brand and goals.</span></li>
+          <li class="rounded-xl border border-[#23232c] p-5"><strong class="block text-[#ff6b63]">Plan &amp; create</strong><span class="text-[#a9a9b6]">We plan, shoot or design, and edit.</span></li>
+          <li class="rounded-xl border border-[#23232c] p-5"><strong class="block text-[#ff6b63]">Review &amp; publish</strong><span class="text-[#a9a9b6]">You approve everything before it goes live.</span></li>
         </ol>
       </section>
 ${faqSection(s.faqs)}
 ${related.length ? `
-      <section class="py-10 border-t border-slate-200">
-        <h2 class="font-display text-xl font-bold">Helpful guides</h2>
+      <section class="py-10 border-t border-[#23232c]">
+        <h2 class="cf-display text-xl font-bold">Helpful guides</h2>
         <ul class="mt-4 flex flex-col gap-2">
-          ${related.map((g) => `<li><a href="/guides/${g.slug}" class="text-blue-600 hover:underline font-medium">${esc(g.h1)}</a></li>`).join('\n          ')}
+          ${related.map((g) => `<li><a href="/guides/${g.slug}" class="text-[#ff6b63] hover:underline font-medium">${esc(g.h1)}</a></li>`).join('\n          ')}
         </ul>
       </section>` : ''}
 
-      <section class="py-10 border-t border-slate-200">
-        <h2 class="font-display text-xl font-bold">Other services</h2>
+      <section class="py-10 border-t border-[#23232c]">
+        <h2 class="cf-display text-xl font-bold">Other services</h2>
         <ul class="mt-4 flex flex-wrap gap-2">
-          ${others.map((o) => `<li><a href="/${o.slug}" class="inline-block rounded-full border border-slate-300 hover:border-blue-600 hover:text-blue-600 px-4 py-2 text-sm">${esc(o.nav)}</a></li>`).join('\n          ')}
+          ${others.map((o) => `<li><a href="/${o.slug}" class="inline-block rounded-full border border-[#3a3a46] hover:border-[#8b8b98] hover:text-white px-4 py-2 text-sm">${esc(o.nav)}</a></li>`).join('\n          ')}
         </ul>
       </section>`,
   });
@@ -221,17 +244,17 @@ const guidePage = (g) => {
     crumb: [['Guides', `${SITE}/guides`], [g.h1, url]],
     main: `
       <article class="py-10 sm:py-14 max-w-3xl">
-        <h1 class="font-display text-3xl sm:text-5xl font-bold tracking-tight">${esc(g.h1)}</h1>
-        <p class="mt-4 text-sm text-slate-500">By Vaibhav Jalota, founder of Cutframe Studio · <time datetime="${g.date}">${new Date(g.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</time></p>
-        <p class="mt-6 text-lg text-slate-700 leading-relaxed">${esc(g.answer)}</p>
+        <h1 class="cf-wide text-3xl sm:text-5xl">${esc(g.h1)}</h1>
+        <p class="mt-4 text-sm text-[#8b8b98]">By Vaibhav Jalota, founder of Cutframe Studio · <time datetime="${g.date}">${new Date(g.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</time></p>
+        <p class="mt-6 text-lg text-[#d4d4dc] leading-relaxed">${esc(g.answer)}</p>
         ${g.sections.map((sec) => `
-        <h2 class="mt-10 font-display text-2xl font-bold">${esc(sec.h)}</h2>
-        ${(sec.p || []).map((p) => `<p class="mt-4 text-slate-700 leading-relaxed">${esc(p)}</p>`).join('\n        ')}
-        ${sec.list ? `<ul class="mt-4 list-disc pl-6 space-y-2 text-slate-700 leading-relaxed">${sec.list.map((li) => `<li>${esc(li)}</li>`).join('')}</ul>` : ''}`).join('\n')}
-        <div class="mt-12 rounded-2xl bg-blue-50 border border-blue-100 p-6">
+        <h2 class="mt-10 cf-display text-2xl font-bold">${esc(sec.h)}</h2>
+        ${(sec.p || []).map((p) => `<p class="mt-4 text-[#d4d4dc] leading-relaxed">${esc(p)}</p>`).join('\n        ')}
+        ${sec.list ? `<ul class="mt-4 list-disc pl-6 space-y-2 text-[#d4d4dc] leading-relaxed">${sec.list.map((li) => `<li>${esc(li)}</li>`).join('')}</ul>` : ''}`).join('\n')}
+        <div class="mt-12 rounded-2xl bg-[#131319] border border-[#23232c] p-6">
           <p class="font-semibold">Want this handled for you?</p>
-          <p class="mt-1 text-slate-700">${linked.map((s) => `<a href="/${s.slug}" class="text-blue-600 hover:underline">${esc(s.nav)}</a>`).join(' · ')}</p>
-          <a href="${WA}?text=${encodeURIComponent(`Hi, I read your guide "${g.h1}" and have a question.`)}" class="mt-4 inline-flex items-center rounded-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5">Ask us on WhatsApp</a>
+          <p class="mt-1 text-[#d4d4dc]">${linked.map((s) => `<a href="/${s.slug}" class="text-[#ff6b63] hover:underline">${esc(s.nav)}</a>`).join(' · ')}</p>
+          <a href="${WA}?text=${encodeURIComponent(`Hi, I read your guide "${g.h1}" and have a question.`)}" class="mt-4 inline-flex items-center rounded-full bg-[#e10600] hover:bg-[#c00500] text-white font-semibold px-5 py-2.5">Ask us on WhatsApp</a>
         </div>
       </article>
 ${faqSection(g.faqs)}`,
@@ -246,10 +269,10 @@ const guidesIndex = () => doc({
   crumb: [['Guides', `${SITE}/guides`]],
   main: `
       <section class="py-10 sm:py-14">
-        <h1 class="font-display text-3xl sm:text-5xl font-bold tracking-tight">Guides</h1>
-        <p class="mt-4 text-lg text-slate-700 max-w-3xl">Practical advice on Reels, Instagram and websites for brands and small businesses, from the team at Cutframe Studio.</p>
+        <h1 class="cf-wide text-3xl sm:text-5xl">Guides</h1>
+        <p class="mt-4 text-lg text-[#d4d4dc] max-w-3xl">Practical advice on Reels, Instagram and websites for brands and small businesses, from the team at Cutframe Studio.</p>
         <ul class="mt-10 grid sm:grid-cols-2 gap-4">
-          ${guides.map((g) => `<li class="rounded-2xl border border-slate-200 p-6 hover:border-blue-400 transition-colors"><a href="/guides/${g.slug}" class="font-display text-xl font-bold hover:text-blue-600">${esc(g.h1)}</a><p class="mt-2 text-slate-600">${esc(g.description)}</p></li>`).join('\n          ')}
+          ${guides.map((g) => `<li class="rounded-2xl border border-[#23232c] p-6 hover:border-[#55555f] transition-colors"><a href="/guides/${g.slug}" class="cf-display text-xl font-bold hover:text-white">${esc(g.h1)}</a><p class="mt-2 text-[#a9a9b6]">${esc(g.description)}</p></li>`).join('\n          ')}
         </ul>
       </section>`,
 });

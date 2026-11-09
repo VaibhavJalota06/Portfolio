@@ -15,14 +15,13 @@ import AgencyCTA from './components/AgencyCTA';
 import { ScrollTrigger, SplitChars, RevealHeading, Reveal, Scramble, useGsap, gsap } from './motion';
 import AgencyFAQ from './components/AgencyFAQ';
 import DiscoveryModal from './components/DiscoveryModal';
-import LiveDemos from './components/LiveDemos';
 const GooglePanel = lazy(() => import('./components/GooglePanel')); // admin/legal only: kept out of the main bundle
 const LegalPolicies = lazy(() => import('./components/LegalPolicies')); // admin/legal only: kept out of the main bundle
 import { getMediaInfo, isEmbedType, isVideoItem } from './utils/media';
 
 // Private admin link: not linked anywhere on the public site. Protected by the admin PIN as well.
 const ADMIN_HASH = '#cutframe-admin';
-const LIVE_DEMOS_TAB = 'Live demos';
+const HOME_SECTIONS = ['#services', '#work', '#process', '#about', '#faq', '#contact'];
 
 export default function App() {
   const [showDiscoveryModal, setShowDiscoveryModal] = useState(false);
@@ -80,8 +79,21 @@ export default function App() {
         else if (hash === '#photos') setActiveGalleryTab('photos');
         else setActiveGalleryTab('all');
       }
+      // Links like "/#work" (from other pages) or "#faq" (from a policy page) must land on that section.
+      // The homepage may not be rendered yet, and work images load in and push sections down,
+      // so jump once it exists and correct a couple of times until the visitor scrolls themselves.
+      if (HOME_SECTIONS.includes(hash)) {
+        let userScrolled = false;
+        const stop = () => { userScrolled = true; };
+        window.addEventListener('wheel', stop, { once: true, passive: true });
+        window.addEventListener('touchstart', stop, { once: true, passive: true });
+        [60, 700, 1800].forEach((ms) => setTimeout(() => {
+          const el = document.querySelector(hash);
+          if (el && !userScrolled) el.scrollIntoView({ behavior: 'auto' });
+        }, ms));
+      }
     };
-    
+
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange(); // Run once on load
     fetchSettings();
@@ -455,7 +467,7 @@ export default function App() {
   };
 
   return (
-    <div className={`relative min-h-screen ${isAdmin ? 'bg-slate-50' : legalTab ? 'bg-white text-slate-900' : 'cf'}`}>
+    <div className={`relative min-h-screen ${isAdmin ? 'bg-slate-50' : 'cf'}`}>
 
       {/* Cinematic Custom Delete Confirmation Modal */}
       {itemToDelete && (
@@ -763,7 +775,7 @@ export default function App() {
                 <div className="cf-wrap">
                   <div className="cf-shead">
                     <div>
-                      <Scramble text="02 / SELECTED WORK" className="cf-idx" />
+                      <Scramble text="SELECTED WORK" className="cf-idx" />
                       <RevealHeading lines={['The', 'reel']} className="cf-wide cf-h2" />
                     </div>
                     <Reveal as="p">Real work for brands, businesses and creators. Tap any piece to watch or view it in full.</Reveal>
@@ -791,18 +803,11 @@ export default function App() {
                             </button>
                           );
                         })}
-                        <button
-                          type="button"
-                          onClick={() => setActiveTagFilter(activeTagFilter === LIVE_DEMOS_TAB ? '' : LIVE_DEMOS_TAB)}
-                          className={`cf-filter ${activeTagFilter === LIVE_DEMOS_TAB ? 'on' : ''}`}
-                        >
-                          {LIVE_DEMOS_TAB}
-                        </button>
                       </div>
                     );
                   })()}
 
-                  {activeTagFilter === LIVE_DEMOS_TAB ? <LiveDemos /> : (() => {
+                  {(() => {
                     const tagFiltered = activeTagFilter
                       ? filteredItems.filter(i => Array.isArray(i.tags) && i.tags.includes(activeTagFilter))
                       : filteredItems;
@@ -1049,10 +1054,11 @@ export default function App() {
   );
 }
 
-// Site footer (public pages). The giant CUTFRAME wordmark rises letter by letter as it scrolls in.
+// Site footer (public pages). The giant CUTFRAME wordmark rises letter by letter when it comes into view.
 function SiteFooter({ onOpenDiscovery }) {
   const bigRef = useGsap((el) => {
-    gsap.from(el.querySelectorAll('.cf-c'), { yPercent: 100, rotate: 10, stagger: 0.05, ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom 90%', scrub: true } });
+    // Plays once (not tied to scroll position): the page can end before a scroll-linked version finishes.
+    gsap.from(el.querySelectorAll('.cf-c'), { yPercent: 110, duration: 0.9, stagger: 0.05, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 98%' } });
   });
   const linkCls = 'block py-1.5 text-[14px] text-[#c9c9d2]';
   return (

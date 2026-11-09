@@ -6,35 +6,35 @@ import { gsap, useGsap, RevealHeading, Reveal, Scramble, finePointer } from '../
 // `service` must match an option in DiscoveryModal's "Primary Service" list.
 const SERVICES = [
   {
-    id: 'video', code: 'V1', color: 'var(--red)', tag: 'Most popular', featured: true,
+    id: 'video', color: 'var(--red)', tag: 'Most popular', featured: true,
     title: 'Video editing & post-production', service: 'Reels & Video Editing',
     description: 'Reels, Shorts, YouTube, ads and brand films. Hooks in the first three seconds, clean captions, pacing that keeps people watching, plus colour and sound done properly.',
     chips: ['Reels & Shorts', 'YouTube', 'Ad edits', 'Colour grading', 'Sound design', 'Subtitles'],
     links: [{ label: 'More about video editing', href: '/reels-video-editing-delhi' }],
   },
   {
-    id: 'ai', code: 'V2', color: 'var(--violet)', tag: 'New',
+    id: 'ai', color: 'var(--violet)', tag: 'New',
     title: 'AI video & creatives', service: 'AI Videos & Creatives',
     description: 'AI avatars, generated scenes and B-roll for when you don’t have footage, finished with real editing so it looks polished, not robotic.',
     chips: ['AI avatars', 'AI B-roll', 'Explainers', 'AI images'],
     links: [{ label: 'More about AI videos', href: '/ai-videos' }],
   },
   {
-    id: 'motion', code: 'V3', color: 'var(--amber)',
+    id: 'motion', color: 'var(--amber)',
     title: 'Motion graphics', service: 'Reels & Video Editing',
     description: 'Animated titles, logo reveals, kinetic text and explainer animation that make your videos feel premium.',
     chips: ['Logo reveals', 'Kinetic type', 'Lower thirds', 'Explainers'],
     links: [],
   },
   {
-    id: 'design', code: 'V4', color: 'var(--teal)',
+    id: 'design', color: 'var(--teal)',
     title: 'Branding & design', service: 'Graphic Design',
     description: 'Logos, social posts, carousels, posters, thumbnails and print, with one consistent look across everything.',
     chips: ['Logos', 'Posts & carousels', 'Thumbnails', 'Print'],
     links: [{ label: 'More about design', href: '/graphic-design' }],
   },
   {
-    id: 'social', code: 'V5', color: 'var(--green)',
+    id: 'social', color: 'var(--green)',
     title: 'Social media & websites', service: 'Social Media & Page Management',
     description: 'Page management, posting calendars, and fast mobile-first websites that turn visitors into clients.',
     chips: ['Page management', 'Posting calendar', 'Websites', 'Landing pages'],
@@ -94,8 +94,8 @@ function ServiceCard({ s, index, onSelectService }) {
 
   const body = (
     <div className="flex flex-col flex-1">
-      <div className="flex items-center justify-between">
-        <span className="cf-mono">{s.code}</span>
+      {/* Tag row is always there (empty if no tag) so titles line up across cards */}
+      <div className="flex min-h-[20px]">
         {s.tag && <span className="cf-tag" style={{ background: s.color }}>{s.tag.toUpperCase()}</span>}
       </div>
       <h3>{s.title}</h3>
@@ -143,7 +143,7 @@ export default function AgencyServices({ onSelectService }) {
       <div className="cf-wrap">
         <div className="cf-shead">
           <div>
-            <Scramble text="01 / SERVICES" className="cf-idx" />
+            <Scramble text="SERVICES" className="cf-idx" />
             <RevealHeading lines={['What we', 'make']} className="cf-wide cf-h2" />
           </div>
           <Reveal as="p">Pick one, or combine them into a monthly plan. Flexible terms, no long lock-ins.</Reveal>
