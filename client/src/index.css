@@ -253,8 +253,7 @@ button, a {
 .cf-wi { display: inline-block; backface-visibility: hidden; }
 
 /* Nav */
-.cf-header { position: fixed; inset: 0 0 auto; z-index: 50; background: rgba(8,8,11,.96); border-bottom: 1px solid var(--line); transition: transform .45s cubic-bezier(.7,0,.2,1); }
-.cf-header.is-hidden { transform: translateY(-100%); }
+.cf-header { position: fixed; inset: 0 0 auto; z-index: 50; background: rgba(8,8,11,.96); border-bottom: 1px solid var(--line); }
 .cf-logo-mark { width: 34px; height: 34px; display: block; flex-shrink: 0; }
 .cf-logo-text { font-family: var(--wide); font-stretch: 115%; font-weight: 800; font-size: 16px; letter-spacing: -.01em; color: #fff; }
 .cf-logo-text span { color: var(--muted); font-weight: 500; }

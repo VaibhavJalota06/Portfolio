@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { scrollToHash } from '../motion';
 import LogoMark from './LogoMark';
@@ -14,24 +14,8 @@ const NAV_LINKS = [
 ];
 
 export default function AgencyNavbar({ onOpenDiscovery }) {
-  const [hidden, setHidden] = useState(false);
+  // The menu bar always stays on screen (no hide-on-scroll).
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const lastY = useRef(0);
-
-  // Hide while scrolling down, show again when scrolling up (with a dead-zone so it never flickers).
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      const dy = y - lastY.current;
-      if (y < 300) { setHidden(false); lastY.current = y; return; }
-      // A single huge move is a jump to a section (e.g. arriving via /#faq), not the visitor scrolling: keep the bar.
-      if (Math.abs(dy) > 400) { lastY.current = y; return; }
-      if (dy > 12) { setHidden(true); lastY.current = y; }
-      else if (dy < -12) { setHidden(false); lastY.current = y; }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // In-page anchors smooth-scroll; if the section isn't on this page (e.g. a policy page)
   // the browser follows the hash normally and the app switches back to the homepage.
@@ -48,7 +32,7 @@ export default function AgencyNavbar({ onOpenDiscovery }) {
   };
 
   return (
-    <header className={`cf-header ${hidden && !mobileMenuOpen ? 'is-hidden' : ''}`}>
+    <header className="cf-header">
       <div className="cf-wrap flex items-center justify-between h-16 gap-4">
         <a href="#" onClick={goHome} className="flex items-center gap-2.5 shrink-0" aria-label="Cutframe Studio home">
           <LogoMark />
