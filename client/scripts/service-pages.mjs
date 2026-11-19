@@ -92,6 +92,17 @@ const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj).re
 
 const shell = fs.readFileSync(new URL('index.html', dist), 'utf8');
 const head = [...shell.matchAll(/<link rel="stylesheet"[^>]*>|<script async src="https:\/\/www\.googletagmanager[\s\S]*?<\/script>\s*<script>[\s\S]*?<\/script>/g)].map((m) => m[0]).join('\n    ');
+// The standalone pages are copied from public/ by Vite, so they do not use
+// the homepage shell. Give them the same single tag and enquiry listener.
+const analytics = shell.match(/<script async src="https:\/\/www\.googletagmanager[\s\S]*?<\/script>\s*<script>[\s\S]*?<\/script>/)?.[0];
+if (!analytics) throw new Error('Google Analytics tag missing from the homepage shell');
+for (const page of ['post-production/index.html', 'apps/index.html', 'apps/orbit/index.html']) {
+  const file = new URL(page, dist);
+  const html = fs.readFileSync(file, 'utf8');
+  if (html.includes('googletagmanager.com/gtag/js')) throw new Error(`Duplicate Google Analytics tag in ${page}`);
+  if (!html.includes('</head>')) throw new Error(`Missing head in ${page}`);
+  fs.writeFileSync(file, html.replace('</head>', `${analytics}\n</head>`));
+}
 
 // Shared document shell for every static page (service pages, guides, guides index).
 const doc = ({ title, description, url, type = 'website', graph, crumb, main }) => `<!doctype html>

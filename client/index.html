@@ -47,6 +47,10 @@
         var h = a.getAttribute('href');
         var m = /wa\.me|whatsapp/i.test(h) ? 'whatsapp' : /^mailto:/i.test(h) ? 'email' : /^tel:/i.test(h) ? 'phone' : '';
         if (m) gtag('event', 'generate_lead', { method: m, page_path: location.pathname });
+        if (a.closest('nav') && ((h.charAt(0) === '/' && !h.startsWith('//')) || h.charAt(0) === '#')) {
+          var destination = new URL(h, location.origin);
+          gtag('event', 'navigation_click', { link_path: destination.pathname, link_fragment: destination.hash.slice(0, 100) });
+        }
       }, true);
     </script>
 
