@@ -112,6 +112,9 @@ const doc = ({ title, description, url, type = 'website', graph, crumb, main }) 
     <meta property="og:description" content="${esc(description)}" />
     <meta property="og:image" content="${SITE}/og-image.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="${esc(title)}" />
+    <meta name="twitter:description" content="${esc(description)}" />
+    <meta name="twitter:image" content="${SITE}/og-image.jpg" />
     ${head}
     ${ld({
       '@context': 'https://schema.org',
@@ -199,8 +202,9 @@ const servicePage = (s) => {
         <p class="mt-4 text-[#a9a9b6] leading-relaxed max-w-3xl">${esc(s.body)}</p>
         <div class="mt-8 flex flex-wrap gap-3">
           <a href="${WA}?text=${encodeURIComponent(`Hi, I'm interested in ${s.nav}.`)}" class="inline-flex items-center rounded-full bg-[#e10600] hover:bg-[#c00500] text-white font-semibold px-6 py-3">WhatsApp us</a>
-          <a href="/#work" class="inline-flex items-center rounded-full border border-[#3a3a46] hover:border-[#8b8b98] font-semibold px-6 py-3">See our work</a>
+          <a href="/post-production/" class="inline-flex items-center rounded-full border border-[#3a3a46] hover:border-[#8b8b98] font-semibold px-6 py-3">See our portfolio</a>
         </div>
+        <p class="mt-4 text-sm text-[#a9a9b6]">Tell us what you need on WhatsApp. We’ll discuss your goals and share a tailored quote.</p>
       </section>
 
       <section class="py-10 border-t border-[#23232c]">
@@ -279,15 +283,16 @@ const guidesIndex = () => doc({
       </section>`,
 });
 
-const today = new Date().toISOString().slice(0, 10);
 fs.mkdirSync(new URL('guides/', dist), { recursive: true });
 for (const s of services) fs.writeFileSync(new URL(`${s.slug}.html`, dist), servicePage(s));
 for (const g of guides) fs.writeFileSync(new URL(`guides/${g.slug}.html`, dist), guidePage(g));
 fs.writeFileSync(new URL('guides.html', dist), guidesIndex());
-const urls = [['', today], ...services.map((s) => [s.slug, today]), ['guides', today], ...guides.map((g) => [`guides/${g.slug}`, g.date])];
+// A build date is not necessarily a content modification date. Omit lastmod
+// until reliable, page-specific modification dates are maintained.
+const urls = ['', ...services.map((s) => s.slug), 'guides', ...guides.map((g) => `guides/${g.slug}`), 'post-production/', 'apps/'];
 fs.writeFileSync(new URL('sitemap.xml', dist), `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(([p, d]) => `  <url><loc>${SITE}/${p}</loc><lastmod>${d}</lastmod></url>`).join('\n')}
+${urls.map((p) => `  <url><loc>${SITE}/${p}</loc></url>`).join('\n')}
 </urlset>
 `);
 console.log(`static pages: ${services.length} services, ${guides.length} guides written`);
