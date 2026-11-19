@@ -165,7 +165,7 @@ export default function App() {
 
   // Synchronize portfolio items based on user view (admin vs public) and login status
   useEffect(() => {
-    if (isAdmin && (pinVerified || (settings && !settings.has_admin_pin))) {
+    if (isAdmin && pinVerified) {
       fetchItems(true);
     } else if (!isAdmin) {
       fetchItems(false);
@@ -239,7 +239,7 @@ export default function App() {
 
   // Automatically fetch messages when entering admin workspace and authenticated
   useEffect(() => {
-    if (isAdmin && (pinVerified || (settings && !settings.has_admin_pin))) {
+    if (isAdmin && pinVerified) {
       fetchMessages();
     }
   }, [isAdmin, pinVerified, settings]);
@@ -532,7 +532,7 @@ export default function App() {
       )}
 
       {/* Admin PIN Lock Screen */}
-      {isAdmin && settings?.has_admin_pin && !pinVerified && (
+      {isAdmin && !pinVerified && (
         <div className="fixed inset-0 z-[60] bg-slate-50 flex items-center justify-center p-6">
           <div className="w-full max-w-sm bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
             <span className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">

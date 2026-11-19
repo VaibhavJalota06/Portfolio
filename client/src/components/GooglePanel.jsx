@@ -29,9 +29,19 @@ export default function GooglePanel({ showToast, onSynced }) {
     return () => window.removeEventListener('focus', loadStatus);
   }, [loadStatus]);
 
-  const connect = () => {
-    const pin = getAdminHeaders()['x-admin-pin'] || '';
-    window.open(`/api/google/connect${pin ? `?admin_pin=${encodeURIComponent(pin)}` : ''}`, '_blank', 'noopener');
+  const connect = async () => {
+    const popup = window.open('about:blank', '_blank');
+    if (!popup) return showToast('Please allow pop-ups to connect Google.', 'error');
+    try {
+      const res = await fetch('/api/google/connect', { method: 'POST', headers: getAdminHeaders() });
+      if (!res.ok) throw new Error('Could not start Google connection.');
+      const { url } = await res.json();
+      popup.opener = null;
+      popup.location.replace(url);
+    } catch (err) {
+      popup.close();
+      showToast(err.message, 'error');
+    }
   };
 
   const syncNow = async () => {

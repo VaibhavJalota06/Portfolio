@@ -21,7 +21,7 @@ app.use(express.json({ limit: '100kb' }));
 
 // Logger middleware
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
   next();
 });
 
@@ -52,12 +52,12 @@ const failedPins = new Map(); // ip -> { count, until }
 const PIN_MAX_FAILS = 8;
 const PIN_LOCK_MS = 15 * 60 * 1000;
 
-const storedPin = () => db.prepare("SELECT value FROM settings WHERE key = 'admin_pin'").get()?.value || '';
+const storedPin = () => db.prepare("SELECT value FROM settings WHERE key = 'admin_pin'").get()?.value || process.env.ADMIN_BOOTSTRAP_PIN || '';
 
 // Returns 'ok' | 'bad' | 'locked'.
 function checkPin(req, pin) {
   const stored = storedPin();
-  if (!stored) return 'ok'; // Open access if no PIN is configured
+  if (!stored) return 'bad'; // Fail closed until an administrator configures a PIN.
   const ip = clientIp(req);
   const entry = failedPins.get(ip);
   if (entry && entry.until > Date.now()) return 'locked';
@@ -69,7 +69,7 @@ function checkPin(req, pin) {
 }
 
 function verifyAdmin(req, res, next) {
-  const result = checkPin(req, req.headers['x-admin-pin'] || req.query.admin_pin);
+  const result = checkPin(req, req.headers['x-admin-pin']);
   if (result === 'ok') return next();
   return res.status(result === 'locked' ? 429 : 401).json({ error: result === 'locked' ? 'Too many attempts. Try again in 15 minutes.' : 'Unauthorized: Invalid or missing admin PIN' });
 }
@@ -210,7 +210,7 @@ app.get('/api/settings', (req, res) => {
     const rows = db.prepare('SELECT * FROM settings').all();
     const settingsObj = {};
     rows.forEach(row => { if (!PRIVATE_SETTINGS.includes(row.key)) settingsObj[row.key] = row.value; });
-    settingsObj.has_admin_pin = rows.some(r => r.key === 'admin_pin' && r.value) ? '1' : '';
+    settingsObj.has_admin_pin = storedPin() ? '1' : '';
     res.json(settingsObj);
   } catch (error) {
     console.error('Error fetching settings:', error);
@@ -382,18 +382,18 @@ app.get('/api/google/status', verifyAdmin, (req, res) => {
   });
 });
 
-// Opened in the browser by the admin (PIN in the query, since it is a top-level navigation).
-app.get('/api/google/connect', verifyAdmin, (req, res) => {
+// The PIN stays in the request header; the client opens the returned Google URL.
+app.post('/api/google/connect', verifyAdmin, (req, res) => {
   if (!google.isConfigured()) return res.status(400).send('Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in server/.env first.');
   const state = crypto.randomUUID();
   oauthStates.add(state);
   setTimeout(() => oauthStates.delete(state), 10 * 60 * 1000);
-  res.redirect(google.authUrl(state));
+  res.json({ url: google.authUrl(state) });
 });
 
 app.get('/api/google/callback', async (req, res) => {
   const { code, state, error } = req.query;
-  if (error || !code || !oauthStates.has(state)) return res.status(400).send(`Google connection failed: ${error || 'invalid or expired request'}. Close this tab and try again.`);
+  if (error || !code || !oauthStates.has(state)) return res.status(400).type('text/plain').send('Google connection failed: invalid or expired request. Close this tab and try again.');
   oauthStates.delete(state);
   try {
     await google.exchangeCode(code);
@@ -401,7 +401,7 @@ app.get('/api/google/callback', async (req, res) => {
     res.send('<p style="font-family:sans-serif">Google account connected. You can close this tab and return to the admin panel.</p>');
   } catch (err) {
     console.error('Google OAuth error:', err.message);
-    res.status(500).send(`Google connection failed: ${err.message}`);
+    res.status(500).type('text/plain').send('Google connection failed. Close this tab and try again.');
   }
 });
 
