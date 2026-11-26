@@ -179,7 +179,7 @@ window.PORTFOLIO = {
   videos: {
     band: "REELS & VIDEO",
     title: "MOTION",
-    intro: "High-retention reels, AI-animated brand stories and real on-location edits from Cutframe Studio — hooks in the first frame, clean captions, sound design and colour grading.",
+    intro: "High-retention reels, AI-animated brand stories and client video edits from Cutframe Studio — hooks in the first frame, clean captions, sound design and colour grading.",
     showreel: "video/drs.mp4",
     reels: [
       { title: "DRS Homeopathy", type: "AI brand reel · 56s", poster: "images/video/drs.jpg", src: "video/drs.mp4" },
@@ -204,7 +204,7 @@ window.PORTFOLIO = {
       frames: ["images/video/drs.jpg", "images/video/renova.jpg", "images/video/jewellery.jpg", "images/video/bts.jpg"]
     },
     pipeline: [
-      { step: "IDEA / RAW FOOTAGE", detail: "Talking-head clip, product shoot or just a one-line idea" },
+      { step: "IDEA / RAW FOOTAGE", detail: "Talking-head clip, product footage or just a one-line idea" },
       { step: "AI SCRIPT & EDIT PLAN", detail: "Claude / Gemini write the hook, script and cut list" },
       { step: "AI SCENES & B-ROLL", detail: "Google Flow generates characters, scenes and B-roll" },
       { step: "AI VOICE", detail: "ElevenLabs voice-over when there's no recording" },
