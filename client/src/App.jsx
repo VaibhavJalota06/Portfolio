@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
-import { Film, Eye, Mail, Lock, X, ChevronLeft, ChevronRight, Trash2, MessageCircle, Instagram, Linkedin } from 'lucide-react';
+import { Film, Eye, Mail, Lock, X, ChevronLeft, ChevronRight, Trash2, MessageCircle, Linkedin } from 'lucide-react';
 import Toast from './components/Toast';
 const AdminPanel = lazy(() => import('./components/AdminPanel')); // admin/legal only: kept out of the main bundle
 const SettingsPanel = lazy(() => import('./components/SettingsPanel')); // admin/legal only: kept out of the main bundle
@@ -1077,7 +1077,6 @@ function SiteFooter({ onOpenDiscovery }) {
             <div className="mt-5 flex gap-2">
               {[
                 { href: CONTACT.whatsappUrl, label: 'WhatsApp', Icon: MessageCircle },
-                { href: CONTACT.instagramUrl, label: 'Instagram', Icon: Instagram },
                 { href: CONTACT.linkedinUrl, label: 'LinkedIn', Icon: Linkedin },
                 { href: `mailto:${CONTACT.email}`, label: 'Email', Icon: Mail },
               ].map(({ href, label, Icon }) => (
