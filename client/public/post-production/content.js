@@ -47,7 +47,7 @@ window.PORTFOLIO = {
   ],
   tools: [
     "Adobe Premiere Pro", "DaVinci Resolve", "Adobe Photoshop", "Adobe Illustrator",
-    "CorelDRAW", "Gravit Designer", "Google Flow", "Claude", "Gemini", "ElevenLabs",
+    "CorelDRAW", "Google Flow", "Claude", "Gemini", "ElevenLabs",
     "Python", "FFmpeg", "Local AI Models"
   ],
 
