@@ -12,7 +12,7 @@ export const guides = [
     sections: [
       {
         h: 'What page management should actually include',
-        p: ['“Page management” means very different things to different agencies. Some only schedule posts you send them. Others plan, shoot, edit, write and post everything. Before comparing prices, make sure you are comparing the same work.'],
+        p: ['“Page management” means very different things to different agencies. Some only schedule posts you send them. Others plan content, edit videos, write captions and publish posts. Before comparing prices, make sure you are comparing the same work.'],
         list: [
           'A monthly content plan: what goes out, on which day, and why',
           'Reels, not just static posts, since short video is what Instagram pushes to new people',
@@ -27,7 +27,7 @@ export const guides = [
         list: [
           'Can I see three Instagram pages you manage right now?',
           'Who makes the reels: your team, freelancers, or me?',
-          'Can you shoot at my location, or do I need to send footage?',
+          'What footage do I need to provide, and how should I share it?',
           'Do I approve every post before it goes live?',
           'What happens if I want changes to a reel?',
           'Is there a lock-in period, and what notice do I need to give?',
@@ -45,8 +45,8 @@ export const guides = [
         ],
       },
       {
-        h: 'Local or remote?',
-        p: ['Editing, design and posting can all be done remotely. Where a local agency helps is filming: a team in Delhi NCR can come to your shop, clinic, office or event and shoot content in one visit, which usually looks far better than phone clips sent over WhatsApp. If you are outside Delhi NCR, a remote team that works from your footage is perfectly fine.'],
+        h: 'How remote collaboration works',
+        p: ['Editing, design and posting can all be done remotely. Ask how the team accepts raw footage, shares drafts and handles feedback before posts go live.'],
       },
     ],
     faqs: [

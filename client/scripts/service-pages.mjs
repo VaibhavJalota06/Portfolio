@@ -13,13 +13,13 @@ const services = [
     slug: 'reels-video-editing-delhi',
     nav: 'Reels & Video Editing',
     title: 'Reels & Video Editing Services in Delhi | Cutframe Studio',
-    description: 'High-retention reels, YouTube Shorts and long-form video editing in Delhi. On-site shoots across Delhi NCR, editing for brands and creators across India.',
+    description: 'High-retention reels, YouTube Shorts and long-form video editing in Delhi. Remote editing for brands and creators across India.',
     h1: 'Reels & Video Editing in Delhi',
-    answer: 'Cutframe Studio edits high-retention Instagram Reels, YouTube Shorts and long-form YouTube videos for brands, businesses and creators. We shoot on-site across Delhi NCR, or edit footage you send us from anywhere in India.',
+    answer: 'Cutframe Studio edits high-retention Instagram Reels, YouTube Shorts and long-form YouTube videos for brands, businesses and creators. Send us your footage from anywhere in India and we’ll edit it remotely.',
     body: 'Every edit is built to keep people watching: a strong hook in the first three seconds, clean word-by-word captions, music, sound effects and B-roll, and pacing that holds attention to the last frame. You review every video before it goes live.',
-    deliverables: ['Strong first-3-second hooks', 'Clean word-by-word captions', 'Music, sound effects and B-roll', 'Cuts, zooms and pacing for retention', 'Exported in 9:16 for Reels & Shorts', 'On-site shoots with camera, lighting and audio across Delhi NCR'],
+    deliverables: ['Strong first-3-second hooks', 'Clean word-by-word captions', 'Music, sound effects and B-roll', 'Cuts, zooms and pacing for retention', 'Exported in 9:16 for Reels & Shorts'],
     faqs: [
-      ['Do I have to record the videos myself?', 'Not necessarily. For clients in Delhi NCR, our team can come to your office, store or workspace with professional cameras, lighting and audio to record everything for you. If you already have footage or are elsewhere in India, share your raw files via Google Drive or WhatsApp.'],
+      ['How do I send my footage?', 'Share your raw footage via Google Drive or WhatsApp and we’ll handle the edit remotely.'],
       ['Can you make reels if I don’t have time to record?', 'Yes. We create engaging videos using motion graphics, AI visuals, licensed B-roll and custom animations, so your brand stays active without you stepping in front of a camera.'],
       ['What happens if I want changes?', 'You review every reel before it goes live. Tell us what to change and we update it until you are satisfied.'],
     ],
@@ -35,8 +35,8 @@ const services = [
     deliverables: ['Monthly content strategy', 'Monthly content & posting calendar', 'Captions and hashtags written for you', 'Regular scheduled posting', 'Profile, bio and highlights cleanup'],
     faqs: [
       ['Who do you work with?', 'Brands and businesses of all sizes: product and e-commerce brands, founders, creators, local businesses and service companies that want strong social media growth.'],
-      ['Do you only work in Delhi NCR?', 'We film on-site across Delhi NCR, and handle editing, design and page management for clients all over India and internationally.'],
-      ['How much does it cost?', 'It depends on how much content you need, whether you need on-site shooting, and how much of the page we run. After a short discovery call we give you a transparent monthly quote with no hidden fees.'],
+      ['Do you only work in Delhi NCR?', 'We handle editing, design and page management remotely for clients across India and internationally.'],
+      ['How much does it cost?', 'It depends on how much content you need and how much of the page we run. After a short discovery call we give you a transparent monthly quote with no hidden fees.'],
     ],
   },
   {
@@ -229,7 +229,7 @@ const servicePage = (s) => {
         <h2 class="cf-display text-2xl sm:text-3xl font-bold">How it works</h2>
         <ol class="mt-6 grid sm:grid-cols-3 gap-4">
           <li class="rounded-xl border border-[#23232c] p-5"><strong class="block text-[#ff6b63]">Free call</strong><span class="text-[#a9a9b6]">We learn about your brand and goals.</span></li>
-          <li class="rounded-xl border border-[#23232c] p-5"><strong class="block text-[#ff6b63]">Plan &amp; create</strong><span class="text-[#a9a9b6]">We plan, shoot or design, and edit.</span></li>
+          <li class="rounded-xl border border-[#23232c] p-5"><strong class="block text-[#ff6b63]">Plan &amp; create</strong><span class="text-[#a9a9b6]">We plan, design and edit your content.</span></li>
           <li class="rounded-xl border border-[#23232c] p-5"><strong class="block text-[#ff6b63]">Review &amp; publish</strong><span class="text-[#a9a9b6]">You approve everything before it goes live.</span></li>
         </ol>
       </section>
