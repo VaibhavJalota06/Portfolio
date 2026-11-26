@@ -1251,11 +1251,11 @@
       ["8. Growth","1GTCHZp20JbdeQcpjasi-d1Wbkx4aY8fT"],
       ["9. Cut Frame Studio Begins","15_Fixla_X3SeBN6dmqzYAj0keuEdxmzd"],
       ["10. Chapter One","1WaylCwJtM-ZEVAKclYW3NYAiAieBJ6iK"]
-    ].map(([title, id]) => ({
+    ].map(([title, id], index) => ({
       title,
       type: "The Editor Nobody Believed In",
       src: `https://drive.google.com/file/d/${id}/preview`,
-      poster: `https://drive.google.com/thumbnail?id=${id}&sz=w480`,
+      poster: `images/video/editor-episode-${String(index + 1).padStart(2, '0')}.jpg`,
       still: true
     }));
     const videoTile = (v, wide) => `
