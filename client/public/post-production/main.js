@@ -1631,7 +1631,7 @@
     `;
 
     // Render into <main id="app">
-    app.innerHTML = heroHTML + videosHTML + sectionsHTML + aboutHTML + tornBandHTML + notesHTML + aiStudioHTML + contactHTML;
+    app.innerHTML = heroHTML + aboutHTML + tornBandHTML + notesHTML + videosHTML + sectionsHTML + aiStudioHTML + contactHTML;
 
     // Apply paper crumple & torn paper edges
     applyCrumpleTexture();
