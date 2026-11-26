@@ -1117,7 +1117,6 @@ function SiteFooter({ onOpenDiscovery }) {
             <h3 className="cf-mono mb-3">Get in touch</h3>
             <a href={CONTACT.whatsappUrl} target="_blank" rel="noopener noreferrer" className={linkCls}>WhatsApp {CONTACT.whatsapp}</a>
             <a href={`mailto:${CONTACT.email}`} className={`${linkCls} break-all`}>{CONTACT.email}</a>
-            <span className="block py-1.5 text-[14px] text-[#8b8b98]">Delhi NCR · All of India</span>
             <button type="button" onClick={onOpenDiscovery} className="cf-btn cf-btn-red cf-btn-sm mt-4">
               Book a free call
             </button>
