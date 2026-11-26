@@ -1258,6 +1258,64 @@
         </div>
       </section>` : '';
 
+    const episodes = [
+      [
+        "1. The Beginning",
+        "155aeTcA-ORDA0Tdk9ylZ4mOrGku8-JNK"
+      ],
+      [
+        "2. Nobody Believed Me",
+        "1mMB3_IQruiOQEyrCsrL3QEVoxnGG2pMV"
+      ],
+      [
+        "3. Sleepless Nights",
+        "16xVP3pmQVT8Qf7JS_BTo3bWqzZOAa2o1"
+      ],
+      [
+        "4. No Clients",
+        "18Y4zAhz0EyTkMwNqS3kWYEeq5Kz8_0yN"
+      ],
+      [
+        "5. First Client",
+        "1KKRjjxm3so3WJpCRSX3u_Z2LsX6J6nrQ"
+      ],
+      [
+        "6. Breaking Point",
+        "1zdllUMo8AiID5a7sUKl_SFJcjegHbgWu"
+      ],
+      [
+        "7. The Promise",
+        "1HQbuo6BmVtC2dHhAbvcyAGPLUeh1t5lN"
+      ],
+      [
+        "8. Growth",
+        "1GTCHZp20JbdeQcpjasi-d1Wbkx4aY8fT"
+      ],
+      [
+        "9. Cut Frame Studio Begins",
+        "15_Fixla_X3SeBN6dmqzYAj0keuEdxmzd"
+      ],
+      [
+        "10. Chapter One",
+        "1WaylCwJtM-ZEVAKclYW3NYAiAieBJ6iK"
+      ]
+    ];
+    const episodeURL = (id, mode) => `https://drive.google.com/file/d/${id}/${mode}`;
+    const seriesHTML = `
+      <section class="videos dark-grid" id="editor-series" aria-labelledby="editor-series-title">
+        <div class="videos-inner">
+          <div class="videos-head"><h3 class="mega" id="editor-series-title">The Editor Nobody Believed In</h3></div>
+          <div style="display:grid;gap:12px;width:min(100%,420px);margin:auto">
+            <label for="editor-episode">Choose an episode</label>
+            <select id="editor-episode" style="width:100%;padding:10px;background:#fff;color:#151515">
+              ${episodes.map(([title, id]) => `<option value="${id}">${escapeHTML(title)}</option>`).join('')}
+            </select>
+            <iframe id="editor-player" title="${escapeHTML(episodes[0][0])}" src="${episodeURL(episodes[0][1], 'preview')}" loading="lazy" allow="fullscreen" style="display:block;width:100%;aspect-ratio:9/16;border:0;background:#000"></iframe>
+            <a id="editor-open" href="${episodeURL(episodes[0][1], 'view')}" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Open episode in Google Drive</a>
+          </div>
+        </div>
+      </section>`;
+
     // 6.5 AI Studio & Orbit Studio Section
     const aiData = data.aiStudio || {};
     const aiMarqueeHTML = aiData.band ? `
@@ -1595,7 +1653,17 @@
     `;
 
     // Render into <main id="app">
-    app.innerHTML = heroHTML + aboutHTML + tornBandHTML + notesHTML + sectionsHTML + videosHTML + aiStudioHTML + contactHTML;
+    app.innerHTML = heroHTML + aboutHTML + tornBandHTML + notesHTML + sectionsHTML + videosHTML + seriesHTML + aiStudioHTML + contactHTML;
+
+    const episodeSelect = document.getElementById('editor-episode');
+    const episodePlayer = document.getElementById('editor-player');
+    const episodeLink = document.getElementById('editor-open');
+    episodeSelect.addEventListener('change', () => {
+      const [title, id] = episodes[episodeSelect.selectedIndex];
+      episodePlayer.title = title;
+      episodePlayer.src = episodeURL(id, 'preview');
+      episodeLink.href = episodeURL(id, 'view');
+    });
 
     // Apply paper crumple & torn paper edges
     applyCrumpleTexture();
