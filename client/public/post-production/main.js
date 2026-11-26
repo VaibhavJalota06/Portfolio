@@ -345,13 +345,25 @@
     const modalClose = document.getElementById('vmodal-close');
     const modalBackdrop = document.getElementById('vmodal-backdrop');
     const vCursor = document.getElementById('video-cursor');
+    let embeddedPlayer = null;
 
     function openModal(src, title, type, triggerEl) {
       if (!modal || !modalVideo) return;
       lastFocusedElement = triggerEl || document.activeElement;
 
-      modalVideo.src = src;
-      modalVideo.currentTime = 0;
+      const useEmbed = src?.startsWith('https://drive.google.com/file/d/');
+      if (useEmbed) {
+        embeddedPlayer = document.createElement('iframe');
+        embeddedPlayer.src = src;
+        embeddedPlayer.title = title;
+        embeddedPlayer.allowFullscreen = true;
+        embeddedPlayer.style.cssText = 'display:block;width:min(100%,48dvh);height:82dvh;margin:auto;border:0;background:#000';
+        modalVideo.style.display = 'none';
+        modalVideo.after(embeddedPlayer);
+      } else {
+        modalVideo.src = src;
+        modalVideo.currentTime = 0;
+      }
       if (modalTitle) modalTitle.textContent = title || 'CUT_FRAME';
       if (modalType) modalType.textContent = type || '4K • 24FPS';
 
@@ -361,14 +373,19 @@
 
       if (lenisInstance) lenisInstance.stop();
 
-      modalVideo.muted = false;
-      modalVideo.play().catch(() => {});
+      if (!useEmbed) {
+        modalVideo.muted = false;
+        modalVideo.play().catch(() => {});
+      }
 
       if (modalClose) modalClose.focus();
     }
 
     function closeModal() {
       if (!modal || !modalVideo) return;
+      embeddedPlayer?.remove();
+      embeddedPlayer = null;
+      modalVideo.style.display = '';
       modalVideo.pause();
       modalVideo.removeAttribute('src');
       modalVideo.load();
@@ -398,7 +415,7 @@
       modal.addEventListener('keydown', (e) => {
         if (!modal.classList.contains('is-active')) return;
         if (e.key === 'Tab') {
-          const focusable = modal.querySelectorAll('button, video, [tabindex="0"]');
+          const focusable = [...modal.querySelectorAll('button, video, iframe, [tabindex="0"]')].filter(el => el.getClientRects().length);
           if (focusable.length === 0) return;
           const first = focusable[0];
           const last = focusable[focusable.length - 1];
@@ -1237,7 +1254,7 @@
     ].map(([title, id]) => ({
       title,
       type: "The Editor Nobody Believed In",
-      src: `https://drive.usercontent.google.com/download?id=${id}&export=download&confirm=t`,
+      src: `https://drive.google.com/file/d/${id}/preview`,
       poster: `https://drive.google.com/thumbnail?id=${id}&sz=w480`,
       still: true
     }));
