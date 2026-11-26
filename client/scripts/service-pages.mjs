@@ -178,7 +178,7 @@ ${main}
         </nav>
         <div class="flex flex-col sm:flex-row gap-3 justify-between text-[#8b8b98]">
           <span>© Cutframe Studio · Delhi, India</span>
-          <span><a href="mailto:vaibhav@cutframestudio.in">vaibhav@cutframestudio.in</a> · <a href="${WA}">+91 92175 84204</a> · <a href="https://instagram.com/studiocutframe">@studiocutframe</a></span>
+          <span><a href="mailto:vaibhav@cutframestudio.in">vaibhav@cutframestudio.in</a> · <a href="${WA}">+91 92175 84204</a></span>
         </div>
       </div>
     </footer>
