@@ -216,7 +216,6 @@ const defaults = {
   gallery_title: "AGENCY VIDEO SHOWCASE",
   gallery_description: "Filter our recent viral short-form campaigns, YouTube long-form stories, and high-conversion commercial ads.",
   hero_label: "CUTFRAME STUDIO • FULL-SERVICE MEDIA ENGINE",
-  instagram_url: "instagram.com/studiocutframe",
   behance_url: "",
   available_for_work: "1",
   admin_pin: "",

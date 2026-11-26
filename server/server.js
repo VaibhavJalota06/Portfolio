@@ -202,8 +202,8 @@ app.patch('/api/items/reorder', verifyAdmin, (req, res) => {
 // ─── SETTINGS ───────────────────────────────────────────────────────────────
 
 // Never sent to the browser, never writable through PUT /api/settings.
-const PRIVATE_SETTINGS = ['admin_pin', 'google_refresh_token'];
-const READONLY_SETTINGS = ['google_refresh_token', 'drive_last_sync', 'has_admin_pin'];
+const PRIVATE_SETTINGS = ['instagram_url', 'admin_pin', 'google_refresh_token'];
+const READONLY_SETTINGS = ['instagram_url', 'google_refresh_token', 'drive_last_sync', 'has_admin_pin'];
 
 app.get('/api/settings', (req, res) => {
   try {
