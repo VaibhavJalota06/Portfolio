@@ -1072,7 +1072,7 @@ function SiteFooter({ onOpenDiscovery }) {
               <span className="cf-logo-text">CUTFRAME <span>STUDIO</span></span>
             </a>
             <p className="mt-4 max-w-xs text-[14px] leading-relaxed text-[#8b8b98]">
-              Video post-production, AI video, motion graphics and design. On-site shoots in Delhi NCR, remote across India.
+              Video post-production, AI video, motion graphics and design. Working remotely with clients across India.
             </p>
             <div className="mt-5 flex gap-2">
               {[
