@@ -1610,10 +1610,6 @@
             <b>PHONE</b>
             <span>${escapeHTML(contactData.phone || '')}</span>
           </a>
-          <a class="reveal-fade" style="--ii: 2" href="https://instagram.com/${escapeHTML((contactData.instagram || '').replace(/^@/, ''))}" target="_blank" rel="noopener noreferrer">
-            <b>INSTAGRAM</b>
-            <span>${escapeHTML(contactData.instagram || '')}</span>
-          </a>
           <a class="reveal-fade" style="--ii: 3" href="https://${escapeHTML((contactData.website || '').replace(/^https?:\/\//, ''))}" target="_blank" rel="noopener noreferrer">
             <b>STUDIO</b>
             <span>${escapeHTML(contactData.website || '')}</span>

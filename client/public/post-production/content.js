@@ -223,7 +223,6 @@ window.PORTFOLIO = {
   contact: {
     email: "vaibhav@cutframestudio.in",
     phone: "+91 92175 84204",
-    instagram: "@studiocutframe",
     website: "cutframestudio.in",
     linkedin: "linkedin.com/in/vaibhavjalota"
   }
