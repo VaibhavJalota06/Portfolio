@@ -1653,7 +1653,7 @@
     `;
 
     // Render into <main id="app">
-    app.innerHTML = heroHTML + aboutHTML + tornBandHTML + notesHTML + sectionsHTML + videosHTML + seriesHTML + aiStudioHTML + contactHTML;
+    app.innerHTML = heroHTML + videosHTML + seriesHTML + sectionsHTML + aboutHTML + tornBandHTML + notesHTML + aiStudioHTML + contactHTML;
 
     const episodeSelect = document.getElementById('editor-episode');
     const episodePlayer = document.getElementById('editor-player');
