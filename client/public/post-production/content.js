@@ -26,7 +26,7 @@ window.PORTFOLIO = {
     "images/portrait/frame4.webp"
   ],
 
-  bio: "I'm Vaibhav Jalota — a multimedia graduate and founder of Cutframe Studio. I bridge creative storytelling and technical craft: brand identities, logos, packaging visuals and posters, plus high-retention video for brands, founders and creators across India. Since 2022 I've been making visuals that make people stop scrolling.",
+  bio: "I'm Vaibhav Jalota, a multimedia graduate and founder of Cutframe Studio. I edit short-form videos, create motion graphics, and design brand identities and packaging for brands, founders and creators across India. I'm also building Orbit Studio, an AI-assisted video tool for planning edits, generating scenes and voice-overs, and timing Hindi and Hinglish captions.",
 
   // from linkedin.com/in/vaibhavjalota
   education: [
@@ -39,8 +39,17 @@ window.PORTFOLIO = {
     { title: "Trainee", place: "Keventers · Okhla, Delhi", years: "Feb – May 2026" },
     { title: "Graphic Designer", place: "Self-employed · Punjab", years: "2022 – 2025" }
   ],
-  skills: ["Graphic Design", "Brand Identity", "Branding", "Online Graphics", "Image Design", "Video Editing", "Motion Graphics", "Videography", "Creative Visualisation", "Design Thinking"],
-  tools:  ["Photoshop", "Illustrator", "CorelDRAW", "Premiere Pro", "Gravit Designer", "Python + local AI"],
+  skills: [
+    "Video Editing", "Short-Form Storytelling", "Motion Graphics", "Colour Grading",
+    "Sound Design", "Videography", "Graphic Design", "Brand Identity",
+    "Packaging Design", "Photo Manipulation", "AI Video Production", "AI Scene Generation",
+    "AI Voice-Over Production", "Hindi and Hinglish Captioning", "Creative Workflow Automation"
+  ],
+  tools: [
+    "Adobe Premiere Pro", "DaVinci Resolve", "Adobe Photoshop", "Adobe Illustrator",
+    "CorelDRAW", "Gravit Designer", "Google Flow", "Claude", "Gemini", "ElevenLabs",
+    "Python", "FFmpeg", "Local AI Models"
+  ],
 
   quotes: [
     { text: "Design is thinking made visual.", by: "Saul Bass" },
