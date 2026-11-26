@@ -8,8 +8,8 @@ const FAQS = [
     a: 'Brands and businesses of all sizes: product and e-commerce brands, founders, creators, local businesses, and service companies that want high-retention video content and strong social media growth.',
   },
   {
-    q: 'Do I have to record the videos myself?',
-    a: 'Not necessarily. For clients in Delhi NCR, we can come to your office, store or workspace with professional cameras, lighting and audio equipment and record everything for you. If you already have footage, or you’re elsewhere in India, you can share your raw files via Google Drive or WhatsApp.',
+    q: 'How do I send my footage?',
+    a: 'Share your raw footage via Google Drive or WhatsApp and we’ll handle the edit remotely.',
   },
   {
     q: 'Can you make reels if I don’t have time to record?',
@@ -21,7 +21,7 @@ const FAQS = [
   },
   {
     q: 'Do you only work in Delhi NCR?',
-    a: 'We do on-site filming and production across Delhi NCR, and video editing, design and social media management for clients all over India and internationally.',
+    a: 'We provide video editing, design and social media management remotely for clients across India and internationally.',
   },
   {
     q: 'How do your website projects work?',
@@ -29,7 +29,7 @@ const FAQS = [
   },
   {
     q: 'How much does it cost?',
-    a: 'It depends on how many videos you need, whether you need on-site shooting, and whether you want full social media management. After a short discovery call, we send a clear monthly quote with no hidden fees.',
+    a: 'It depends on how many videos you need and whether you want full social media management. After a short discovery call, we send a clear monthly quote with no hidden fees.',
   },
 ];
 

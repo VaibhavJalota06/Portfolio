@@ -5,7 +5,7 @@ import { gsap, useGsap, RevealHeading, Reveal, Scramble } from '../motion';
 
 const FACTS = [
   { big: '1:1', small: 'You talk directly to the editor' },
-  { big: 'Delhi NCR', small: 'On-site shoots with camera & lights' },
+  { big: 'Remote', small: 'Working with clients across India' },
   { big: 'All India', small: 'Remote editing & design' },
 ];
 

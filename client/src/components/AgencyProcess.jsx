@@ -4,7 +4,7 @@ import { gsap, useGsap, RevealHeading, Reveal, Scramble } from '../motion';
 const STEPS = [
   { title: 'Free call', text: 'Book a call or message us on WhatsApp. We talk about your goals, style and budget.' },
   { title: 'Plan & quote', text: 'You get a clear monthly plan and price, with no hidden costs.' },
-  { title: 'Shoot or share', text: 'We shoot on-site in Delhi NCR, or you send your raw files via Google Drive.' },
+  { title: 'Share your footage', text: 'Send your raw files via Google Drive.' },
   { title: 'Review', text: 'You review every piece. We make your changes until you’re happy with it.' },
   { title: 'Export & post', text: 'Delivered ready to post, or we post it for you as part of page management.' },
 ];
