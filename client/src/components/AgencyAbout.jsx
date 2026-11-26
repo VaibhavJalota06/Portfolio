@@ -1,5 +1,5 @@
 import React from 'react';
-import { Linkedin, Instagram, Mail, ArrowRight } from 'lucide-react';
+import { Linkedin, Mail, ArrowRight } from 'lucide-react';
 import { CONTACT } from '../contact';
 import { gsap, useGsap, RevealHeading, Reveal, Scramble } from '../motion';
 
@@ -47,7 +47,6 @@ export default function AgencyAbout() {
 
           <Reveal className="mt-7 flex flex-wrap gap-2.5">
             <a href={CONTACT.linkedinUrl} target="_blank" rel="noopener noreferrer" className="cf-btn cf-btn-ghost cf-btn-sm"><Linkedin className="w-4 h-4" /> LinkedIn</a>
-            <a href={CONTACT.instagramUrl} target="_blank" rel="noopener noreferrer" className="cf-btn cf-btn-ghost cf-btn-sm"><Instagram className="w-4 h-4" /> Instagram</a>
             <a href={`mailto:${CONTACT.email}`} className="cf-btn cf-btn-ghost cf-btn-sm"><Mail className="w-4 h-4" /> Email</a>
             <a href="/post-production/" className="cf-btn cf-btn-ghost cf-btn-sm">Post-Production portfolio <ArrowRight className="w-4 h-4" /></a>
           </Reveal>
